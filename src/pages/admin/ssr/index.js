@@ -1,27 +1,21 @@
 import React from "react";
 
 // components
-
-import CardSettings from "../../../components/Cards/CardSettings.js";
-import CardTablessr from "../../../components/Cards/CardTablessr.js";
+import TableSSR from "../../../components/Cards/CardTableSSR.js";
 
 // layout for page
-
 import Admin from "../../../layouts/Admin.js";
 
-export default function Settings() {
+export default function SSR() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <CardSettings />
-        </div>
-        <div className="w-full mb-12 px-4">
-          <CardTablessr />
+          <TableSSR />
         </div>
       </div>
     </>
   );
 }
 
-Settings.layout = Admin;
+SSR.layout = Admin;

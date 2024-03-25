@@ -3239,7 +3239,8 @@ select {
 
 .text-green-100 {
   --tw-bg-opacity: 1;
-  color: rgba(209, 250, 229, var(--tw-bg-opacity));
+  color: rgba(209, 250, 229
+  , var(--tw-bg-opacity));
 }
 
 .text-green-200 {
