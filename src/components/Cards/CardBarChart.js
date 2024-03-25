@@ -7,30 +7,40 @@ export default function CardBarChart() {
       type: "bar",
       data: {
         labels: [
-          "January",
-          "February",
-          "March",
+          "Januari",
+          "Februari",
+          "Maret",
           "April",
-          "May",
-          "June",
-          "July",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
         ],
         datasets: [
           {
-            label: new Date().getFullYear(),
-            backgroundColor: "#ed64a6",
-            borderColor: "#ed64a6",
-            data: [30, 78, 56, 34, 100, 45, 13],
-            fill: false,
-            barThickness: 8,
-          },
-          {
-            label: new Date().getFullYear() - 1,
-            fill: false,
+            label: "TPT",
             backgroundColor: "#4c51bf",
             borderColor: "#4c51bf",
-            data: [27, 68, 86, 74, 10, 4, 87],
-            barThickness: 8,
+            data: [65, 78, 66, 44, 56, 67, 75],
+            fill: false,
+          },
+          {
+            label: "IKRT",
+            backgroundColor: "#ff0000",
+            borderColor: "#ff0000",
+            data: [40, 68, 86, 74, 56, 60, 87],
+            fill: false,
+          },
+          {
+            label: "Laporan Ternotifikasi",
+            backgroundColor: "#fbcb3a",
+            borderColor: "#fbcb3a",
+            data: [44, 62, 6, 7, 5, 10, 17],
+            fill: false,
           },
         ],
       },
@@ -105,10 +115,10 @@ export default function CardBarChart() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-                Performance
+                Pemeringkatan
               </h6>
               <h2 className="text-blueGray-700 text-xl font-semibold">
-                Total orders
+                Laporan PerDaerah
               </h2>
             </div>
           </div>

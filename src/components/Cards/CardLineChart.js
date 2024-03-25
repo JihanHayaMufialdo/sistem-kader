@@ -7,28 +7,40 @@ export default function CardLineChart() {
       type: "line",
       data: {
         labels: [
-          "January",
-          "February",
-          "March",
+          "Januari",
+          "Februari",
+          "Maret",
           "April",
-          "May",
-          "June",
-          "July",
+          "Mei",
+          "Juni",
+          "Juli",
+          "Agustus",
+          "September",
+          "Oktober",
+          "November",
+          "Desember",
         ],
         datasets: [
           {
-            label: new Date().getFullYear(),
+            label: "TPT",
             backgroundColor: "#4c51bf",
             borderColor: "#4c51bf",
             data: [65, 78, 66, 44, 56, 67, 75],
             fill: false,
           },
           {
-            label: new Date().getFullYear() - 1,
-            fill: false,
-            backgroundColor: "#fff",
-            borderColor: "#fff",
+            label: "IKRT",
+            backgroundColor: "#ffffff",
+            borderColor: "#ffffff",
             data: [40, 68, 86, 74, 56, 60, 87],
+            fill: false,
+          },
+          {
+            label: "Laporan Ternotifikasi",
+            backgroundColor: "#fbcb3a",
+            borderColor: "#fbcb3a",
+            data: [44, 62, 6, 7, 5, 10, 17],
+            fill: false,
           },
         ],
       },
@@ -113,9 +125,9 @@ export default function CardLineChart() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-100 mb-1 text-xs font-semibold">
-                Overview
+                TREN
               </h6>
-              <h2 className="text-white text-xl font-semibold">Sales value</h2>
+              <h2 className="text-white text-xl font-semibold">Capaian Bulanan</h2>
             </div>
           </div>
         </div>
