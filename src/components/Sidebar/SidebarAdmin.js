@@ -53,7 +53,7 @@ export default function Sidebar() {
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }>
-                </i>{" "}Beranda
+                </i>{" "}BERANDA
               </Link>
             </li>
 
