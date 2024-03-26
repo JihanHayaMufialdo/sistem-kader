@@ -15,16 +15,11 @@ export default function TableDK() {
   };
 
   // Function to handle button tambah click
-  // const handleButtonTambahClick = () => {
-  //   // Your logic when button tambah is clicked goes here
-  // };
 
   const router = useRouter();
   const handleButtonTambahClick = () => {
     router.push('/components/Forms/FormUploadKTA');
   };
-
-  
 
 
   // Dummy data for kader
