@@ -29,7 +29,7 @@ export default function Sidebar() {
           <ul className="md:flex-col md:min-w-full flex flex-col list-none">
             <li className="items-center">
               <Link
-                href="/ssr/profil"
+                href="/ssr/profil/"
                 className={
                   "text-xs uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/ssr/profil") !== -1
@@ -50,10 +50,10 @@ export default function Sidebar() {
 
             <li className="items-center">
               <Link
-                href="/admin/ssr/"
+                href="/ssr/kader/"
                 className={
                   "text-xs uppercase py-3 font-bold block " +
-                  (router.pathname.indexOf("/admin/ssr") !== -1
+                  (router.pathname.indexOf("/ssr/kader") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
                 }>
@@ -61,53 +61,11 @@ export default function Sidebar() {
                 <i
                   className={
                     "fas fa-tools mr-2 text-sm " +
-                    (router.pathname.indexOf("/admin/ssr") !== -1
-                      ? "opacity-75"
-                      : "text-blueGray-300")
-                  }
-                ></i>{" "}Akun SSR
-              </Link>
-            </li>
-
-            <li className="items-center">
-              <Link
-                href="/admin/kader/"
-                className={
-                  "text-xs uppercase py-3 font-bold block " +
-                  (router.pathname.indexOf("/admin/kader") !== -1
-                    ? "text-green-500 hover:text-green-600"
-                    : "text-blueGray-700 hover:text-blueGray-500")
-                }>
-
-                <i
-                  className={
-                    "fas fa-table mr-2 text-sm " +
-                    (router.pathname.indexOf("/admin/kader") !== -1
+                    (router.pathname.indexOf("/ssr/kader") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }
                 ></i>{" "}Data Kader
-              </Link>
-            </li>
-
-            <li className="items-center">
-              <Link
-                href="/admin/laporan/"
-                className={
-                  "text-xs uppercase py-3 font-bold block " +
-                  (router.pathname.indexOf("/admin/laporan") !== -1
-                    ? "text-green-500 hover:text-green-600"
-                    : "text-blueGray-700 hover:text-blueGray-500")
-                }>
-
-                <i
-                  className={
-                    "fas fa-map-marked mr-2 text-sm " +
-                    (router.pathname.indexOf("/admin/laporan") !== -1
-                      ? "opacity-75"
-                      : "text-blueGray-300")
-                  }
-                ></i>{" "}Laporan
               </Link>
             </li>
 
@@ -137,59 +95,4 @@ export default function Sidebar() {
     </nav>
   </>;
 }
-// import React, { useState } from "react";
-// import Link from "next/link";
-// import { useRouter } from "next/router";
-
-// const SidebarAdmin = () => {
-//   const router = useRouter();
-
-//   // State untuk menyimpan rute yang aktif
-//   const [activeRoute, setActiveRoute] = useState("");
-
-//   // Daftar menu dengan rute dan ikon yang sesuai
-//   const menuItems = [
-//     { route: "/admin/dashboard", label: "Beranda", icon: "fas fa-tv" },
-//     { route: "/admin/ssr/", label: "Akun SSR", icon: "fas fa-tools" },
-//     { route: "/admin/kader/", label: "Data Kader", icon: "fas fa-table" },
-//     { route: "/admin/laporan/", label: "Laporan", icon: "fas fa-map-marked" },
-//     { route: "/logout", label: "Keluar", icon: "fas fa-sign-out-alt" }
-//   ];
-
-//   // Fungsi untuk menandai menu yang aktif
-//   const handleSetActiveRoute = (route) => {
-//     setActiveRoute(route);
-//   };
-
-//   return (
-//     <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-//       {menuItems.map((item, index) => (
-//         <li className="items-center" key={index}>
-//           <Link
-//             href={item.route}
-//             className={
-//               "text-xs uppercase py-3 font-bold block " +
-//               (router.pathname === item.route
-//                 ? "text-green-600 hover:text-green-700"
-//                 : "text-blueGray-700 hover:text-blueGray-500")
-//             }
-//             onClick={() => handleSetActiveRoute(item.route)} // Setelah klik, set rute yang aktif
-//           >
-//             <i
-//               className={
-//                 `${item.icon} mr-2 text-sm ` +
-//                 (router.pathname === item.route
-//                   ? "opacity-75"
-//                   : "text-blueGray-300")
-//               }
-//             ></i>{" "}
-//             {item.label}
-//           </Link>
-//         </li>
-//       ))}
-//     </ul>
-//   );
-// };
-
-// export default SidebarAdmin;
 

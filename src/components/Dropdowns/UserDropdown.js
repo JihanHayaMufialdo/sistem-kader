@@ -26,7 +26,10 @@ const UserDropdown = () => {
           dropdownPopoverShow ? closeDropdownPopover() : openDropdownPopover();
         }}
       >
-        <div className="items-center flex">
+        <div className="items-center flex mt-3">
+          <h6 className="text-white text-base font-bold mr-3 ">
+            Kader A
+          </h6>
           <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
             <img
               alt="..."

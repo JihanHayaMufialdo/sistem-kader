@@ -78,23 +78,23 @@ export default function FormEditKecamatan() {
                 />
               </div>
             </div>
+            <div className="text-center flex justify-end mr-3 mt-3 w-full">
+              <button
+                className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ml-auto"
+                type="submit"
+                onClick={handleEditKecamatan}
+              >
+                Simpan
+              </button>
+              <a
+                className="bg-blueGray-400 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                type="button"
+                onClick={handleButtonKembaliClick}
+              >
+                Kembali
+              </a>
+            </div>
           </form>
-          <div className="text-center flex justify-end mr-3 mt-3">
-            <button
-              className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-              type="submit"
-              onClick={handleEditKecamatan}
-            >
-              Simpan
-            </button>
-            <a
-              className="bg-blueGray-400 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-              type="button"
-              onClick={handleButtonKembaliClick}
-            >
-              Kembali
-            </a>
-          </div>
         </div>
       </div>
     </>
