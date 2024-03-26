@@ -1,7 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import Chart from "chart.js";
 
 export default function CardBarChart() {
+  const [selectedRegion, setSelectedRegion] = useState("All"); // State untuk menyimpan daerah yang dipilih
+
   React.useEffect(() => {
     let config = {
       type: "bar",
@@ -25,21 +27,21 @@ export default function CardBarChart() {
             label: "TPT",
             backgroundColor: "#4c51bf",
             borderColor: "#4c51bf",
-            data: [65, 78, 66, 44, 56, 67, 75],
+            data: [65, 78, 66, 44, 56, 67, 75, 60, 43, 22, 78, 98],
             fill: false,
           },
           {
             label: "IKRT",
             backgroundColor: "#ff0000",
             borderColor: "#ff0000",
-            data: [40, 68, 86, 74, 56, 60, 87],
+            data: [40, 68, 86, 74, 56, 60, 87, 45, 77, 34, 28, 70],
             fill: false,
           },
           {
             label: "Laporan Ternotifikasi",
             backgroundColor: "#fbcb3a",
             borderColor: "#fbcb3a",
-            data: [44, 62, 6, 7, 5, 10, 17],
+            data: [44, 62, 6, 71, 48, 10, 17, 11, 56, 78, 92, 34, 24],
             fill: false,
           },
         ],
@@ -108,6 +110,15 @@ export default function CardBarChart() {
     let ctx = document.getElementById("bar-chart").getContext("2d");
     window.myBar = new Chart(ctx, config);
   }, []);
+
+  // Fungsi untuk memfilter data berdasarkan daerah yang dipilih
+  const filterDataByRegion = (region) => {
+    // Implementasi logika filter di sini
+    // Misalnya, jika ingin memfilter data berdasarkan daerah yang dipilih
+    // Anda dapat mengubah dataset sesuai dengan logika yang diinginkan
+    console.log("Filter by region:", region);
+  };
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words bg-white w-full mb-6 shadow-lg rounded">
@@ -120,6 +131,28 @@ export default function CardBarChart() {
               <h2 className="text-blueGray-700 text-xl font-semibold">
                 Laporan PerDaerah
               </h2>
+            </div>
+            {/* Dropdown untuk memilih daerah */}
+            <div className="relative w-full max-w-full flex-grow flex-1">
+              <select
+                className="form-select block w-full bg-white border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+                onChange={(e) => {
+                  setSelectedRegion(e.target.value);
+                  filterDataByRegion(e.target.value);
+                }}
+                value={selectedRegion}
+              >
+                <option value="All">All</option>
+                <option value="Bandar Lampung">Bandar Lampung</option>
+                <option value="Pringsewu">Pringsewu</option>
+                <option value="Pesawaran">Pesawaran</option>
+                <option value="Tanggamus">Tanggamus</option>
+                <option value="Lampung Tengah">Lampung Tengah</option>
+                <option value="Lampung Selatan">Lampung Selatan</option>
+                <option value="Lampung Timur">Lampung Timur</option>
+                <option value="Lampung Utara">Lampung Utara</option>
+                <option value="Tulang Bawang Barat">Tulang Bawang Barat</option>
+              </select>
             </div>
           </div>
         </div>
