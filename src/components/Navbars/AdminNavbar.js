@@ -3,6 +3,13 @@ import React from "react";
 import UserDropdown from "../Dropdowns/UserDropdown.js";
 
 export default function Navbar() {
+  const navbarStyle = {
+    backgroundImage: `url('/img/bglogin6.Jpg')`, // Atur latar belakang dengan gambar yang diimpor
+    backgroundSize: "cover", // Sesuaikan ukuran gambar agar mencakup seluruh area navbar
+    backgroundRepeat: "no-repeat", // Hindari pengulangan gambar
+    padding: "10px 20px", // Sesuaikan padding sesuai kebutuhan
+    // Tambahkan gaya lainnya sesuai kebutuhan
+  };
   return (
     <>
       {/* Navbar */}
@@ -14,7 +21,7 @@ export default function Navbar() {
             href="#pablo"
             onClick={(e) => e.preventDefault()}
           >
-            Dashboard
+            Beranda
           </a>
           {/* Form */}
           <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">

@@ -14,7 +14,7 @@ export default function Auth({ children }) {
           <div
             className="absolute top-0 w-full h-full bg-green-800 bg-no-repeat bg-full"
             style={{
-               backgroundImage: "url('/img/bglogin2.jpg')",
+               backgroundImage: "url('/img/bglogin6.Jpg')",
             }}
           ></div>
           {children}
