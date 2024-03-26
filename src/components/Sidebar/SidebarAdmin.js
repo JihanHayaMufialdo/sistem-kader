@@ -38,7 +38,7 @@ export default function Sidebar() {
           <ul className="md:flex-col md:min-w-full flex flex-col list-none">
             <li className="items-center">
               <Link
-                href="/admin/dashboard"
+                href="/admin/dashboard/"
                 className={
                   "text-xs uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/dashboard") !== -1
