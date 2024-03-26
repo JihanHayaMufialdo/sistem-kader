@@ -1,20 +1,20 @@
 import React from "react";
 
 // components
-import FormInsertSSR from "../../../components/Forms/FormInsertSSR";
+import FormEditKota from "../../../../components/Forms/FormEditKota.js";
 // layout for page
-import Admin from "../../../layouts/Admin.js";
+import Admin from "../../../../layouts/Admin.js";
 
-export default function InsertSSR() {
+export default function EditKota() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <FormInsertSSR />
+          <FormEditKota />
         </div>
       </div>
     </>
   );
 }
 
-InsertSSR.layout = Admin;
+EditKota.layout = Admin;

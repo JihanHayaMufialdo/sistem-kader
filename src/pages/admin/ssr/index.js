@@ -1,7 +1,7 @@
 import React from "react";
 
 // components
-import TableSSR from "../../../components/Cards/CardTableSSR.js";
+import TableSSR from "../../../components/Cards/CardTablessr.js";
 
 // layout for page
 import Admin from "../../../layouts/Admin.js";

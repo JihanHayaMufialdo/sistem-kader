@@ -13,7 +13,7 @@ function handleCreateAccount() {
   }
 }
 
-export default function InsertSSR() {
+export default function FormInsertSSR() {
 
   const router = useRouter();
   const handleButtonKembaliClick = () => {

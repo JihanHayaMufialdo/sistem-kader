@@ -13,7 +13,7 @@ function handleCreateAccount() {
   }
 }
 
-export default function InsertSSR() {
+export default function FormEditSSR() {
     const router = useRouter();
     const handleButtonKembaliClick = () => {
         router.push('/admin/ssr/');
