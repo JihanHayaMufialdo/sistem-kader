@@ -1,11 +1,11 @@
 import React from "react";
 
 // components
-import FormEditSSR from "../../../components/Forms/FormEditSSR";
+import FormEditSSR from "../../../../components/Forms/FormEditSSR.js";
 // layout for page
-import Admin from "../../../layouts/Admin.js";
+import Admin from "../../../../layouts/Admin.js";
 
-export default function InsertSSR() {
+export default function EditSSR() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -17,4 +17,4 @@ export default function InsertSSR() {
   );
 }
 
-InsertSSR.layout = Admin;
+EditSSR.layout = Admin;

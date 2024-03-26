@@ -12,7 +12,7 @@ function handleButtonHapusClick() {
   }
 }
 
-export default function TableSSR({ color }) {
+export default function TableSSR() {
 
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
@@ -21,11 +21,11 @@ export default function TableSSR({ color }) {
 
   const router = useRouter();
   const handleButtonTambahClick = () => {
-    router.push('/admin/ssr/InsertSSR');
+    router.push('/admin/ssr/tambah/');
   };
 
   const handleButtonUbahClick = () => {
-    router.push('/admin/ssr/EditSSR');
+    router.push('/admin/ssr/edit/');
   };
 
   return (
@@ -40,109 +40,12 @@ export default function TableSSR({ color }) {
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
-                <a type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
+                <a type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-8">
                   Tambah Akun
                 </a>
               </div>
             </div>
           </div>
-
-          {/* Form untuk import data dari Excel */}
-          {/* {showForm && (
-            <div className="px-4 py-3 border-2 rounded mb-4">
-              <h4 className="font-semibold mb-2">Import Data from Excel</h4>
-              <form>
-                <label htmlFor="excelFile" className="block mb-1">
-                  Upload Excel File:
-                </label>
-                <input
-                  type="file"
-                  id="excelFile"
-                  name="excelFile"
-                  accept=".xls,.xlsx"
-                  className="border border-gray-300 px-2 py-1 rounded"
-                />
-                <button
-                  type="submit"
-                  className="bg-blue-500 hover:bg-blue-700 text-gray font-bold py-1 px-3 rounded mt-2 border border-blue-500"
-                >
-                  Simpan
-                </button>
-              </form>
-            </div>
-          )} */}
-
-          {/* Form untuk menampilkan detail laporan */}
-          {/* {showDetail && (
-            <div className="grid grid-cols-2 gap-4 px-4 py-3 border-2 rounded mb-4">
-              <div>
-                <label htmlFor="no" className="block mb-1">
-                  No
-                </label>
-                <input
-                  type="text"
-                  id="no"
-                  name="no"
-                  className="border border-gray-300 px-2 py-1 rounded mb-2 w-full"
-                />
-              </div>
-              <div>
-                <label htmlFor="namaKader" className="block mb-1">
-                  Nama Kader
-                </label>
-                <input
-                  type="text"
-                  id="namaKader"
-                  name="namaKader"
-                  className="border border-gray-300 px-2 py-1 rounded mb-2 w-full"
-                />
-              </div>
-              <div>
-                <label htmlFor="kota" className="block mb-1">
-                  Kota
-                </label>
-                <input
-                  type="text"
-                  id="kota"
-                  name="kota"
-                  className="border border-gray-300 px-2 py-1 rounded mb-2 w-full"
-                />
-              </div>
-              <div>
-                <label htmlFor="jenisLaporan" className="block mb-1">
-                  Jenis Laporan
-                </label>
-                <input
-                  type="text"
-                  id="jenisLaporan"
-                  name="jenisLaporan"
-                  className="border border-gray-300 px-2 py-1 rounded mb-2 w-full"
-                />
-              </div>
-              <div>
-                <label htmlFor="tanggalKegiatan" className="block mb-1">
-                  Tanggal Kegiatan
-                </label>
-                <input
-                  type="text"
-                  id="tanggalKegiatan"
-                  name="tanggalKegiatan"
-                  className="border border-gray-300 px-2 py-1 rounded mb-2 w-full"
-                />
-              </div>
-              <div>
-                <label htmlFor="namaKontak" className="block mb-1">
-                  Tanggal Entry
-                </label>
-                <input
-                  type="text"
-                  id="namaKontak"
-                  name="namaKontak"
-                  className="border border-gray-300 px-2 py-1 rounded mb-2 w-full"
-                />
-              </div>
-            </div>
-          )} */}
 
           {/* Tabel Akun SSR */}
           <table className="items-center w-full bg-white border-collapse">
