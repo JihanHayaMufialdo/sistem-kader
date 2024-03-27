@@ -1,18 +1,28 @@
-import React, { useState } from "react";
+import React from "react";
 import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 
-export default function TableLaporan({ color }) {
+export default function NewPage({ color }) {
   const router = useRouter();
-  const handleButtonExportClick = () => {
-    console.log(`Export ke Excel`);
+
+  const handleButtonUbahClick = () => {
+    router.push('/admin/laporan/UbahDetail');
+  };
+  
+  const handleDeleteClick = () => {
+    const confirmation = window.confirm("Apakah anda yakin ingin menghapus laporan?");
+    if (confirmation) {
+      // Handle positive confirmation (account creation logic)
+      // console.log("Creating account...");
+    } else {
+      // Handle negative confirmation (do nothing)
+      // console.log("Account creation cancelled.");
+    }
   };
 
-  const handleButtonTambahClick = () => {
-    router.push('/admin/laporan/InsertLaporan');
-  };
-
-  const handleButtonDetailClick = () => {
-    router.push('/admin/laporan/DetailLaporan');
+  const handleBackClick = () => {
+    router.push('/admin/laporan');
   };
 
   return (
@@ -22,22 +32,17 @@ export default function TableLaporan({ color }) {
           <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
             <div className="flex justify-between items-center">
               <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                <h6 className="text-green-700 text-xl font-bold">
-                  Laporan
-                </h6>
-              </div>
-              <div className="flex justify-end mr-2">
-                <a type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
-                  Tambah Laporan
-                </a>
-                <a type="button" onClick={handleButtonDetailClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
-                  Detail Laporan
-                </a>
+                <div className="flex items-center justify-left"> {/* Menggunakan justify-center untuk memusatkan judul */}
+                  <FontAwesomeIcon icon={faArrowLeft} className="cursor-pointer text-green-700 text-xl mr-2" onClick={handleBackClick} />
+                  <h6 className="text-green-700 text-xl font-bold">
+                    Detail Laporan
+                  </h6>
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Tabel Akun SSR */}
+          {/* Tabel Laporan */}
           <table className="items-center w-full bg-white border-collapse">
             <thead className="bg-blueGray-50">
               <tr>
@@ -57,37 +62,37 @@ export default function TableLaporan({ color }) {
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Kabupaten/Kota
+                  Kota
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Bulan
+                  Jenis Laporan
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  TPT
+                  Tanggal Kegiatan
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Sudah IK
+                  Nama Kontak
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Belum IK
+                  Tanggal Entry
                 </th>
                 <th
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Ternotifikasi
+                  Aksi
                 </th>
               </tr>
             </thead>
@@ -103,56 +108,30 @@ export default function TableLaporan({ color }) {
                   Kota A
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  Januari
+                  Laporan X
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  100
+                  2024-03-25
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  80
+                  Kontak X
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  20
+                  2024-03-25
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  50
-                </td>
-              </tr>
-              <tr>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">
-                  2
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  Kader B
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  Kota B
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  Februari
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  120
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  100
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  20
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  70
+                  <button onClick={() => handleButtonUbahClick()} className="bg-blueGray-400 hover:bg-blue-700 text-white font-medium py-1 px-3 rounded mr-2">
+                    Ubah
+                  </button>
+                  <button onClick={() => handleDeleteClick(1)} className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded">
+                    Hapus
+                  </button>
                 </td>
               </tr>
               {/* Tambahkan baris data lainnya sesuai kebutuhan */}
             </tbody>
           </table>
         </div>
-      </div>
-      <div className="flex justify-end mr-2">
-              <a type="button" onClick={handleButtonExportClick} className="bg-blueGray-700 text-white font-medium py-1 px-3 rounded mr-2">
-                  Export Excel
-              </a>
       </div>
     </>
   );
