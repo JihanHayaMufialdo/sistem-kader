@@ -1,25 +1,20 @@
 import React from "react";
 
 // components
-
-import TableDK from "../../../components/Cards/CardTableDK.js";
-
-
+import FormEditKota from "../../../../components/Forms/FormEditKota.js";
 // layout for page
+import Admin from "../../../../layouts/Admin.js";
 
-import Admin from "../../../layouts/Admin.js";
-
-export default function TableeDK() {
+export default function EditKota() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <TableDK />
+          <FormEditKota />
         </div>
-
       </div>
     </>
   );
 }
 
-TableeDK.layout = Admin;
+EditKota.layout = Admin;

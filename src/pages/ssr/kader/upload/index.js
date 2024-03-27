@@ -1,25 +1,20 @@
 import React from "react";
 
 // components
-
-import TableDK from "../../../components/Cards/CardTableDK.js";
-
-
+import FormUploadKTA from "../../../components/Forms/FormUploadKTA";
 // layout for page
-
 import Admin from "../../../layouts/Admin.js";
 
-export default function TableeDK() {
+export default function InsertSSR() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <TableDK />
+          <FormUploadKTA />
         </div>
-
       </div>
     </>
   );
 }
 
-TableeDK.layout = Admin;
+InsertSSR.layout = Admin;

@@ -1,5 +1,6 @@
-import React from "react";
-import Link from "next/link";
+import React, { useState } from "react";
+// import Link from "next/link";
+import { useRouter } from "next/router.js";
 
 // layout for page
 
@@ -8,93 +9,114 @@ import Auth from "../../layouts/Auth.js";
 
 
 export default function Login() {
-  return <>
-    <div className="container mx-auto px-4 h-full">
-      <div className="flex content-center items-center justify-center h-full">
-        <div className="w-full lg:w-4/12 px-4">
-          <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
-            <div className="rounded-t mb-0 px-6 py-3">
-              <div className="text-center mb-3">
-                <img src="/img/brand/logo-ils.png" lat="Logo" className="w-20 h-10 mx-auto mb-3" />
+  const router = useRouter();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    // Ensure this code runs only on the client side
+    if (typeof window !== 'undefined') {
+      // Memeriksa username yang dimasukkan
+      if (username === "admin") {
+        router.push("/admin/dashboard/");
+      } else if (username === "ssr") {
+        router.push("/ssr/profil/");
+      }
+      // Reset formulir setelah pengalihan halaman
+      setUsername("");
+      setPassword("");
+    }
+  };
+
+  return (
+    <>
+      <div className="container mx-auto px-4 h-full">
+        <div className="flex content-center items-center justify-center h-full">
+          <div className="w-full lg:w-4/12 px-4">
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+              <div className="rounded-t mb-0 px-6 py-3">
+                <div className="text-center mb-3">
+                  <img src="/img/brand/logo-ils.png" alt="Logo" className="w-20 h-10 mx-auto mb-3" />
+                </div>
+                <hr className="mt-6 border-b-1 border-blueGreen-900" />
               </div>
-             
-              <hr className="mt-6 border-b-1 border-blueGreen-900" />
-            </div>
-            <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-              
-              <form>
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Nama Pengguna
-                  </label>
-                  <input
-                    type="Nama Pengguna"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Nama Pengguna"
-                  />
-                </div>
-
-                <div className="relative w-full mb-3">
-                  <label
-                    className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
-                    htmlFor="grid-password"
-                  >
-                    Kata Sandi
-                  </label>
-                  <input
-                    type="Kata Sandi"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    placeholder="Kata Sandi"
-                  />
-                </div>
-                <div>
-                  <label className="inline-flex items-center cursor-pointer">
+              <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
+                <form onSubmit={handleLogin}>
+                  <div className="relative w-full mb-3">
+                    <label
+                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                      htmlFor="username"
+                    >
+                      Nama Pengguna
+                    </label>
                     <input
-                      id="customCheckLogin"
-                      type="checkbox"
-                      className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                      type="text"
+                      id="username"
+                      name="username"
+                      value={username}
+                      onChange={(e) => setUsername(e.target.value)}
+                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      placeholder="Nama Pengguna"
                     />
-                    <span className="ml-2 text-sm font-semibold text-blueGray-600">
-                      Ingatkan Saya
-                    </span>
-                  </label>
-                </div>
-
-                <div className="text-center mt-6">
-                  {/* <button
-                    className="bg-blueGray-800 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
-                    type="submit">
-                    Sign In
-                  </button> */}
-                  <Link 
-                    href="/admin/dashboard" 
-                    className="bg-green-600 text-white active:bg-blueGray-300 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150">
-                    Masuk
-                  </Link>
-                </div>
-              </form>
+                  </div>
+                  <div className="relative w-full mb-3">
+                    <label
+                      className="block uppercase text-blueGray-600 text-xs font-bold mb-2"
+                      htmlFor="password"
+                    >
+                      Kata Sandi
+                    </label>
+                    <input
+                      type="password"
+                      id="password"
+                      name="password"
+                      value={password}
+                      onChange={(e) => setPassword(e.target.value)}
+                      className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                      placeholder="Kata Sandi"
+                    />
+                  </div>
+                  <div>
+                    <label className="inline-flex items-center cursor-pointer">
+                      <input
+                        id="customCheckLogin"
+                        type="checkbox"
+                        className="form-checkbox border-0 rounded text-blueGray-700 ml-1 w-5 h-5 ease-linear transition-all duration-150"
+                      />
+                      <span className="ml-2 text-sm font-semibold text-blueGray-600">
+                        Ingatkan Saya
+                      </span>
+                    </label>
+                  </div>
+                  <div className="text-center mt-6">
+                    <button
+                      className="bg-green-700 text-white active:bg-blueGray-600 text-sm font-bold uppercase px-6 py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mr-1 mb-1 w-full ease-linear transition-all duration-150"
+                      type="submit"
+                    >
+                      Masuk
+                    </button>
+                  </div>
+                </form>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-wrap mt-6 relative">
-            <div className="w-1/2">
-              <a
-                href="#pablo"
-                onClick={(e) => e.preventDefault()}
-                className="text-blueGray-200"
-              >
-              </a>
-            </div>
-            <div className="w-1/2 text-right">
-
+            <div className="flex flex-wrap mt-6 relative">
+              <div className="w-1/2">
+                <a
+                  href="#pablo"
+                  onClick={(e) => e.preventDefault()}
+                  className="text-blueGray-200"
+                >
+                </a>
+              </div>
+              <div className="w-1/2 text-right">
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-  </>;
+    </>
+  );
 }
 
 Login.layout = Auth;

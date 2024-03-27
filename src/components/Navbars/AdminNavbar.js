@@ -1,8 +1,13 @@
 import React from "react";
 
-import UserDropdown from "../Dropdowns/UserDropdown.js";
-
 export default function Navbar() {
+  const navbarStyle = {
+    backgroundImage: `url('/img/bglogin6.Jpg')`, // Atur latar belakang dengan gambar yang diimpor
+    backgroundSize: "cover", // Sesuaikan ukuran gambar agar mencakup seluruh area navbar
+    backgroundRepeat: "no-repeat", // Hindari pengulangan gambar
+    padding: "10px 20px", // Sesuaikan padding sesuai kebutuhan
+    // Tambahkan gaya lainnya sesuai kebutuhan
+  };
   return (
     <>
       {/* Navbar */}
@@ -14,24 +19,21 @@ export default function Navbar() {
             href="#pablo"
             onClick={(e) => e.preventDefault()}
           >
-            Dashboard
+            Beranda
           </a>
-          {/* Form */}
-          <form className="md:flex hidden flex-row flex-wrap items-center lg:ml-auto mr-3">
-            <div className="relative flex w-full flex-wrap items-stretch">
-              <span className="z-10 h-full leading-snug font-normal absolute text-center text-blueGray-300 absolute bg-transparent rounded text-base items-center justify-center w-8 pl-3 py-3">
-                <i className="fas fa-search"></i>
-              </span>
-              <input
-                type="text"
-                placeholder="Search here..."
-                className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 relative bg-white bg-white rounded text-sm shadow outline-none focus:outline-none focus:ring w-full pl-10"
-              />
-            </div>
-          </form>
-          {/* User */}
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
-            <UserDropdown />
+            <div className="items-center flex mt-3">
+              <h6 className="text-white text-base font-bold mr-3 ">
+                Kader A
+              </h6>
+              <span className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full">
+                <img
+                  alt="..."
+                  className="w-full rounded-full align-middle border-none shadow-lg"
+                  src="/img/team-1-800x800.jpg"
+                />
+              </span>
+            </div>
           </ul>
         </div>
       </nav>

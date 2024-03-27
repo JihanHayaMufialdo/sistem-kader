@@ -38,7 +38,7 @@ export default function Sidebar() {
           <ul className="md:flex-col md:min-w-full flex flex-col list-none">
             <li className="items-center">
               <Link
-                href="/admin/dashboard"
+                href="/admin/dashboard/"
                 className={
                   "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/dashboard") !== -1
@@ -117,6 +117,27 @@ export default function Sidebar() {
                       : "text-blueGray-300")
                   }
                 ></i>{" "}Laporan
+              </Link>
+            </li>
+
+            <li className="items-center">
+              <Link
+                href="/admin/kota/"
+                className={
+                  "text-xs uppercase py-3 font-bold block " +
+                  (router.pathname.indexOf("/admin/kota") !== -1
+                    ? "text-green-500 hover:text-green-600"
+                    : "text-blueGray-700 hover:text-blueGray-500")
+                }>
+
+                <i
+                  className={
+                    "fas fa-map-marked mr-2 text-sm " +
+                    (router.pathname.indexOf("/admin/kota") !== -1
+                      ? "opacity-75"
+                      : "text-blueGray-300")
+                  }
+                ></i>{" "}Sebaran Wilayah
               </Link>
             </li>
 

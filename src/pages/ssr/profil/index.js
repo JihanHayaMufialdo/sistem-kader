@@ -1,25 +1,22 @@
 import React from "react";
 
 // components
-
-import TableDK from "../../../components/Cards/CardTableDK.js";
-
+import FormEditProfil from "../../../components/Forms/FormEditProfil.js";
 
 // layout for page
 
-import Admin from "../../../layouts/Admin.js";
+import SSR from "../../../layouts/SSR.js";
 
-export default function TableeDK() {
+export default function Profil() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <TableDK />
+          <FormEditProfil />
         </div>
-
       </div>
     </>
   );
 }
 
-TableeDK.layout = Admin;
+Profil.layout = SSR;
