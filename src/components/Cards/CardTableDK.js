@@ -39,18 +39,15 @@ export default function TableDK() {
     router.push('kader/InsertKader');
   };
 
-<<<<<<< Updated upstream
-=======
    // Function to handle edit kader
    const handleEditKader = () => {
      router.push('kader/EditKader');
    };
-
-   
->>>>>>> Stashed changes
   // Function to handle button tambah click
+
+  const router = useRouter();
   const handleButtonTambahClick = () => {
-    // Your logic when button tambah is clicked goes here
+    router.push('/components/Forms/FormUploadKTA');
   };
 
   // Function to handle penyimpanan data kader
@@ -145,6 +142,9 @@ export default function TableDK() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Aksi
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                KTA
+              </th>
             </tr>
           </thead>
           {/* Table Body */}
@@ -166,23 +166,28 @@ export default function TableDK() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.kecamatan}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.kota}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.provinsi}</td>
+                  
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                     {/* Buttons for actions */}
-<<<<<<< Updated upstream
-                    <button className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-                      Ubah
-                    </button>
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-=======
                     <button onClick={handleEditKader} 
                     className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                       Ubah
                     </button>
                     <button onClick={handleButtonHapus} 
                     className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
->>>>>>> Stashed changes
                       Hapus
                     </button>
+                    </td>
+                    <td>
+                    <div>
+                    <a
+                      type="button"
+                      onClick={handleButtonTambahClick}
+                      className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Lihat
+                    </a>
+                    </div>
                   </td>
                 </tr>
               ))}

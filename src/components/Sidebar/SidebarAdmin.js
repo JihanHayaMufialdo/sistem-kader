@@ -38,9 +38,9 @@ export default function Sidebar() {
           <ul className="md:flex-col md:min-w-full flex flex-col list-none">
             <li className="items-center">
               <Link
-                href="/admin/dashboard"
+                href="/admin/dashboard/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/dashboard") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -61,7 +61,7 @@ export default function Sidebar() {
               <Link
                 href="/admin/ssr/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/ssr") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -82,7 +82,7 @@ export default function Sidebar() {
               <Link
                 href="/admin/kader/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/kader") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -103,7 +103,7 @@ export default function Sidebar() {
               <Link
                 href="/admin/laporan/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/laporan") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -122,9 +122,30 @@ export default function Sidebar() {
 
             <li className="items-center">
               <Link
-                href="/logout"
+                href="/admin/kota/"
                 className={
                   "text-xs uppercase py-3 font-bold block " +
+                  (router.pathname.indexOf("/admin/kota") !== -1
+                    ? "text-green-500 hover:text-green-600"
+                    : "text-blueGray-700 hover:text-blueGray-500")
+                }>
+
+                <i
+                  className={
+                    "fas fa-map-marked mr-2 text-sm " +
+                    (router.pathname.indexOf("/admin/kota") !== -1
+                      ? "opacity-75"
+                      : "text-blueGray-300")
+                  }
+                ></i>{" "}Sebaran Wilayah
+              </Link>
+            </li>
+
+            <li className="items-center">
+              <Link
+                href="/logout"
+                className={
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/auth/login") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")

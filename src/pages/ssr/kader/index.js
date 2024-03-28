@@ -1,20 +1,21 @@
 import React from "react";
 
 // components
-import FormEditSSR from "../../../components/Forms/FormEditSSR";
-// layout for page
-import Admin from "../../../layouts/Admin.js";
+import CardTableKaderSSR from "../../../components/Cards/CardTableKaderSSR.js";
 
-export default function InsertSSR() {
+// layout for page
+import SSR from "../../../layouts/SSR.js";
+
+export default function Kader() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <FormEditSSR />
+          <CardTableKaderSSR />
         </div>
       </div>
     </>
   );
 }
 
-InsertSSR.layout = Admin;
+Kader.layout = SSR;

@@ -13,10 +13,10 @@ function handleCreateAccount() {
   }
 }
 
-export default function FormEditSSR() {
+export default function EditLaporan() {
     const router = useRouter();
     const handleButtonKembaliClick = () => {
-        router.push('/admin/ssr/');
+        router.push('/admin/laporan/');
     };
 
     const kotaKabupatenList = [
