@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 import { useRouter } from 'next/router';
 
+function handleButtonHapus() {
+  const confirmation = window.confirm("Apakah anda yakin ingin menghapus data?");
+  if (confirmation) {
+    // Handle positive confirmation (account creation logic)
+    // console.log("Creating account...");
+  } else {
+    // Handle negative confirmation (do nothing)
+    // console.log("Account creation cancelled.");
+  }
+}
+
 export default function TableDK() {
   const [filterKota, setFilterKota] = useState("All");
   const [kaderData, setKaderData] = useState([
@@ -28,6 +39,10 @@ export default function TableDK() {
     router.push('kader/InsertKader');
   };
 
+   // Function to handle edit kader
+   const handleEditKader = () => {
+     router.push('kader/EditKader');
+   };
   // Function to handle button tambah click
 
   const router = useRouter();
@@ -39,10 +54,6 @@ export default function TableDK() {
   const handleSimpanDataKader = (dataKaderBaru) => {
     setKaderData([...kaderData, dataKaderBaru]);
   };
-
-
-
-  
 
   return (
     <div className="overflow-x-auto">
@@ -158,10 +169,12 @@ export default function TableDK() {
                   
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                     {/* Buttons for actions */}
-                    <button className="mr-2 mb-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <button onClick={handleEditKader} 
+                    className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                       Ubah
                     </button>
-                    <button className="mb-2 bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    <button onClick={handleButtonHapus} 
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                       Hapus
                     </button>
                     </td>
