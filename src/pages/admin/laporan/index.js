@@ -1,8 +1,7 @@
 import React from "react";
 
 // components
-
-import CardTableLaporan from "../../../components/Cards/CardTableLaporan.js";
+import TableLaporan from "../../../components/Cards/CardTableLaporan.js";
 
 // layout for page
 
@@ -13,7 +12,7 @@ export default function Laporan() {
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <CardTableLaporan />
+          <TableLaporan />
         </div>
       </div>
     </>

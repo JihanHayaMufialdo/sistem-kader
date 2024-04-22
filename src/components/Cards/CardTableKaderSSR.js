@@ -1,6 +1,17 @@
 import React, { useState } from "react";
 import { useRouter } from "next/router";
 
+function handleButtonHapus() {
+  const confirmation = window.confirm("Apakah anda yakin ingin menghapus data?");
+  if (confirmation) {
+    // Handle positive confirmation (account creation logic)
+    // console.log("Creating account...");
+  } else {
+    // Handle negative confirmation (do nothing)
+    // console.log("Account creation cancelled.");
+  }
+}
+
 export default function TableKaderSSR() {
   const [filterKota, setFilterKota] = useState("All");
 
@@ -41,9 +52,7 @@ export default function TableKaderSSR() {
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
-                <a type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
-                  Tambah Kader
-                </a>
+                {/* Tombol tambah kader dihapus */}
               </div>
             </div>
           </div>
@@ -80,6 +89,12 @@ export default function TableKaderSSR() {
                 Kecamatan
               </th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+                Kota
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+                Provinsi
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
                 KTA
               </th>
               <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -103,6 +118,8 @@ export default function TableKaderSSR() {
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.noTelepon}</td>
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.alamat}</td>
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.kecamatan}</td>
+                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.kota}</td>
+                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.provinsi}</td>
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">
                     {/* Buttons for actions */}
                     <a type="button" onClick={handleButtonUploadClick}
@@ -115,12 +132,12 @@ export default function TableKaderSSR() {
                     </a>
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">
-                    {/* Buttons for actions */}
-                    <a type="button" onClick={handleButtonUbahClick}
-                      className="mr-2 bg-blueGray-700 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <button onClick={handleButtonUbahClick}
+                    className="mr-2 bg-blueGray-700 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                       Ubah
-                    </a>
-                    <button className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    </button>
+                    <button onClick={handleButtonHapus}
+                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                       Hapus
                     </button>
                   </td>
@@ -132,4 +149,3 @@ export default function TableKaderSSR() {
     </div>
   );
 }
-

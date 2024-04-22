@@ -1,20 +1,20 @@
 import React from "react";
 
 // components
-import FormInsertLaporan from "../../../components/Forms/FormInsertLaporan.js";
+import FormInsertKader from "../../../components/Forms/FormInsertKader";
 // layout for page
 import Admin from "../../../layouts/Admin.js";
 
-export default function TambahLaporan() {
+export default function InsertKader() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <FormInsertLaporan />
+          <FormInsertKader />
         </div>
       </div>
     </>
   );
 }
 
-TambahLaporan.layout = Admin;
+InsertKader.layout = Admin;
