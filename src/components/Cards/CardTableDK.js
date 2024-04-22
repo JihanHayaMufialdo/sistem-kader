@@ -45,7 +45,6 @@ export default function TableDK() {
    };
   // Function to handle button tambah click
 
-  const router = useRouter();
   const handleButtonTambahClick = () => {
     router.push('/components/Forms/FormUploadKTA');
   };
