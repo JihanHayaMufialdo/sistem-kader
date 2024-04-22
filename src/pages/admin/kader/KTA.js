@@ -1,9 +1,14 @@
 import React from "react";
 
 // components
-import CardKTA from "/src/components/Cards/CardKTA.js";
 
-export default function Kader() {
+import CardKTA from "../../../components/Cards/CardKTA.js";
+
+// layout for page
+
+import Admin from "../../../layouts/Admin.js";
+
+export default function TableeDK() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -14,3 +19,5 @@ export default function Kader() {
     </>
   );
 }
+
+CardKTA.layout = Admin;

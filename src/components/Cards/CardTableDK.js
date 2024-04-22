@@ -179,13 +179,14 @@ export default function TableDK() {
                     </td>
                     <td>
                     <div>
-                    <a
+                    <button
+                    
                       type="button"
                       onClick={handleButtonTambahClick}
                       className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
                     >
                       Lihat
-                    </a>
+                    </button>
                     </div>
                   </td>
                 </tr>

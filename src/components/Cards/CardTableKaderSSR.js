@@ -32,7 +32,7 @@ export default function TableKaderSSR() {
 
   // Dummy data for kader
   const kaderData = [
-    { id: 1, nama: "Sarah Johnson", jenisKelamin: "Perempuan", usia: 25, noTelepon: "08123456789", alamat: "Jl. Contoh No. 123", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "sarahj123" },
+    { id: 1, nama: "Park Chanyeol", jenisKelamin: "Laki-laki", usia: 25, noTelepon: "08123456789", alamat: "Jl. Contoh No. 123", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "sarahj123" },
     { id: 2, nama: "Muhammad Ali", jenisKelamin: "Laki-laki", usia: 30, noTelepon: "087654321", alamat: "Jl. Contoh No. 456", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "muhammadali321" },
     { id: 3, nama: "Emily Smith", jenisKelamin: "Perempuan", usia: 28, noTelepon: "08123456789", alamat: "Jl. Contoh No. 789", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "emilysmith456" },
     { id: 4, nama: "David Brown", jenisKelamin: "Laki-laki", usia: 35, noTelepon: "087654321", alamat: "Jl. Contoh No. 1011", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "davidbrown789" },
@@ -122,15 +122,16 @@ export default function TableKaderSSR() {
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.provinsi}</td>
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">
                     {/* Buttons for actions */}
-                    <button className="mr-2 bg-yellow-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <a type="button" onClick={handleButtonUploadClick}
+                      className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
                       Unggah Foto
-                    </button>
-                    <button className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    </a>
+                    <a type="button" onClick={handleButtonKTAClick}
+                      className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                       Lihat KTA
-                    </button>
+                    </a>
                   </td>
                   <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">
-                    {/* Buttons for actions */}
                     <button onClick={handleButtonUbahClick}
                     className="mr-2 bg-blueGray-700 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                       Ubah
@@ -148,4 +149,3 @@ export default function TableKaderSSR() {
     </div>
   );
 }
-
