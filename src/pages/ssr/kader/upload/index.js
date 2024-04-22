@@ -1,11 +1,9 @@
 import React from "react";
 
 // components
-import FormUploadKTA from "../../../components/Forms/FormUploadKTA";
-// layout for page
-import Admin from "../../../layouts/Admin.js";
+import FormUploadKTA from "/src/components/Forms/FormUploadKTA.js";
 
-export default function InsertSSR() {
+export default function Kader() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -16,5 +14,3 @@ export default function InsertSSR() {
     </>
   );
 }
-
-InsertSSR.layout = Admin;
