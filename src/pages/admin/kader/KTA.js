@@ -1,20 +1,20 @@
 import React from "react";
 
 // components
-import FormEditKader from "../../../components/Forms/FormEditKader";
+import CardLihatKTA from "../../../components/Cards/CardLihatKTA.js";
 // layout for page
 import Admin from "../../../layouts/Admin.js";
 
-export default function EditKader() {
+export default function LihatKTA() {
   return (
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <FormEditKader />
+          <CardLihatKTA />
         </div>
       </div>
     </>
   );
 }
 
-EditKader.layout = Admin;
+CardLihatKTA.layout = Admin;
