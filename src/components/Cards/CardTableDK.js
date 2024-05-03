@@ -29,8 +29,6 @@ export default function TableDK() {
   };
 
   // Function to handle button tambah click
-
-  const router = useRouter();
   const handleButtonTambahClick = () => {
     router.push('/components/Forms/FormUploadKTA');
   };
@@ -39,10 +37,6 @@ export default function TableDK() {
   const handleSimpanDataKader = (dataKaderBaru) => {
     setKaderData([...kaderData, dataKaderBaru]);
   };
-
-
-
-  
 
   return (
     <div className="overflow-x-auto">
