@@ -45,8 +45,8 @@ export default function TableDK() {
    };
   // Function to handle button tambah click
 
-  const handleButtonTambahClick = () => {
-    router.push('/components/Forms/FormUploadKTA');
+  const handleLihatKTA = () => {
+    router.push('kader/KTA');
   };
 
   // Function to handle penyimpanan data kader
@@ -182,7 +182,7 @@ export default function TableDK() {
                     <button
                     
                       type="button"
-                      onClick={handleButtonTambahClick}
+                      onClick={handleLihatKTA}
                       className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
                     >
                       Lihat
