@@ -7,7 +7,7 @@ export default function KartuTandaPengenal() {
     const [uploadedImage, setUploadedImage] = useState(null);
 
     const handleButtonKembaliClick = () => {
-        router.push('/admin/ssr/kader');
+        router.push('/ssr/kader');
     };
 
     const printToPDF = () => {
