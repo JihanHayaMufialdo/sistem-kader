@@ -124,17 +124,17 @@ export default function Sidebar() {
               <Link
                 href="/admin/kota/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/admin/kota") !== -1
-                    ? "text-green-500 hover:text-green-600"
-                    : "text-blueGray-700 hover:text-blueGray-500")
+                  ? "text-green-500 hover:text-green-600"
+                  : "text-blueGray-700 hover:text-blueGray-500")
                 }>
 
                 <i
                   className={
-                    "fas fa-map-marked mr-2 text-sm " +
+                    "fas fa-map-marked mr-2 text-sm" +
                     (router.pathname.indexOf("/admin/kota") !== -1
-                      ? "opacity-75"
+                    ? "opacity-75"
                       : "text-blueGray-300")
                   }
                 ></i>{" "}Sebaran Wilayah
@@ -222,4 +222,3 @@ export default function Sidebar() {
 // };
 
 // export default SidebarAdmin;
-

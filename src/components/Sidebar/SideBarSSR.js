@@ -31,7 +31,7 @@ export default function Sidebar() {
               <Link
                 href="/ssr/profil/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/ssr/profil") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -39,7 +39,7 @@ export default function Sidebar() {
               >
                 <i
                   className={
-                    "fas fa-chart-simple mr-2 text-sm " +
+                    "fas fa-map-marked mr-2 text-sm" +
                     (router.pathname.indexOf("/ssr/profil") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
@@ -52,7 +52,7 @@ export default function Sidebar() {
               <Link
                 href="/ssr/kader/"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/ssr/kader") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -60,7 +60,7 @@ export default function Sidebar() {
 
                 <i
                   className={
-                    "fas fa-tools mr-2 text-sm " +
+                    "fas fa-map-marked mr-2 text-sm " +
                     (router.pathname.indexOf("/ssr/kader") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
@@ -73,7 +73,7 @@ export default function Sidebar() {
               <Link
                 href="/logout"
                 className={
-                  "text-xs uppercase py-3 font-bold block " +
+                  "text-sm uppercase py-3 font-bold block " +
                   (router.pathname.indexOf("/auth/login") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
@@ -95,4 +95,3 @@ export default function Sidebar() {
     </nav>
   </>;
 }
-
