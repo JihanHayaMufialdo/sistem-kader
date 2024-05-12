@@ -19,7 +19,7 @@ const connectionPool = mysql.createPool({
 connectionPool.getConnection()
   .then(connection => {
     console.log('Connected to MySQL database');
-
+    // Menu Akun SSR
     // Route to fetch users with prepared statements
     app.get('/laporan', async (req, res) => {
       try {
@@ -68,10 +68,10 @@ connectionPool.getConnection()
       try {
         const { no_kta, nama, kota_kabupaten, nama_pengguna, kata_sandi } = req.body;
         const query = 'UPDATE akun_ssrils SET no_kta = ?, nama = ?, kota_kabupaten = ?, kata_sandi = ? WHERE nama_pengguna = ?';
-    
+
         // Melakukan eksekusi query dengan parameter yang diberikan
         await connection.query(query, [no_kta, nama, kota_kabupaten, kata_sandi, nama_pengguna]);
-    
+
         res.status(200).send('Account updated successfully');
       } catch (error) {
         console.error('Error updating account:', error);
@@ -106,3 +106,5 @@ connectionPool.getConnection()
     console.error('Error connecting to database:', error);
     process.exit(1); // Exit with error code on connection error
   });
+
+  
