@@ -48,8 +48,6 @@ connectionPool.getConnection()
       }
     });
     
-    
-
     app.post('/akun', async (req, res) => {
       try {
         const { no_kta, nama, kota_kabupaten, nama_pengguna, kata_sandi } = req.body;
@@ -91,6 +89,89 @@ connectionPool.getConnection()
         res.status(500).send('Error deleting account');
       }
     });
+
+
+
+    // Menu Sebaran Wilayah
+    app.get('/wilayah', async (req, res) => {
+      try {
+        const [rows] = await connection.query(`
+          SELECT 
+            p.id AS id_provinsi,
+            p.nama_provinsi AS provinsi,
+            k.kode_kota,
+            k.nama_kota AS kota,
+            kc.nama_kecamatan AS kecamatan,
+            kc.kode_kecamatan
+          FROM 
+            provinsi p
+          LEFT JOIN 
+            kota k ON p.id = k.id_provinsi
+          LEFT JOIN 
+            kecamatan kc ON k.id = kc.id_kota
+        `);
+        res.json(rows);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        res.status(500).send('Error retrieving data');
+      }
+    });
+    
+    
+    
+    // POST: Menambahkan data baru ke tabel provinsi
+    app.post('/tambah-data', async (req, res) => {
+      try {
+        const { nama_provinsi, kode_provinsi, nama_kota, kode_kota, nama_kecamatan, kode_kecamatan } = req.body;
+    
+        // Insert data ke tabel 'provinsi'
+        const provinsiQuery = 'INSERT INTO provinsi (nama_provinsi, kode_provinsi) VALUES (?, ?)';
+        const [provinsiResult] = await connection.query(provinsiQuery, [nama_provinsi, kode_provinsi]);
+        const id_provinsi = provinsiResult.insertId;
+    
+        // Insert data ke tabel 'kota'
+        const kotaQuery = 'INSERT INTO kota (nama_kota, kode_kota, id_provinsi) VALUES (?, ?, ?)';
+        const [kotaResult] = await connection.query(kotaQuery, [nama_kota, kode_kota, id_provinsi]);
+        const id_kota = kotaResult.insertId;
+    
+        // Insert data ke tabel 'kecamatan'
+        const kecamatanQuery = 'INSERT INTO kecamatan (nama_kecamatan, kode_kecamatan, id_kota) VALUES (?, ?, ?)';
+        await connection.query(kecamatanQuery, [nama_kecamatan, kode_kecamatan, id_kota]);
+    
+        res.status(201).send('Data added successfully');
+      } catch (error) {
+        console.error('Error adding data:', error);
+        res.status(500).send('Error adding data');
+      }
+    }); 
+    
+    
+    // PUT: Memperbarui data di tabel provinsi
+    app.put('/provinsi/:id', async (req, res) => {
+      try {
+        const { id } = req.params;
+        const { nama_provinsi, kode_provinsi } = req.body;
+        const query = 'UPDATE provinsi SET nama_provinsi = ?, kode_provinsi = ? WHERE id = ?';
+        await connection.query(query, [nama_provinsi, kode_provinsi, id]);
+        res.status(200).send('Provinsi updated successfully');
+      } catch (error) {
+        console.error('Error updating provinsi:', error);
+        res.status(500).send('Error updating provinsi');
+      }
+    });
+    
+    // DELETE: Menghapus data di tabel provinsi
+    app.delete('/provinsi/:id', async (req, res) => {
+      try {
+        const { id } = req.params;
+        const query = 'DELETE FROM provinsi WHERE id = ?';
+        await connection.query(query, [id]);
+        res.status(200).send('Provinsi deleted successfully');
+      } catch (error) {
+        console.error('Error deleting provinsi:', error);
+        res.status(500).send('Error deleting provinsi');
+      }
+    });
     
 
     // Start server with better error handling
@@ -106,5 +187,3 @@ connectionPool.getConnection()
     console.error('Error connecting to database:', error);
     process.exit(1); // Exit with error code on connection error
   });
-
-  
