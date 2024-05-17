@@ -1,4 +1,6 @@
 import React from "react"; 
+import { useRouter } from "next/router";
+const axios = require("axios");
 
 export default function TableProvinsi() {
 
