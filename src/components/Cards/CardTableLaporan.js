@@ -27,12 +27,12 @@ export default function TableLaporan({ color }) {
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
-                <a type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
+                <button type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
                   Tambah Laporan
-                </a>
-                <a type="button" onClick={handleButtonDetailClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
+                </button>
+                <button type="button" onClick={handleButtonDetailClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
                   Detail Laporan
-                </a>
+                </button>
               </div>
             </div>
           </div>
