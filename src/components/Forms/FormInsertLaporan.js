@@ -17,7 +17,7 @@ export default function TambahLaporan() {
       formData.append('file', file);
 
       // Kirim formData ke server menggunakan fetch atau axios
-      const response = await fetch('https://example.com/import', {
+      const response = await fetch('http://localhost:8000/upload/kader', {
         method: 'POST',
         body: formData,
       });
@@ -54,6 +54,30 @@ export default function TambahLaporan() {
               <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="fileInput">
+                    Pilih File Excel
+                  </label>
+                  <input
+                    type="file" id="fileInput" name="fileInput"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    onChange={handleFileChange}
+                  />
+                   <label className="mt-4  block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="fileInput">
+                    Pilih File Excel
+                  </label>
+                  <input
+                    type="file" id="fileInput" name="fileInput"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    onChange={handleFileChange}
+                  />
+                   <label className="mt-4  block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="fileInput">
+                    Pilih File Excel
+                  </label>
+                  <input
+                    type="file" id="fileInput" name="fileInput"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    onChange={handleFileChange}
+                  /><button>sasasas</button>
+                   <label className=" mt-4 block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="fileInput">
                     Pilih File Excel
                   </label>
                   <input
