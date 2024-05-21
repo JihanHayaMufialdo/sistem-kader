@@ -37,6 +37,28 @@ export default function TableKota() {
       router.push('/admin/kota/edit/');
     };
 
+    const handleButtonHapusClick = (id_kota) => {
+      const confirmDelete = confirm('Apakah kamu yakin ingin menghapus Kecamatan ini?');
+      if (confirmDelete) {
+        axios.delete(`http://localhost:8000/kota/${id_kota}`)
+          .then(() => {
+            // Hapus item dari state data setelah sukses menghapus dari server
+            setData(data.filter(item => item.id_kota !== id_kota));
+            alert('Kecamatan berhasil dihapus');
+          })
+          .catch(error => {
+            console.error('There was an error deleting the item!', error);
+            alert('Gagal menghapus kecamatan');
+          });
+      }
+    };
+    
+      
+    
+    
+  
+    
+
     const goToPage = (page) => {
       setCurrentPage(page);
     };
@@ -135,10 +157,10 @@ export default function TableKota() {
                         className="bg-blueGray-700 text-white font-bold py-1 px-3 rounded mr-2"
                       >
                         Ubah
-                      </button>
+                        </button>
                       <button
                         type="button"
-                        onClick={handleButtonLihatClick}
+                        onClick={() => handleButtonHapusClick(item.id_kota)}
                         className="bg-red-700 text-white font-bold py-1 px-3 rounded mr-2"
                       >
                         Hapus
