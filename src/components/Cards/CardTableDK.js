@@ -1,67 +1,76 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
-
-function handleButtonHapus() {
-  const confirmation = window.confirm("Apakah anda yakin ingin menghapus data?");
-  if (confirmation) {
-    // Handle positive confirmation (account creation logic)
-    // console.log("Creating account...");
-  } else {
-    // Handle negative confirmation (do nothing)
-    // console.log("Account creation cancelled.");
-  }
-}
+import axios from 'axios';
 
 export default function TableDK() {
   const [filterKota, setFilterKota] = useState("All");
-  const [kaderData, setKaderData] = useState([
-    { id: 1, nama: "Sarah Johnson", jenisKelamin: "Perempuan", tanggalLahir: "1997-05-12", noTelepon: "08123456789", noUrut: "001", alamat: "Jl. Contoh No. 123", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung" },
-    { id: 2, nama: "Muhammad Ali", jenisKelamin: "Laki-laki", tanggalLahir: "1992-08-25", noTelepon: "087654321", noUrut: "002", alamat: "Jl. Contoh No. 456", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung" },
-    { id: 3, nama: "Emily Smith", jenisKelamin: "Perempuan", tanggalLahir: "1994-12-18", noTelepon: "08123456789", noUrut: "003", alamat: "Jl. Contoh No. 789", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung" },
-    { id: 4, nama: "David Brown", jenisKelamin: "Laki-laki", tanggalLahir: "1989-06-30", noTelepon: "087654321", noUrut: "004", alamat: "Jl. Contoh No. 1011", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung" },
-    { id: 5, nama: "Maria Rodriguez", jenisKelamin: "Perempuan", tanggalLahir: "1997-02-15", noTelepon: "08123456789", noUrut: "005", alamat: "Jl. Contoh No. 1213", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung" },
-    { id: 6, nama: "John Doe", jenisKelamin: "Laki-laki", tanggalLahir: "1992-11-05", noTelepon: "08123456789", noUrut: "006", alamat: "Jl. Contoh No. 456", kecamatan: "Contoh", kota: "Pringsewu", provinsi: "Lampung" },
-    { id: 7, nama: "Jane Doe", jenisKelamin: "Perempuan", tanggalLahir: "1994-09-20", noTelepon: "087654321", noUrut: "007", alamat: "Jl. Contoh No. 789", kecamatan: "Contoh", kota: "Pringsewu", provinsi: "Lampung" },
-    { id: 8, nama: "Michael Smith", jenisKelamin: "Laki-laki", tanggalLahir: "1989-04-10", noTelepon: "08123456789", noUrut: "008", alamat: "Jl. Contoh No. 1011", kecamatan: "Contoh", kota: "Pesawaran", provinsi: "Lampung" },
-    { id: 9, nama: "Jessica Johnson", jenisKelamin: "Perempuan", tanggalLahir: "1997-08-03", noTelepon: "087654321", noUrut: "009", alamat: "Jl. Contoh No. 1213", kecamatan: "Contoh", kota: "Pesawaran", provinsi: "Lampung" },
-    { id: 10, nama: "Robert Brown", jenisKelamin: "Laki-laki", tanggalLahir: "1999-01-25", noTelepon: "08123456789", noUrut: "010", alamat: "Jl. Contoh No. 123", kecamatan: "Contoh", kota: "Tanggamus", provinsi: "Lampung" }
-    // Data kader yang ada sebelumnya
-  ]);
+  const [kaderData, setKaderData] = useState([]);
+  const router = useRouter();
 
-  // Function to handle filter change
+  useEffect(() => {
+    // Panggil endpoint GET kader saat komponen dimuat
+    fetchKaderData();
+  }, []);
+
+  const fetchKaderData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/kader');
+      setKaderData(response.data);
+    } catch (error) {
+      console.error('Error fetching kader data:', error);
+    }
+  };
+
   const handleFilterChange = (e) => {
     setFilterKota(e.target.value);
   };
 
-  // Function to handle tambah kader
-  const router = useRouter();
   const handleTambahKader = () => {
-    router.push('kader/InsertKader');
+    router.push('/admin/kader/InsertKader');
   };
 
-   // Function to handle edit kader
-   const handleEditKader = () => {
-     router.push('kader/EditKader');
-   };
-   
-  // Function to handle button tambah click
+  const handleEditKader = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/kader/${id}`);
+      const dataToEdit = response.data;
+      router.push({
+        pathname: `kader/EditKader/`,
+        query: { id: id },
+      });
+    } catch (error) {
+      console.error("Error navigating to edit page:", error);
+      // Tambahkan penanganan kesalahan di sini, misalnya tampilkan pesan kesalahan kepada pengguna
+    }
+  };
+  
+
   const handleButtonTambahClick = () => {
     router.push('/components/Forms/FormUploadKTA');
-  }
+  };
 
   const handleLihatKTA = () => {
     router.push('kader/KTA');
   };
 
-  // Function to handle penyimpanan data kader
-  const handleSimpanDataKader = (dataKaderBaru) => {
-    setKaderData([...kaderData, dataKaderBaru]);
+  const handleButtonHapus = async (id) => {
+    const confirmation = window.confirm("Apakah anda yakin ingin menghapus data?");
+    if (confirmation) {
+      try {
+        await axios.delete(`http://localhost:8000/kader/${id}`);
+        // Update kembali data setelah hapus
+        fetchKaderData();
+        console.log("Data kader berhasil dihapus");
+      } catch (error) {
+        console.error('Error deleting kader data:', error);
+      }
+    } else {
+      console.log("Hapus data kader dibatalkan.");
+    }
   };
 
   return (
     <div className="overflow-x-auto">
       <div className="relative flex flex-col min-w-0 break-words w-full mb-4 shadow-lg rounded-lg bg-white border-1">
-        {/* Filter dropdown */}
         <div className="mt-3 mx-4 mb-4">
           <label htmlFor="filterKota" className="block text-sm font-medium text-gray-700">
             Filter Kota:
@@ -103,10 +112,7 @@ export default function TableDK() {
           </div>
         </div>
 
-
-        {/* Table */}
         <table className="items-center w-full bg-white border-collapse">
-          {/* Table Header */}
           <thead className="bg-blueGray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -122,9 +128,6 @@ export default function TableDK() {
                 Jenis Kelamin
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                Tanggal Lahir
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 No Telepon
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -134,7 +137,7 @@ export default function TableDK() {
                 No Urut
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                Kecamatan
+                ID Kecamatan
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Kota
@@ -142,7 +145,7 @@ export default function TableDK() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Provinsi
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium                     text-gray-700 uppercase tracking-wider">
                 Aksi
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
@@ -150,7 +153,6 @@ export default function TableDK() {
               </th>
             </tr>
           </thead>
-          {/* Table Body */}
           <tbody className="divide-y divide-gray-200">
             {kaderData
               .filter((kader) => filterKota === "All" || kader.kota === filterKota)
@@ -159,38 +161,33 @@ export default function TableDK() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.id}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.no_induk}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.nama}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.jenisKelamin}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.tanggalLahir}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.noTelepon}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.jenis_kelamin}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.no_telp}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.alamat}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.noUrut}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.kecamatan}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.no_urut}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.id_kecamatan}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.kota}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.provinsi}</td>
                   
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                    {/* Buttons for actions */}
-                    <button onClick={handleEditKader} 
-                    className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                    <button onClick={() => handleEditKader(kader.id)} className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
                       Ubah
                     </button>
-                    <button onClick={handleButtonHapus} 
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    <button onClick={() => handleButtonHapus(kader.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                       Hapus
                     </button>
-                    </td>
-                    <td>
+                  </td>
+                  <td>
                     <div>
-                    <button
-                    
-                      type="button"
-                      onClick={handleLihatKTA}
-                      className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-                    >
-                      Lihat
-                    </button>
+                      <button
+                        type="button"
+                        onClick={handleLihatKTA}
+                        className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                      >
+                        Lihat
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -201,3 +198,4 @@ export default function TableDK() {
     </div>
   );
 }
+
