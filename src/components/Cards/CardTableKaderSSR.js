@@ -1,108 +1,146 @@
-import React, { useState } from "react";
-import { useRouter } from "next/router";
+import React, { useState, useEffect } from "react";
+import { useRouter } from 'next/router';
+import axios from 'axios';
 
-function handleButtonHapus() {
-  const confirmation = window.confirm("Apakah anda yakin ingin menghapus data?");
-  if (confirmation) {
-    // Handle positive confirmation (account creation logic)
-    // console.log("Creating account...");
-  } else {
-    // Handle negative confirmation (do nothing)
-    // console.log("Account creation cancelled.");
-  }
-}
-
-export default function TableKaderSSR() {
+export default function TableDK() {
   const [filterKota, setFilterKota] = useState("All");
-
+  const [kaderData, setKaderData] = useState([]);
   const router = useRouter();
-  const handleButtonTambahClick = () => {
-      router.push('/ssr/kader/tambah/');
+
+  useEffect(() => {
+    fetchKaderData();
+  }, []);
+
+  const fetchKaderData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/kader');
+      setKaderData(response.data);
+    } catch (error) {
+      console.error('Error fetching kader data:', error);
+    }
   };
-  const handleButtonUbahClick = () => {
-      router.push('/ssr/kader/edit/');
+
+  const handleFilterChange = (e) => {
+    setFilterKota(e.target.value);
   };
+
+  const handleButtonHapus = async (id) => {
+    const confirmation = window.confirm("Apakah anda yakin ingin menghapus data?");
+    if (confirmation) {
+      try {
+        await axios.delete(`http://localhost:8000/kader/${id}`);
+        fetchKaderData();
+        console.log("Data kader berhasil dihapus");
+      } catch (error) {
+        console.error('Error deleting kader data:', error);
+      }
+    } else {
+      console.log("Hapus data kader dibatalkan.");
+    }
+  };
+
+  const handleEditKader = async (id) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/kader/${id}`);
+      const dataToEdit = response.data;
+      router.push({
+        pathname: `kader/edit`,
+        query: { id: id },
+      });
+    } catch (error) {
+      console.error("Error navigating to edit page:", error);
+    }
+  };
+
   const handleButtonUploadClick = () => {
-      router.push('/ssr/kader/upload');
+    router.push('/ssr/kader/upload');
   };
+
   const handleButtonKTAClick = () => {
     router.push('/ssr/kader/KTA');
-};
-
-
-  // Dummy data for kader
-  const kaderData = [
-    { id: 1, nama: "Park Chanyeol", jenisKelamin: "Laki-laki", usia: 25, noTelepon: "08123456789", alamat: "Jl. Contoh No. 123", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "sarahj123" },
-    { id: 2, nama: "Muhammad Ali", jenisKelamin: "Laki-laki", usia: 30, noTelepon: "087654321", alamat: "Jl. Contoh No. 456", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "muhammadali321" },
-    { id: 3, nama: "Emily Smith", jenisKelamin: "Perempuan", usia: 28, noTelepon: "08123456789", alamat: "Jl. Contoh No. 789", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "emilysmith456" },
-    { id: 4, nama: "David Brown", jenisKelamin: "Laki-laki", usia: 35, noTelepon: "087654321", alamat: "Jl. Contoh No. 1011", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "davidbrown789" },
-    { id: 5, nama: "Maria Rodriguez", jenisKelamin: "Perempuan", usia: 27, noTelepon: "08123456789", alamat: "Jl. Contoh No. 1213", kecamatan: "Contoh", kota: "Bandar Lampung", provinsi: "Lampung", username: "mariarod123" },
-  ];
-  
+  };
 
   return (
     <div className="overflow-x-auto">
       <div className="relative flex flex-col min-w-0 break-words w-full mb-4 shadow-lg rounded-lg bg-white border-1">
+        <div className="mt-3 mx-4 mb-4">
+          <label htmlFor="filterKota" className="block text-sm font-medium text-gray-700">
+            Filter Kota:
+          </label>
+          <select
+            id="filterKota"
+            name="filterKota"
+            className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+            value={filterKota}
+            onChange={handleFilterChange}
+          >
+            <option value="All">All</option>
+            <option value="Bandar Lampung">Bandar Lampung</option>
+            <option value="Pringsewu">Pringsewu</option>
+            <option value="Pesawaran">Pesawaran</option>
+            <option value="Tanggamus">Tanggamus</option>
+            <option value="Lampung Tengah">Lampung Tengah</option>
+            <option value="Lampung Selatan">Lampung Selatan</option>
+            <option value="Lampung Timur">Lampung Timur</option>
+            <option value="Lampung Utara">Lampung Utara</option>
+            <option value="Tulang Bawang Barat">Tulang Bawang Barat</option>
+          </select>
+        </div>
+        
         <div className="overflow-x-auto">
           <div className="rounded-t bg-white mb-1 px-3 py-3 border-collapse">
-            <div className="flex justify-between items-center w-full">
+            <div className="flex justify-between items-center">
               <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                <h6 className="text-green-600 text-xl font-bold w-full">
-                  Daftar Kader ILS Bandar Lampung
+                <h6 className="text-green-600 text-xl font-bold">
+                  Daftar Kader ILS
                 </h6>
-              </div>
-              <div className="flex justify-end mr-2">
-                {/* Tombol tambah kader dihapus */}
               </div>
             </div>
           </div>
         </div>
 
-
-        {/* Table */}
         <table className="items-center w-full bg-white border-collapse">
-          {/* Table Header */}
           <thead className="bg-blueGray-50">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 No
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
-                NIA
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                Nomor Induk Anggota
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Nama
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Jenis Kelamin
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
-                Usia
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 No Telepon
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Alamat
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
-                Kecamatan
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                No Urut
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                ID Kecamatan
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Kota
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Provinsi
               </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
-                KTA
-              </th>
-              <th className="px-6 py-3 text-center text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
                 Aksi
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+                KTA
               </th>
             </tr>
           </thead>
-          {/* Table Body */}
+
           <tbody className="divide-y divide-gray-200">
             {kaderData
               .filter((kader) => filterKota === "All" || kader.kota === filterKota)
@@ -111,35 +149,62 @@ export default function TableKaderSSR() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                     {index + 1}
                   </td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.id}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.nama}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.jenisKelamin}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.usia}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.noTelepon}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.alamat}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.kecamatan}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.kota}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">{kader.provinsi}</td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">
-                    {/* Buttons for actions */}
-                    <a type="button" onClick={handleButtonUploadClick}
-                      className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded">
-                      Unggah Foto
-                    </a>
-                    <a type="button" onClick={handleButtonKTAClick}
-                      className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-                      Lihat KTA
-                    </a>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.no_induk}
                   </td>
-                  <td className="px-6 py-4 text-center whitespace-nowrap text-sm text-gray-800">
-                    <button onClick={handleButtonUbahClick}
-                    className="mr-2 bg-blueGray-700 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.nama}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.jenis_kelamin}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.no_telp}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.alamat}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.no_urut}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.id_kecamatan}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.kota}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    {kader.provinsi}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    <button
+                      onClick={() => handleEditKader(kader.id)}
+                      className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
+                    >
                       Ubah
                     </button>
-                    <button onClick={handleButtonHapus}
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                    <button
+                      onClick={() => handleButtonHapus(kader.id)}
+                      className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    >
                       Hapus
                     </button>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+                    <a
+                      type="button"
+                      onClick={handleButtonUploadClick}
+                      className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Unggah Foto
+                    </a>
+                    <a
+                      type="button"
+                      onClick={handleButtonKTAClick}
+                      className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+                    >
+                      Lihat KTA
+                    </a>
                   </td>
                 </tr>
               ))}
