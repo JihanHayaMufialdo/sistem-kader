@@ -26,7 +26,7 @@
     "express-fileupload": "^1.5.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
-    "hyper-express": "^6.16.1",
+    "hyper-express": "^6.16.2",
     "jspdf": "^2.5.1",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",

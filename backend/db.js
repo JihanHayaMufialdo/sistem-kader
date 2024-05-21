@@ -257,6 +257,7 @@ res.send('Data berhasil disimpan ke database.');
         res.status(500).send('Error deleting kader data');
       }
     });
+
     // Menu Sebaran Wilayah
     app.get("/wilayah", async (req, res) => {
       try {
@@ -475,8 +476,6 @@ res.send('Data berhasil disimpan ke database.');
         res.status(500).send("Error deleting provinsi");
       }
     });
-
-    
 
     // Start server with better error handling
     const port = 8000;
