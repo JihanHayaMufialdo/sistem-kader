@@ -5,6 +5,8 @@ const multer = require('multer');
 const xlsx = require("xlsx");
 const path = require("path");
 const fs = require("fs");
+const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(express.json()); // Middleware untuk mengurai JSON body dari request
@@ -29,10 +31,6 @@ connectionPool
   .getConnection()
   .then((connection) => {
     console.log("Connected to MySQL database");
-
-
-
-    
 
       const storage = multer.diskStorage({
         destination: (req, file, cb) => {
@@ -352,21 +350,45 @@ res.send('Data berhasil disimpan ke database.');
       }
     });
 
+    // Endpoint untuk mengambil data provinsi beserta jumlah kota/kabupaten dan kecamatan
+app.get('/provinsi', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        provinsi.id, 
+        provinsi.nama_provinsi, 
+        COUNT(DISTINCT kota.id) AS jumlah_kota, 
+        COUNT(DISTINCT kecamatan.id) AS jumlah_kecamatan
+      FROM 
+        provinsi
+      LEFT JOIN 
+        kota ON kota.id_provinsi = provinsi.id
+      LEFT JOIN 
+        kecamatan ON kecamatan.id_kota = kota.id
+      GROUP BY 
+        provinsi.id
+    `;
+    const [results] = await connectionPool.query(query);
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Error fetching data' });
+  }
+});
+
     // Route untuk menambahkan data kecamatan baru
-    app.post("/kecamatan", async (req, res) => {
+    app.post('/kota/kecamatan', async (req, res) => {
       try {
-        const { id_kota, kode_kecamatan, nama_kecamatan } = req.body;
-        const query =
-          "INSERT INTO kecamatan (id_kota, kode_kecamatan, nama_kecamatan) VALUES (?, ?, ?)";
-        await connection.query(query, [
-          id_kota,
-          kode_kecamatan,
-          nama_kecamatan,
-        ]);
-        res.status(201).send("Kecamatan added successfully");
+        const { kode_kecamatan, nama_kecamatan, id_kota } = req.body;
+        if (!kode_kecamatan || !nama_kecamatan || !id_kota) {
+          return res.status(400).json({ error: 'All fields are required' });
+        }
+        const query = "INSERT INTO kecamatan (kode_kecamatan, nama_kecamatan, id_kota) VALUES (?, ?, ?)";
+        const [result] = await connectionPool.query(query, [kode_kecamatan, nama_kecamatan, id_kota]);
+        res.status(201).json({ message: "Kecamatan added successfully", result });
       } catch (error) {
-        console.error("Error adding kecamatan:", error);
-        res.status(500).send("Error adding kecamatan");
+        console.error('Error adding kecamatan:', error);
+        res.status(500).json({ error: 'Error adding kecamatan' });
       }
     });
 
@@ -400,7 +422,27 @@ res.send('Data berhasil disimpan ke database.');
         console.error("Error deleting kecamatan:", error);
         res.status(500).send("Error deleting kecamatan");
       }
+    }); 
+
+    app.delete("/kota/:id_kota", async (req, res) => {
+      try {
+        const { id_kota } = req.params;
+        const query = "DELETE FROM kota WHERE id = ?";
+        const [result] = await connection.query(query, [id_kota]);
+    
+        if (result.affectedRows > 0) {
+          res.status(200).send("Kota deleted successfully");
+        } else {
+          res.status(404).send("Kota not found");
+        }
+      } catch (error) {
+        console.error("Error deleting kota:", error);
+        res.status(500).send("Error deleting kota. Please try again later."); // Pesan kesalahan yang lebih informatif
+      }
     });
+    
+    
+    
 
     // POST: Menambahkan data baru ke tabel provinsi
     app.post("/tambah-data", async (req, res) => {

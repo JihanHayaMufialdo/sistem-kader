@@ -5,6 +5,7 @@ import { useRouter } from 'next/router';
 export default function TableKecamatan() {
     const router = useRouter();
     const { id_kota } = router.query; // Get the city ID from the URL query parameter
+    const { id_kota: prevIdKota } = router.query;
     
     const [data, setData] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
@@ -26,18 +27,10 @@ export default function TableKecamatan() {
     }, [id_kota]);
 
 
-    const handleButtonTambahClick = async (id_kecamatan) => {
-        try {
-          const response = await axios.get(`http://localhost:8000/kecamatan/${id_kecamatan}`);
-          const dataToEdit = response.data;
-          router.push({
-            pathname: `/admin/kota/kecamatan/tambah`,
-            query: { id_kecamatan: id_kecamatan },
-        });
-        } catch (error) {
-          console.error('Error fetching kecamatan data:', error);
-        }
+    const handleButtonTambahClick = () => {
+        router.push(`/admin/kota/kecamatan/tambah?id_kota=${prevIdKota}`);
       };
+      
 
 
     const handleButtonUbahClick = async (id_kecamatan) => {
