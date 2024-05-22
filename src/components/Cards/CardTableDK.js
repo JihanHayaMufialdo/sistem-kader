@@ -5,7 +5,10 @@ import axios from 'axios';
 export default function TableDK() {
   const [filterKota, setFilterKota] = useState("All");
   const [kaderData, setKaderData] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
   const router = useRouter();
+  const itemsPerPage = 10;
+  const totalPages = Math.ceil(kaderData.length / itemsPerPage);
 
   useEffect(() => {
     // Panggil endpoint GET kader saat komponen dimuat
@@ -39,11 +42,9 @@ export default function TableDK() {
       });
     } catch (error) {
       console.error("Error navigating to edit page:", error);
-      // Tambahkan penanganan kesalahan di sini, misalnya tampilkan pesan kesalahan kepada pengguna
     }
   };
   
-
   const handleButtonTambahClick = () => {
     router.push('/components/Forms/FormUploadKTA');
   };
@@ -67,6 +68,14 @@ export default function TableDK() {
       console.log("Hapus data kader dibatalkan.");
     }
   };
+
+  const goToPage = (page) => {
+    setCurrentPage(page);
+  };
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = kaderData.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="overflow-x-auto">
@@ -104,9 +113,9 @@ export default function TableDK() {
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
-                <a type="button" onClick={handleTambahKader} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
+                <button type="button" onClick={handleTambahKader} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
                   Tambah Kader
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -115,61 +124,57 @@ export default function TableDK() {
         <table className="items-center w-full bg-white border-collapse">
           <thead className="bg-blueGray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 No
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Nomor Induk Anggota
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Nama
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+                Jenis Kader
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Jenis Kelamin
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 No Telepon
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                Alamat
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+                Kecamatan
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                No Urut
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
-                ID Kecamatan
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Kota
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Provinsi
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium                     text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Aksi
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 KTA
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
             {kaderData
-              .filter((kader) => filterKota === "All" || kader.kota === filterKota)
+              .filter((kader) => filterKota === "All" || kader.nama_kota === filterKota)
               .map((kader, index) => (
                 <tr key={kader.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                    {index + 1}
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">
+                  {(currentPage - 1) * itemsPerPage + index + 1}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.no_induk}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.nama}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.jenis_kelamin}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.no_telp}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.alamat}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.no_urut}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.id_kecamatan}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.kota}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">{kader.provinsi}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_induk}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kader}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kelamin}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_telp}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_kecamatan}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_kota}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_provinsi}</td>
                   
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
                     <button onClick={() => handleEditKader(kader.id)} className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
@@ -195,6 +200,32 @@ export default function TableDK() {
           </tbody>
         </table>
       </div>
+      {/* Pagination */}
+      <div className="flex justify-center mt-4">
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-black py-2 px-4 rounded-l"
+            onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+          {[...Array(totalPages)].map((_, index) => (
+            <button
+            key={index}
+            className={`bg-${currentPage === index + 1 ? 'blueGray-200' : 'blue-500'} hover:bg-blue-700 text-green-500 py-2 px-4 rounded mr-2 ${currentPage === index + 1 ? 'text-blueGray-700 font-bold' : ''}`}
+            onClick={() => setCurrentPage(index + 1)}
+          >
+            {index + 1}
+            </button>
+          ))}
+          <button
+            className="bg-blue-500 hover:bg-blue-700 text-black py-2 px-4 rounded-r"
+            onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
     </div>
   );
 }

@@ -25,15 +25,12 @@
     "del": "^7.1.0",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.0",
-<<<<<<< HEAD
-=======
     "express-session": "^1.18.0",
->>>>>>> dev
     "express-validator": "^7.1.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
-    "jsonwebtoken": "^9.0.2",
     "hyper-express": "^6.16.2",
+    "jsonwebtoken": "^9.0.2",
     "jspdf": "^2.5.1",
     "multer": "^1.4.5-lts.1",
     "mysql": "^2.18.1",
@@ -48,6 +45,7 @@
     "react-perfect-scrollbar": "^1.5.8",
     "react-popper": "^2.2.5",
     "react-scripts": "4.0.3",
+    "react-select": "^5.8.0",
     "tailwindcss": "3.4.1",
     "xlsx": "^0.18.5"
   },
