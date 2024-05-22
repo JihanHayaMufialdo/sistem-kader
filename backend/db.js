@@ -5,6 +5,8 @@ const multer = require('multer');
 const xlsx = require("xlsx");
 const path = require("path");
 const fs = require("fs");
+const { body, validationResult } = require('express-validator');
+const bcrypt = require('bcrypt');
 
 const app = express();
 app.use(express.json()); // Middleware untuk mengurai JSON body dari request
@@ -16,8 +18,7 @@ const connectionPool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "",
-  database: "database_ils",
-  port: 3308,
+  database: "database_ils"
 });
 
 
@@ -25,10 +26,6 @@ connectionPool
   .getConnection()
   .then((connection) => {
     console.log("Connected to MySQL database");
-
-
-
-    
 
       const storage = multer.diskStorage({
         destination: (req, file, cb) => {
@@ -103,7 +100,8 @@ res.send('Data berhasil disimpan ke database.');
         res.send(`File uploaded: ${req.file.filename}`);
       });
 
-      
+   // Login
+  
 
     // Menu Akun SSR
     app.get("/laporan", async (req, res) => {
@@ -316,6 +314,45 @@ res.send('Data berhasil disimpan ke database.');
       }
     });
 
+    app.get("/kota", async (req, res) => {
+      try {
+        const { id_kota } = req.params;
+        const query = "SELECT * FROM kota WHERE id_kota = ?";
+        const [rows] = await connection.query(query, [id_kota]);
+
+        if (rows.length === 0) {
+          res.status(404).send("kota not found");
+        } else {
+          res.json(rows[0]);
+        }
+      } catch (error) {
+        console.error("Error fetching kota:", error);
+        res.status(500).send("Error retrieving kota");
+      }
+    });
+
+
+    app.put("/kota/:id_kota", async (req, res) => {
+      try {
+        const { id_kota } = req.params;
+        const { kode_kota, nama_kota } = 
+          req.body;
+        const query =
+          "UPDATE kota SET kode_kota = ?, nama_kota = ? WHERE id = ?";
+        await connection.query(query, [
+          kode_kota,
+          nama_kota,
+          id_kota
+        ]);
+        res.status(200).send("Kota updated successfully");
+      } catch (error) {
+        console.error("Error updating kota:", error);
+        res.status(500).send("Error updating kota");
+      }
+    });
+
+    
+
     // Route untuk menghapus data kecamatan
     app.delete("/kecamatan/:id_kecamatan", async (req, res) => {
       try {
@@ -327,7 +364,26 @@ res.send('Data berhasil disimpan ke database.');
         console.error("Error deleting kecamatan:", error);
         res.status(500).send("Error deleting kecamatan");
       }
+    }); 
+
+    app.delete("/kota/:id_kota", async (req, res) => {
+      try {
+        const { id_kota } = req.params;
+        const query = "DELETE FROM kota WHERE id = ?";
+        await connectionPool.query(query, [id_kota]);
+         if (result.affectedRows > 0) {
+           res.status(200).send("Kota deleted successfully");
+         } else {
+           res.status(404).send("Kota not found");
+         }
+      } catch (error) {
+        console.error("Error deleting kota:", error);
+        res.status(500).send("Error deleting kota");
+      }
     });
+
+
+    
 
     // POST: Menambahkan data baru ke tabel provinsi
     app.post("/tambah-data", async (req, res) => {
