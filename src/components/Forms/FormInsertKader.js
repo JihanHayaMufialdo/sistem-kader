@@ -1,26 +1,92 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import CreatableSelect from 'react-select/creatable';
 
 const initialFormData = {
-  no_induk: '', 
-  no_urut: '', 
-  nama: '',
-  jenis_kelamin: '',
-  no_telp: '',
-  alamat: '',
-  id_kecamatan: '',
-  provinsi: '',
-  kota: ''
+  jenis_kader: "",
+  nama: "",
+  no_induk: "",
+  jenis_kelamin: "",
+  no_telp: "",
+  id_kecamatan: "",
+  nama_provinsi: "",
+  nama_kota: ""
 };
 
 export default function InsertKader() {
   const [formData, setFormData] = useState(initialFormData);
+  const [kecamatanList, setKecamatanList] = useState([]);
+  const [jenisKaderList, setJenisKaderList] = useState([]);
   const router = useRouter();
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const response = await axios.get('http://localhost:8000/data');
+      
+      // Set kecamatan list
+      setKecamatanList(response.data.kecamatan);
+  
+      // Filter duplikat jenis kader
+      const uniqueJenisKader = response.data.jenisKader.reduce((acc, current) => {
+        const x = acc.find(item => item.jenis_kader === current.jenis_kader);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+      
+      // Set jenis kader list
+      setJenisKaderList(uniqueJenisKader);
+  
+      // Filter duplikat kecamatan
+      const uniqueKecamatan = response.data.kecamatan.reduce((acc, current) => {
+        const x = acc.find(item => item.nama_kecamatan === current.nama_kecamatan);
+        if (!x) {
+          return acc.concat([current]);
+        } else {
+          return acc;
+        }
+      }, []);
+      
+      // Set kecamatan list yang unik
+      setKecamatanList(uniqueKecamatan);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prevFormData) => {
+      let updatedFormData = { ...prevFormData, [name]: value };
+
+      if (name === "id_kecamatan") {
+        const selectedKecamatan = kecamatanList.find(kecamatan => kecamatan.id === parseInt(value));
+        if (selectedKecamatan) {
+          updatedFormData = {
+            ...updatedFormData,
+            nama_kota: selectedKecamatan.nama_kota,
+            nama_provinsi: selectedKecamatan.nama_provinsi,
+            nama_kecamatan: selectedKecamatan.nama_kecamatan
+          };
+        }
+      }
+
+      return updatedFormData;
+    });
+  };
+
+  const handleJenisKaderChange = (newValue) => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      jenis_kader: newValue ? newValue.value : ""
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -59,58 +125,44 @@ export default function InsertKader() {
             <div className="flex flex-wrap mt-3">
               <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="provinsi">
-                    Provinsi
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="jenis_kader">
+                    Jenis Kader
                   </label>
-                  <input
-                    type="text" id="provinsi" name="provinsi" value={formData.provinsi} onChange={handleChange}
+                  <CreatableSelect
+                    id="jenis_kader"
+                    name="jenis_kader"
+                    value={formData.jenis_kader ? { value: formData.jenis_kader, label: formData.jenis_kader } : null}
+                    onChange={handleJenisKaderChange}
+                    options={jenisKaderList.map((jenisKader) => ({
+                      value: jenisKader.jenis_kader,
+                      label: jenisKader.jenis_kader
+                    }))}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
-                <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kota">
-                    Kota
-                  </label>
-                  <input
-                    type="text" id="kota" name="kota" value={formData.kota} onChange={handleChange}
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-                <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="id_kecamatan">
-                    ID Kecamatan
-                  </label>
-                  <input
-                    type="text" id="id_kecamatan" name="id_kecamatan" value={formData.id_kecamatan} onChange={handleChange}
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-                <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="no_urut">
-                    No Urut
-                  </label>
-                  <input
-                    type="text" id="no_urut" name="no_urut" value={formData.no_urut} onChange={handleChange}
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
-                </div>
-              </div>
-              <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama">
                     Nama
                   </label>
                   <input
-                    type="text" id="nama" name="nama" value={formData.nama} onChange={handleChange}
+                    type="text"
+                    id="nama"
+                    name="nama"
+                    value={formData.nama}
+                    onChange={handleChange}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
                 <div className="relative w-full mb-3">
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="no_induk">
-                    Nomor Induk Anggota
+                    Nomor Induk
                   </label>
                   <input
-                    type="text" id="no_induk" name="no_induk" value={formData.no_induk} onChange={handleChange}
+                    type="text"
+                    id="no_induk"
+                    name="no_induk"
+                    value={formData.no_induk}
+                    onChange={handleChange}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
@@ -119,28 +171,74 @@ export default function InsertKader() {
                     Jenis Kelamin
                   </label>
                   <select
-                    id="jenis_kelamin" name="jenis_kelamin" value={formData.jenis_kelamin} onChange={handleChange}
+                    id="jenis_kelamin"
+                    name="jenis_kelamin"
+                    value={formData.jenis_kelamin}
+                    onChange={handleChange}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   >
-                    <option value="L">Laki-laki</option>
+                    <option className="font-bold" value="">Pilih Jenis Kelamin</option>
                     <option value="P">Perempuan</option>
+                    <option value="L">Laki-laki</option>
                   </select>
                 </div>
+              </div>
+              <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="no_telp">
                     Nomor Telepon
                   </label>
                   <input
-                    type="text" id="no_telp" name="no_telp" value={formData.no_telp} onChange={handleChange}
+                    type="text"
+                    id="no_telp"
+                    name="no_telp"
+                    value={formData.no_telp}
+                    onChange={handleChange}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="alamat">
-                    Alamat
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="id_kecamatan">
+                    Kecamatan
+                  </label>
+                  <select
+                    id="id_kecamatan"
+                    name="id_kecamatan"
+                    value={formData.id_kecamatan}
+                    onChange={handleChange}
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  >
+                    <option className="font-bold" value="">Pilih Kecamatan</option>
+                    {kecamatanList.map((kecamatan) => (
+                      <option key={kecamatan.id} value={kecamatan.id}>
+                        {kecamatan.nama_kecamatan}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kota">
+                    Kota
                   </label>
                   <input
-                    type="text" id="alamat" name="alamat" value={formData.alamat} onChange={handleChange}
+                    type="text"
+                    id="nama_kota"
+                    name="nama_kota"
+                    value={formData.nama_kota}
+                    readOnly
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  />
+                </div>
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_provinsi">
+                    Provinsi
+                  </label>
+                  <input
+                    type="text"
+                    id="nama_provinsi"
+                    name="nama_provinsi"
+                    value={formData.nama_provinsi}
+                    readOnly
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
@@ -158,7 +256,7 @@ export default function InsertKader() {
                 type="button"
                 onClick={handleButtonKembaliClick}
               >
-                Kembali
+                Batal
               </button>
             </div>
           </form>
