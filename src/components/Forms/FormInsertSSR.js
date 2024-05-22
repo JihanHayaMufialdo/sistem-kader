@@ -34,14 +34,9 @@ console.log(formData)
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
-
-  
   
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-  
     try {
       const response = await axios.post('http://localhost:8000/akun', formData);
       console.log(response.data); // Menampilkan respon dari server
@@ -50,6 +45,7 @@ console.log(formData)
     }
     setFormData(initialFormData);
   };
+
   const router = useRouter();
   const handleButtonKembaliClick = () => {
     router.push('/admin/ssr/');

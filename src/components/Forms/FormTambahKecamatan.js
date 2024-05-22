@@ -1,23 +1,41 @@
-import React from "react";
+// Frontend - FormTambahKecamatan.js
+import React, { useState } from "react";
 import { useRouter } from 'next/router';
-
-// Function to handle confirmation before creating account
-function handleTambahKecamatan() {
-  const confirmation = window.confirm("Apakah anda yakin ingin menambahkan kecamatan?");
-  if (confirmation) {
-    // Handle positive confirmation (account creation logic)
-    // console.log("Creating account...");
-  } else {
-    // Handle negative confirmation (do nothing)
-    // console.log("Account creation cancelled.");
-  }
-}
+import axios from "axios";
 
 export default function FormTambahKecamatan() {
-
   const router = useRouter();
+  const { id_kota } = router.query; // Ambil id_kota dari query parameter
+
+  const [kecamatan, setKecamatan] = useState({
+    kode_kecamatan: "",
+    nama_kecamatan: "",
+    id_kota: id_kota || "" // Set id_kota dengan nilai dari query parameter
+  });
+
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setKecamatan((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleTambahKecamatan = async (e) => {
+    e.preventDefault();
+    try {
+      if (!kecamatan.kode_kecamatan || !kecamatan.nama_kecamatan || !kecamatan.id_kota) {
+        alert("Please fill all the fields");
+        return;
+      }
+      await axios.post(`http://localhost:8000/kota/kecamatan`, kecamatan);
+      alert("Kecamatan added successfully");
+      router.push(`/admin/kota/kecamatan?id_kota=${id_kota}`); // Redirect ke halaman daftar kecamatan
+    } catch (error) {
+      console.error("Error adding kecamatan:", error);
+      alert("Error adding kecamatan");
+    }
+  };
+
   const handleButtonKembaliClick = () => {
-    router.push('/admin/kota/kecamatan');
+    router.push(`/admin/kota/kecamatan?id_kota=${id_kota}`);
   };
 
   return (
@@ -31,31 +49,7 @@ export default function FormTambahKecamatan() {
           </div>
         </div>
         <div className="flex-auto px-4 lg:px-10 py-10 pt-0">
-          <form className="flex flex-wrap mt-3">
-            <div className="w-full lg:w-6/12 px-4">
-              <div className="relative w-full mb-3">
-                <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="selectKotaKabupaten">
-                  Provinsi
-                </label>
-                <input
-                  type="text" id="id_provinsi" name="id_provinsi"
-                  className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  defaultValue={'18 - Lampung'}
-                  readOnly
-                />
-              </div>
-              <div className="relative w-full mb-3">
-                <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="selectKotaKabupaten">
-                  Kota/Kabupaten
-                </label>
-                <input
-                  type="text" id="id_kota" name="id_kota"
-                  className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  defaultValue={'01 - Lampung Selatan'}
-                  readOnly
-                />
-              </div>
-            </div>
+          <form className="flex flex-wrap mt-3" onSubmit={handleTambahKecamatan}>
             <div className="w-full lg:w-6/12 px-4">
               <div className="relative w-full mb-3">
                 <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="grid-password">
@@ -63,6 +57,8 @@ export default function FormTambahKecamatan() {
                 </label>
                 <input
                   type="text" id="kode_kecamatan" name="kode_kecamatan"
+                  value={kecamatan.kode_kecamatan}
+                  onChange={handleChange}
                   className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 />
               </div>
@@ -72,6 +68,8 @@ export default function FormTambahKecamatan() {
                 </label>
                 <input
                   type="text" id="nama_kecamatan" name="nama_kecamatan"
+                  value={kecamatan.nama_kecamatan}
+                  onChange={handleChange}
                   className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                 />
               </div>
@@ -80,17 +78,16 @@ export default function FormTambahKecamatan() {
               <button
                 className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150 ml-auto"
                 type="submit"
-                onClick={handleTambahKecamatan}
               >
                 Simpan
               </button>
-              <a
+              <button
                 className="bg-blueGray-400 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                 type="button"
                 onClick={handleButtonKembaliClick}
               >
                 Kembali
-              </a>
+              </button>
             </div>
           </form>
         </div>

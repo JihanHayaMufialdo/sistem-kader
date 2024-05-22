@@ -46,21 +46,23 @@ export default function TableKota() {
         }
       };
     
+    const totalPages = Math.ceil(data.length / itemsPerPage);
 
     const handleButtonHapusClick = (id_kota) => {
-        const confirmDelete = confirm('Apakah kamu yakin ingin menghapus Kecamatan ini?');
-        if (confirmDelete) {
-            axios.delete(`http://localhost:8000/kota/${id_kota}`)
-                .then(() => {
-                    setData(data.filter(item => item.id_kota !== id_kota));
-                })
-                .catch(error => {
-                    console.error('There was an error deleting the item!', error);
-                });
-        }
+      const confirmDelete = confirm('Apakah kamu yakin ingin menghapus Kecamatan ini?');
+      if (confirmDelete) {
+        axios.delete(`http://localhost:8000/kota/${id_kota}`)
+          .then(() => {
+            // Hapus item dari state data setelah sukses menghapus dari server
+            setData(data.filter(item => item.id_kota !== id_kota));
+            alert('Kecamatan berhasil dihapus');
+          })
+          .catch(error => {
+            console.error('There was an error deleting the item!', error);
+            alert('Gagal menghapus kecamatan');
+          });
+      }
     };
-
-    const totalPages = Math.ceil(data.length / itemsPerPage);
 
     const goToPage = (page) => {
         setCurrentPage(page);

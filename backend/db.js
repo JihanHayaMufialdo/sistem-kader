@@ -18,7 +18,16 @@ const connectionPool = mysql.createPool({
   host: "localhost",
   user: "root",
   password: "",
-  database: "database_ils"
+  database: "database_ils",
+  host: 'localhost',
+  user: 'root',
+  password: '',
+  database: 'database_ils',
+});
+
+connectionPool.getConnection()
+  .then(connection => {
+    console.log('Connected to MySQL database');
 });
 
 
@@ -102,7 +111,6 @@ res.send('Data berhasil disimpan ke database.');
 
    // Login
   
-
     // Menu Akun SSR
     app.get("/laporan", async (req, res) => {
       try {
@@ -180,6 +188,77 @@ res.send('Data berhasil disimpan ke database.');
       } catch (error) {
         console.error("Error deleting account:", error);
         res.status(500).send("Error deleting account");
+      }
+    });
+
+    // Menu Data Kader
+    // GET: Mengambil semua data kader
+    app.get('/kader', async (req, res) => {
+      try {
+        const [rows] = await connection.query('SELECT * FROM data_kader');
+        res.json(rows);
+      } catch (error) {
+        console.error('Error fetching kader data:', error);
+        res.status(500).send('Error retrieving kader data');
+      }
+    });
+
+    // GET: Mengambil data kader berdasarkan ID
+    app.get('/kader/:id', async (req, res) => {
+      try {
+        const { id } = req.params;
+        const query = 'SELECT * FROM data_kader WHERE id = ?';
+        const [rows] = await connection.query(query, [id]);
+
+        if (rows.length === 0) {
+          res.status(404).send('Kader not found');
+        } else {
+          res.json(rows[0]);
+        }
+      } catch (error) {
+        console.error('Error fetching kader data:', error);
+        res.status(500).send('Error retrieving kader data');
+      }
+    });
+
+    // POST: Menambahkan data kader baru
+    app.post('/kader', async (req, res) => {
+      try {
+        const { no_urut, nama, no_induk, jenis_kelamin, no_telp, alamat, id_kecamatan } = req.body;
+        const query = 'INSERT INTO data_kader (no_urut, nama, no_induk, jenis_kelamin, no_telp, alamat, id_kecamatan) VALUES (?, ?, ?, ?, ?, ?, ?)';
+        await connection.query(query, [no_urut, nama, no_induk, jenis_kelamin, no_telp, alamat, id_kecamatan]);
+        res.status(201).send('Kader data created successfully');
+      } catch (error) {
+        console.error('Error creating kader data:', error);
+        res.status(500).send('Error creating kader data');
+      }
+    });
+
+    // PUT: Memperbarui data kader
+    app.put('/kader/:id', async (req, res) => {
+      try {
+        const { no_urut, nama, no_induk, jenis_kelamin, no_telp, alamat, id_kecamatan } = req.body;
+        const { id } = req.params;
+        console.log('Received data:', { no_urut, nama, no_induk, jenis_kelamin, no_telp, alamat, id_kecamatan });
+        const query = 'UPDATE data_kader SET no_urut = ?, nama = ?, no_induk = ?, jenis_kelamin = ?, no_telp = ?, alamat = ?, id_kecamatan = ? WHERE id = ?';
+        await connection.query(query, [no_urut, nama, no_induk, jenis_kelamin, no_telp, alamat, id_kecamatan, id]);
+        res.status(200).send('Kader data updated successfully');
+      } catch (error) {
+        console.error('Error updating kader data:', error);
+        res.status(500).send('Error updating kader data');
+      }
+    });
+
+    // DELETE: Menghapus data kader
+    app.delete('/kader/:id', async (req, res) => {
+      try {
+        const { id } = req.params;
+        const query = 'DELETE FROM data_kader WHERE id = ?';
+        await connection.query(query, [id]);
+        res.status(200).send('Kader data deleted successfully');
+      } catch (error) {
+        console.error('Error deleting kader data:', error);
+        res.status(500).send('Error deleting kader data');
       }
     });
 
@@ -277,21 +356,45 @@ res.send('Data berhasil disimpan ke database.');
       }
     });
 
+    // Endpoint untuk mengambil data provinsi beserta jumlah kota/kabupaten dan kecamatan
+app.get('/provinsi', async (req, res) => {
+  try {
+    const query = `
+      SELECT 
+        provinsi.id, 
+        provinsi.nama_provinsi, 
+        COUNT(DISTINCT kota.id) AS jumlah_kota, 
+        COUNT(DISTINCT kecamatan.id) AS jumlah_kecamatan
+      FROM 
+        provinsi
+      LEFT JOIN 
+        kota ON kota.id_provinsi = provinsi.id
+      LEFT JOIN 
+        kecamatan ON kecamatan.id_kota = kota.id
+      GROUP BY 
+        provinsi.id
+    `;
+    const [results] = await connectionPool.query(query);
+    res.status(200).json(results);
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Error fetching data' });
+  }
+});
+
     // Route untuk menambahkan data kecamatan baru
-    app.post("/kecamatan", async (req, res) => {
+    app.post('/kota/kecamatan', async (req, res) => {
       try {
-        const { id_kota, kode_kecamatan, nama_kecamatan } = req.body;
-        const query =
-          "INSERT INTO kecamatan (id_kota, kode_kecamatan, nama_kecamatan) VALUES (?, ?, ?)";
-        await connection.query(query, [
-          id_kota,
-          kode_kecamatan,
-          nama_kecamatan,
-        ]);
-        res.status(201).send("Kecamatan added successfully");
+        const { kode_kecamatan, nama_kecamatan, id_kota } = req.body;
+        if (!kode_kecamatan || !nama_kecamatan || !id_kota) {
+          return res.status(400).json({ error: 'All fields are required' });
+        }
+        const query = "INSERT INTO kecamatan (kode_kecamatan, nama_kecamatan, id_kota) VALUES (?, ?, ?)";
+        const [result] = await connectionPool.query(query, [kode_kecamatan, nama_kecamatan, id_kota]);
+        res.status(201).json({ message: "Kecamatan added successfully", result });
       } catch (error) {
-        console.error("Error adding kecamatan:", error);
-        res.status(500).send("Error adding kecamatan");
+        console.error('Error adding kecamatan:', error);
+        res.status(500).json({ error: 'Error adding kecamatan' });
       }
     });
 
@@ -381,8 +484,7 @@ res.send('Data berhasil disimpan ke database.');
         res.status(500).send("Error deleting kota");
       }
     });
-
-
+    
     
 
     // POST: Menambahkan data baru ke tabel provinsi
@@ -459,8 +561,6 @@ res.send('Data berhasil disimpan ke database.');
         res.status(500).send("Error deleting provinsi");
       }
     });
-
-    
 
     // Start server with better error handling
     const port = 8000;
