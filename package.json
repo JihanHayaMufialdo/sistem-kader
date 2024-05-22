@@ -25,7 +25,10 @@
     "del": "^7.1.0",
     "express": "^4.19.2",
     "express-fileupload": "^1.5.0",
+<<<<<<< HEAD
+=======
     "express-session": "^1.18.0",
+>>>>>>> dev
     "express-validator": "^7.1.0",
     "gulp": "4.0.2",
     "gulp-append-prepend": "1.0.8",
