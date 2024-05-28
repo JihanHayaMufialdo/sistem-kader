@@ -11,12 +11,13 @@ export default function TableKecamatan() {
     const [currentPage, setCurrentPage] = useState(1);
     const itemsPerPage = 10;
     const totalPages = Math.ceil(data.length / itemsPerPage);
+    const [namaKota, setNamaKota] = useState('');
 
     useEffect(() => {
         if (id_kota) {
             const fetchData = async () => {
                 try {
-                    const response = await axios.get(`http://localhost:8000/kota/${id_kota}`);
+                    const response = await axios.get(`http://localhost:8000/kecamatan-by-kota/${id_kota}`);
                     setData(response.data);
                 } catch (error) {
                     console.error(error);
@@ -26,32 +27,37 @@ export default function TableKecamatan() {
         }
     }, [id_kota]);
 
+    useEffect(() => {
+        if (prevIdKota) {
+            const fetchNamaKota = async () => {
+                try {
+                    const response = await axios.get(`http://localhost:8000/kota/${prevIdKota}`);
+                    setNamaKota(response.data.nama_kota);
+                } catch (error) {
+                    console.error(error);
+                }
+            };
+            fetchNamaKota();
+        }
+    }, [prevIdKota]);
 
     const handleButtonTambahClick = () => {
         router.push(`/admin/kota/kecamatan/tambah?id_kota=${prevIdKota}`);
-      };
-      
+    };
 
-
-    const handleButtonUbahClick = async (id_kecamatan) => {
-        try {
-          const response = await axios.get(`http://localhost:8000/kecamatan/${id_kecamatan}`);
-          const dataToEdit = response.data;
-          router.push({
-            pathname: `/admin/kota/kecamatan/edit`,
-            query: { id_kecamatan: id_kecamatan },
+    const handleButtonUbahClick = (nama_kecamatan) => {
+        router.push({
+            pathname: `/admin/kota/kecamatan/edit/`,
+            query: { nama_kecamatan: nama_kecamatan, id_kota: id_kota },
         });
-        } catch (error) {
-          console.error('Error fetching kecamatan data:', error);
-        }
-      };
+    };
 
-    const handleButtonHapusClick = (id_kecamatan) => {
+    const handleButtonHapusClick = (nama_kecamatan) => {
         const confirmDelete = confirm('Apakah kamu yakin ingin menghapus Kecamatan ini?');
         if (confirmDelete) {
-            axios.delete(`http://localhost:8000/kecamatan/${id_kecamatan}`)
+            axios.delete(`http://localhost:8000/kecamatan/nama/${nama_kecamatan}`)
                 .then(() => {
-                    setData(data.filter(item => item.id_kecamatan !== id_kecamatan));
+                    setData(data.filter(item => item.nama_kecamatan !== nama_kecamatan));
                 })
                 .catch(error => {
                     console.error('There was an error deleting the item!', error);
@@ -79,7 +85,7 @@ export default function TableKecamatan() {
                         <div className="flex justify-between items-center">
                             <div className="relative w-full px-4 max-w-full flex-grow flex-1">
                                 <h6 className="text-green-700 text-xl font-bold">
-                                    Daftar Kecamatan
+                                    Daftar Kecamatan {namaKota}
                                 </h6>
                             </div>
                             <div className="flex justify-end mr-2">
@@ -115,12 +121,6 @@ export default function TableKecamatan() {
                                     scope="col"
                                     className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                                 >
-                                    Kota
-                                </th>
-                                <th
-                                    scope="col"
-                                    className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                                >
                                     Aksi
                                 </th>
                             </tr>
@@ -138,19 +138,16 @@ export default function TableKecamatan() {
                                         {item.nama_kecamatan}
                                     </td>
                                     <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                                        {item.kota}
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
                                         <button
                                             type="button"
-                                            onClick={() => handleButtonUbahClick(item.id_kecamatan)}
+                                            onClick={() => handleButtonUbahClick(item.nama_kecamatan)}
                                             className="bg-blueGray-700 text-white font-bold py-1 px-3 rounded mr-2"
                                         >
                                             Ubah
                                         </button>
                                         <button
                                             type="button"
-                                            onClick={() => handleButtonHapusClick(item.id_kecamatan)}
+                                            onClick={() => handleButtonHapusClick(item.nama_kecamatan)}
                                             className="bg-red-700 text-white font-bold py-1 px-3 rounded mr-2"
                                         >
                                             Hapus

@@ -1,3 +1,4 @@
+// Import useEffect, useState, dan axios
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import axios from "axios";
@@ -9,7 +10,8 @@ export default function FormEditKota() {
     const [kota, setKota] = useState({
         provinsi: "Lampung",
         kode_kota: "",
-        nama_kota: ""
+        nama_kota: "",
+        kode_provinsi: "" // Tambahkan kode_provinsi ke state kota
     });
 
     useEffect(() => {
@@ -23,7 +25,8 @@ export default function FormEditKota() {
                     setKota({
                         provinsi: dataToEdit.provinsi || "Lampung",
                         kode_kota: dataToEdit.kode_kota,
-                        nama_kota: dataToEdit.nama_kota
+                        nama_kota: dataToEdit.nama_kota,
+                        kode_provinsi: dataToEdit.kode_provinsi || "" // Set nilai default untuk kode_provinsi jika kosong
                     });
                 }
             } catch (error) {
@@ -57,6 +60,7 @@ export default function FormEditKota() {
             [name]: value
         }));
     };
+    
 
     return (
         <>
@@ -82,19 +86,19 @@ export default function FormEditKota() {
                                     readOnly
                                 />
                             </div>
-                            <div className="relative w-full mb-3">
-                                <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_kota">
-                                    Kode Kota/Kabupaten
+                        </div>
+                        <div className="w-full lg:w-6/12 px-4">
+                        <div className="relative w-full mb-3">
+                                <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_provinsi">
+                                    Kode Provinsi
                                 </label>
                                 <input
-                                    type="text" id="kode_kota" name="kode_kota"
+                                    type="text" id="kode_provinsi" name="kode_provinsi"
                                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                                    value={kota.kode_kota}
+                                    value={kota.kode_provinsi}
                                     onChange={handleChange}
                                 />
                             </div>
-                        </div>
-                        <div className="w-full lg:w-6/12 px-4">
                             <div className="relative w-full mb-3">
                                 <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kota">
                                     Kota/Kabupaten
@@ -103,6 +107,17 @@ export default function FormEditKota() {
                                     type="text" id="nama_kota" name="nama_kota"
                                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                                     value={kota.nama_kota}
+                                    onChange={handleChange}
+                                />
+                            </div>
+                            <div className="relative w-full mb-3">
+                                <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_kota">
+                                    Kode Kota/Kabupaten
+                                </label>
+                                <input
+                                    type="text" id="kode_kota" name="kode_kota"
+                                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                                    value={kota.kode_kota}
                                     onChange={handleChange}
                                 />
                             </div>
