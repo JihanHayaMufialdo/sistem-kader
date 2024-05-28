@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import CreatableSelect from 'react-select/creatable';
 
 const initialFormData = {
   nama_provinsi: '',
@@ -8,15 +9,59 @@ const initialFormData = {
   nama_kota: '',
   kode_kota: '',
   nama_kecamatan: '',
-  kode_kecamatan: ''
+  kode_kecamatan: '',
 };
 
 export default function FormTambahKota() {
   const router = useRouter();
   const [formData, setFormData] = useState(initialFormData);
+  const [provinsiOptions, setProvinsiOptions] = useState([]);
+  const [selectedProvinsi, setSelectedProvinsi] = useState(null);
+  const [manualKodeProvinsi, setManualKodeProvinsi] = useState(false);
+
+  useEffect(() => {
+    const fetchProvinsiData = async () => {
+      try {
+        const response = await axios.get('http://localhost:8000/provinsi');
+        const options = response.data.map(prov => ({
+          value: prov.kode_provinsi,
+          label: prov.nama_provinsi
+        }));
+        setProvinsiOptions(options);
+      } catch (error) {
+        console.error('Error fetching provinsi data:', error);
+      }
+    };
+    fetchProvinsiData();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleProvinsiChange = (selectedOption) => {
+    if (selectedOption) {
+      setSelectedProvinsi(selectedOption);
+      setFormData({
+        ...formData,
+        nama_provinsi: selectedOption.label,
+        kode_provinsi: selectedOption.value
+      });
+    } else {
+      setSelectedProvinsi(null);
+      setFormData({
+        ...formData,
+        nama_provinsi: '',
+        kode_provinsi: ''
+      });
+    }
+  };
+
+  const handleManualKodeProvinsi = () => {
+    setManualKodeProvinsi(!manualKodeProvinsi);
+    if (!manualKodeProvinsi) {
+      setFormData({ ...formData, kode_provinsi: '' });
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -24,8 +69,21 @@ export default function FormTambahKota() {
     const confirmation = window.confirm("Apakah anda yakin ingin menambahkan kota?");
     if (confirmation) {
       try {
-        const response = await axios.post('http://localhost:8000/tambah-data', formData);
-        console.log(response.data); // Menampilkan respon dari server
+        let id_provinsiToSend = selectedProvinsi ? selectedProvinsi.value : null;
+        if (!selectedProvinsi) {
+          const existingProvinsi = provinsiOptions.find(option => option.label === formData.nama_provinsi);
+          if (existingProvinsi) {
+            id_provinsiToSend = existingProvinsi.value;
+          }
+        }
+
+        const dataToSend = {
+          ...formData,
+          id_provinsi: id_provinsiToSend
+        };
+
+        const response = await axios.post('http://localhost:8000/tambah-data', dataToSend);
+        console.log(response.data);
         setFormData(initialFormData);
         router.push('/admin/kota/');
       } catch (error) {
@@ -56,17 +114,21 @@ export default function FormTambahKota() {
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="provinsi">
                     Provinsi
                   </label>
-                  <input
-                    type="text"
-                    id="provinsi"
+                  <CreatableSelect
+                    id="nama_provinsi"
                     name="nama_provinsi"
-                    value={formData.nama_provinsi}
-                    onChange={handleChange}
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    value={
+                      formData.nama_provinsi
+                        ? { value: formData.kode_provinsi, label: formData.nama_provinsi }
+                        : null
+                    }
+                    onChange={handleProvinsiChange}
+                    options={provinsiOptions}
+                    className="border-0 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_kota">
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kota">
                     Kota/Kabupaten
                   </label>
                   <input
@@ -79,7 +141,7 @@ export default function FormTambahKota() {
                   />
                 </div>
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_kota">
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kecamatan">
                     Kecamatan
                   </label>
                   <input
@@ -94,21 +156,34 @@ export default function FormTambahKota() {
               </div>
               <div className="w-full lg:w-6/12 px-4">
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kota">
-                    Kode Provinsi
-                  </label>
+                <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_provinsi">
+                  Kode Provinsi 
+                </label>
+                <div className="flex items-center">
                   <input
-                    type="text"
-                    id="kode_provinsi"
-                    name="kode_provinsi"
-                    value={formData.kode_provinsi}
-                    onChange={handleChange}
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                  />
+                  type="text"
+                  id="kode_provinsi"
+                  name="kode_provinsi"
+                  value={formData.kode_provinsi}
+                  onChange={handleChange}
+                  disabled={!manualKodeProvinsi}
+                  className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150 mr-2"
+               />
+                <label className="block uppercase text-green-600 text-xs font-bold mr-2" htmlFor="manualKodeProvinsi">
+                  Manual
+                </label>
+                <input
+                  type="checkbox"
+                  id="manualKodeProvinsi"
+                  name="manualKodeProvinsi"
+                  checked={manualKodeProvinsi}
+                  onChange={handleManualKodeProvinsi}
+                />
+                </div>
                 </div>
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kota">
-                  kode Kota
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_kota">
+                    Kode Kota
                   </label>
                   <input
                     type="text"
@@ -120,7 +195,7 @@ export default function FormTambahKota() {
                   />
                 </div>
                 <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="nama_kota">
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="kode_kecamatan">
                     Kode Kecamatan
                   </label>
                   <input

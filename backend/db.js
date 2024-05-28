@@ -475,65 +475,101 @@ res.send('Data berhasil disimpan ke database.');
 
     app.get("/kota/:id_kota", async (req, res) => {
       const { id_kota } = req.params;
-
+    
       try {
         const [rows] = await connection.query(
           `
           SELECT 
-            kc.id AS id_kecamatan,
-            kc.kode_kecamatan,
-            kc.nama_kecamatan,
-            k.nama_kota AS kota
+            k.id AS id_kota,
+            k.kode_kota,
+            k.nama_kota,
+            k.id_provinsi,
+            p.kode_provinsi
           FROM 
-            kecamatan kc
-          JOIN 
-            kota k ON kc.id_kota = k.id
+            kota k
+          INNER JOIN provinsi p ON k.id_provinsi = p.id
           WHERE 
-            kc.id_kota = ?
-        `,
+            k.id = ?
+          `,
           [id_kota]
         );
-
-        res.json(rows);
+    
+        if (rows.length > 0) {
+          res.json(rows[0]);
+        } else {
+          res.status(404).send("Data not found");
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         res.status(500).send("Error retrieving data");
       }
     });
 
-    app.get("/kecamatan/:id_kecamatan", async (req, res) => {
-      const { id_kecamatan } = req.params;
+    app.get("/kecamatan-by-kota/:id_kota", async (req, res) => {
+      const { id_kota } = req.params;
+  
       try {
-        const query = `
-          SELECT 
-            kc.id AS id_kecamatan,
-            kc.kode_kecamatan,
-            kc.nama_kecamatan,
-            k.id AS id_kota,
-            k.nama_kota AS kota,
-            p.id AS id_provinsi,
-            p.nama_provinsi AS provinsi
-          FROM 
-            kecamatan kc
-          JOIN 
-            kota k ON kc.id_kota = k.id
-          JOIN 
-            provinsi p ON k.id_provinsi = p.id
-          WHERE 
-            kc.id = ?
-        `;
-        const [rows] = await connection.query(query, [id_kecamatan]);
-
-        if (rows.length === 0) {
-          res.status(404).send("Kecamatan not found");
-        } else {
-          res.json(rows[0]);
-        }
+          const [rows] = await connection.query(
+              `
+              SELECT 
+                  kc.kode_kecamatan,
+                  kc.nama_kecamatan,
+                  k.nama_kota
+              FROM 
+                  kecamatan kc
+              JOIN 
+                  kota k ON kc.id_kota = k.id
+              WHERE 
+                  kc.id_kota = ?
+              `,
+              [id_kota]
+          );
+  
+          res.json(rows);
       } catch (error) {
-        console.error("Error fetching kecamatan data:", error);
-        res.status(500).send("Error retrieving kecamatan data");
+          console.error("Error fetching kecamatan data by kota:", error);
+          res.status(500).send("Error retrieving kecamatan data by kota");
       }
-    });
+  });
+  
+  
+    
+
+  app.get("/kecamatan/:id_kecamatan", async (req, res) => {
+    const { id_kecamatan } = req.params;
+    try {
+      const query = `
+        SELECT 
+          kc.id AS id_kecamatan,
+          kc.kode_kecamatan,
+          kc.nama_kecamatan,
+          k.id AS id_kota,
+          k.nama_kota AS kota,
+          p.id AS id_provinsi,
+          p.nama_provinsi AS provinsi
+        FROM 
+          kecamatan kc
+        JOIN 
+          kota k ON kc.id_kota = k.id
+        JOIN 
+          provinsi p ON k.id_provinsi = p.id
+        WHERE 
+          kc.id = ?
+      `;
+      const [rows] = await connectionPool.query(query, [id_kecamatan]);
+  
+      if (rows.length === 0) {
+        res.status(404).send("Kecamatan not found");
+      } else {
+        res.json(rows[0]);
+      }
+    } catch (error) {
+      console.error("Error fetching kecamatan data:", error);
+      res.status(500).send("Error retrieving kecamatan data");
+    }
+  });
+
+    
 
     // Endpoint untuk mengambil data provinsi beserta jumlah kota/kabupaten dan kecamatan
 app.get('/provinsi', async (req, res) => {
@@ -541,7 +577,8 @@ app.get('/provinsi', async (req, res) => {
     const query = `
       SELECT 
         provinsi.id, 
-        provinsi.nama_provinsi, 
+        provinsi.nama_provinsi,
+        provinsi.kode_provinsi, 
         COUNT(DISTINCT kota.id) AS jumlah_kota, 
         COUNT(DISTINCT kecamatan.id) AS jumlah_kecamatan
       FROM 
@@ -578,16 +615,16 @@ app.get('/provinsi', async (req, res) => {
     });
 
     // Route untuk mengubah data kecamatan
-    app.put("/kecamatan/:id_kecamatan", async (req, res) => {
+    app.put("/kecamatan/:id", async (req, res) => {
       try {
-        const { id_kecamatan } = req.params;
+        const { id } = req.params;
         const { kode_kecamatan, nama_kecamatan } = req.body;
         const query =
           "UPDATE kecamatan SET kode_kecamatan = ?, nama_kecamatan = ? WHERE id = ?";
         await connection.query(query, [
           kode_kecamatan,
           nama_kecamatan,
-          id_kecamatan,
+          id,
         ]);
         res.status(200).send("Kecamatan updated successfully");
       } catch (error) {
@@ -617,21 +654,30 @@ app.get('/provinsi', async (req, res) => {
     app.put("/kota/:id_kota", async (req, res) => {
       try {
         const { id_kota } = req.params;
-        const { kode_kota, nama_kota } = 
-          req.body;
-        const query =
-          "UPDATE kota SET kode_kota = ?, nama_kota = ? WHERE id = ?";
-        await connection.query(query, [
-          kode_kota,
-          nama_kota,
-          id_kota
-        ]);
-        res.status(200).send("Kota updated successfully");
+        const { kode_kota, nama_kota, kode_provinsi } = req.body;
+    
+        // Perbarui kode kota di tabel kota
+        const queryKota = "UPDATE kota SET kode_kota = ?, nama_kota = ? WHERE id = ?";
+        await connection.query(queryKota, [kode_kota, nama_kota, id_kota]);
+    
+        // Perbarui kode_provinsi di tabel provinsi berdasarkan relasi dengan kota
+        const queryUpdateProvinsi = `
+          UPDATE provinsi p
+          JOIN kota k ON p.id = k.id_provinsi
+          SET p.kode_provinsi = ?
+          WHERE k.id = ?
+        `;
+        await connection.query(queryUpdateProvinsi, [kode_provinsi, id_kota]);
+    
+        res.status(200).send("Kota and Provinsi updated successfully");
       } catch (error) {
-        console.error("Error updating kota:", error);
-        res.status(500).send("Error updating kota");
+        console.error("Error updating kota and provinsi:", error);
+        res.status(500).send("Error updating kota and provinsi");
       }
     });
+    
+    
+    
 
     
 
@@ -652,17 +698,19 @@ app.get('/provinsi', async (req, res) => {
       try {
         const { id_kota } = req.params;
         const query = "DELETE FROM kota WHERE id = ?";
-        await connectionPool.query(query, [id_kota]);
-         if (result.affectedRows > 0) {
-           res.status(200).send("Kota deleted successfully");
-         } else {
-           res.status(404).send("Kota not found");
-         }
+        const [result] = await connectionPool.query(query, [id_kota]);
+    
+        if (result.affectedRows > 0) {
+          res.status(200).send("Kota deleted successfully");
+        } else {
+          res.status(404).send("Kota not found");
+        }
       } catch (error) {
         console.error("Error deleting kota:", error);
-        res.status(500).send("Error deleting kota");
+        res.status(500).send("Error deleting kota. Please try again later."); // Pesan kesalahan yang lebih informatif
       }
     });
+    
     
     // POST: Menambahkan data baru ke tabel provinsi
     app.post("/tambah-data", async (req, res) => {
@@ -674,27 +722,34 @@ app.get('/provinsi', async (req, res) => {
           kode_kota,
           nama_kecamatan,
           kode_kecamatan,
+          id // Tambahkan field id_provinsi dari frontend
         } = req.body;
-
-        // Insert data ke tabel 'provinsi'
-        const provinsiQuery =
-          "INSERT INTO provinsi (nama_provinsi, kode_provinsi) VALUES (?, ?)";
-        const [provinsiResult] = await connection.query(provinsiQuery, [
-          nama_provinsi,
-          kode_provinsi,
-        ]);
-        const id_provinsi = provinsiResult.insertId;
-
+    
+        // Cek apakah nama provinsi sudah ada di database
+        const existingProvinsiQuery = "SELECT id FROM provinsi WHERE nama_provinsi = ?";
+        const [existingProvinsiRows] = await connection.query(existingProvinsiQuery, [nama_provinsi]);
+    
+        let id_toInsert = id; // Gunakan ID provinsi dari frontend
+        if (existingProvinsiRows.length > 0) {
+          // Jika nama provinsi sudah ada, gunakan ID provinsi yang sudah ada
+          id_toInsert = existingProvinsiRows[0].id;
+        } else {
+          // Jika nama provinsi belum ada, tambahkan data provinsi baru
+          const newProvinsiQuery = "INSERT INTO provinsi (nama_provinsi, kode_provinsi) VALUES (?, ?)";
+          const [newProvinsiResult] = await connection.query(newProvinsiQuery, [nama_provinsi, kode_provinsi]);
+          id_toInsert = newProvinsiResult.insertId;
+        }
+    
         // Insert data ke tabel 'kota'
         const kotaQuery =
           "INSERT INTO kota (nama_kota, kode_kota, id_provinsi) VALUES (?, ?, ?)";
         const [kotaResult] = await connection.query(kotaQuery, [
           nama_kota,
           kode_kota,
-          id_provinsi,
+          id_toInsert // Gunakan ID provinsi yang sudah ditentukan
         ]);
         const id_kota = kotaResult.insertId;
-
+    
         // Insert data ke tabel 'kecamatan'
         const kecamatanQuery =
           "INSERT INTO kecamatan (nama_kecamatan, kode_kecamatan, id_kota) VALUES (?, ?, ?)";
@@ -703,13 +758,15 @@ app.get('/provinsi', async (req, res) => {
           kode_kecamatan,
           id_kota,
         ]);
-
+    
         res.status(201).send("Data added successfully");
       } catch (error) {
         console.error("Error adding data:", error);
         res.status(500).send("Error adding data");
       }
     });
+    
+    
 
     // PUT: Memperbarui data di tabel provinsi
     app.put("/provinsi/:id", async (req, res) => {
@@ -738,6 +795,99 @@ app.get('/provinsi', async (req, res) => {
         res.status(500).send("Error deleting provinsi");
       }
     });
+
+    app.delete("/kota/:nama_kota", async (req, res) => {
+      try {
+        const { nama_kota } = req.params;
+        const query = "DELETE FROM kota WHERE nama_kota = ?";
+        await connectionPool.execute(query, [nama_kota]);
+        res.status(200).send("Kota deleted successfully");
+      } catch (error) {
+        console.error("Error deleting kota:", error);
+        res.status(500).send("Error deleting kota");
+      }
+    });
+
+    app.delete("/kota/:id_kota", async (req, res) => {
+      try {
+        const { id_kota } = req.params;
+        const query = "DELETE FROM kota WHERE id = ?";
+        const [result] = await connectionPool.query(query, [id_kota]);
+    
+        if (result.affectedRows > 0) {
+          res.status(200).send("Kota deleted successfully");
+        } else {
+          res.status(404).send("Kota not found");
+        }
+      } catch (error) {
+        console.error("Error deleting kota:", error);
+        res.status(500).send("Error deleting kota. Please try again later."); // Pesan kesalahan yang lebih informatif
+      }
+    });
+
+    // Sebaran Wilayah 2
+    // Menghapus Nama Kecamatan
+    app.delete("/kecamatan/nama/:nama_kecamatan", async (req, res) => {
+      try {
+        const { nama_kecamatan } = req.params;
+        const query = "DELETE FROM kecamatan WHERE nama_kecamatan = ?";
+        const [result] = await connectionPool.query(query, [nama_kecamatan]);
+    
+        if (result.affectedRows > 0) {
+          res.status(200).send("Kecamatan deleted successfully");
+        } else {
+          res.status(404).send("Kecamatan not found");
+        }
+      } catch (error) {
+        console.error("Error deleting kecamatan:", error);
+        res.status(500).send("Error deleting kecamatan");
+      }
+    });
+
+    app.get('/kecamatan-by-nama/:nama_kecamatan/:id_kota', async (req, res) => {
+      try {
+        const { nama_kecamatan, id_kota } = req.params;
+        const query = "SELECT * FROM kecamatan WHERE nama_kecamatan = ? AND id_kota = ?";
+        const [rows] = await connectionPool.query(query, [nama_kecamatan, id_kota]);
+    
+        if (rows.length > 0) {
+          res.status(200).json(rows[0]);
+        } else {
+          res.status(404).send("Kecamatan not found");
+        }
+      } catch (error) {
+        console.error("Error fetching kecamatan data:", error);
+        res.status(500).send("Error fetching kecamatan data");
+      }
+    });
+
+    // DELETE: Menghapus data provinsi dan data terkait (kota dan kecamatan)
+app.delete("/provinsi/:id_provinsi", async (req, res) => {
+  try {
+    const { id_provinsi } = req.params;
+
+    // Delete kecamatan data related to the province
+    const deleteKecamatanQuery = "DELETE FROM kecamatan WHERE id_kota IN (SELECT id FROM kota WHERE id_provinsi = ?)";
+    await connectionPool.query(deleteKecamatanQuery, [id_provinsi]);
+
+    // Delete kota data related to the province
+    const deleteKotaQuery = "DELETE FROM kota WHERE id_provinsi = ?";
+    await connectionPool.query(deleteKotaQuery, [id_provinsi]);
+
+    // Delete the province itself
+    const deleteProvinsiQuery = "DELETE FROM provinsi WHERE id = ?";
+    await connectionPool.query(deleteProvinsiQuery, [id_provinsi]);
+
+    res.status(200).send("Province and related data deleted successfully");
+  } catch (error) {
+    console.error("Error deleting province and related data:", error);
+    res.status(500).send("Error deleting province and related data");
+  }
+});
+
+  
+    
+    
 
     // Start server with better error handling
     const port = 8000;
