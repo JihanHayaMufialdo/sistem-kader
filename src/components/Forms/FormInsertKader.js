@@ -137,7 +137,7 @@ export default function InsertKader() {
                       value: jenisKader.jenis_kader,
                       label: jenisKader.jenis_kader
                     }))}
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    className="border-0 px-3 py-1 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   />
                 </div>
                 <div className="relative w-full mb-3">
