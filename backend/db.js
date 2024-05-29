@@ -22,8 +22,7 @@ const connectionPool = mysql.createPool({
   host: 'localhost',
   user: 'root',
   password: '',
-  database: 'database_ils',
-  port : '3308',
+  database: 'database_ils'
 });
 
 connectionPool.getConnection()
@@ -796,6 +795,76 @@ app.get('/provinsi', async (req, res) => {
       }
     });
 
+// Filter
+// Endpoint untuk menyaring data kader berdasarkan filter
+app.get("/filter-kader", async (req, res) => {
+  try {
+    const { jenis_kader, jenis_kelamin, provinsi, kota_kabupaten, kecamatan } = req.query;
+    let conditions = [];
+
+    if (jenis_kader) {
+      conditions.push(`jenis_kader = '${jenis_kader}'`);
+    }
+    if (jenis_kelamin) {
+      conditions.push(`jenis_kelamin = '${jenis_kelamin}'`);
+    }
+    if (provinsi) {
+      conditions.push(`nama_provinsi = '${provinsi}'`);
+    }
+    if (kota_kabupaten) {
+      conditions.push(`nama_kota = '${kota_kabupaten}'`);
+    }
+    if (kecamatan) {
+      conditions.push(`nama_kecamatan = '${kecamatan}'`);
+    }
+
+    let whereClause = "";
+    if (conditions.length > 0) {
+      whereClause = "WHERE " + conditions.join(" AND ");
+    }
+
+    const query = `
+      SELECT 
+        dk.*, p.nama_provinsi, k.nama_kota, kec.nama_kecamatan
+      FROM 
+        data_kader dk
+      JOIN 
+        kecamatan kec ON dk.id_kecamatan = kec.id
+      JOIN 
+        kota k ON kec.id_kota = k.id
+      JOIN 
+        provinsi p ON k.id_provinsi = p.id
+      ${whereClause}
+    `;
+    const [rows] = await connectionPool.query(query);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error fetching filtered kader data:", error);
+    res.status(500).send("Error retrieving filtered kader data");
+  }
+});
+
+
+// Endpoint untuk mengambil pilihan nama provinsi, kabupaten/kota, dan kecamatan
+app.get('/filter-options', async (req, res) => {
+  try {
+    const [provinsiRows] = await connectionPool.query('SELECT DISTINCT nama_provinsi FROM provinsi');
+    const [kotaRows] = await connectionPool.query('SELECT DISTINCT nama_kota FROM kota');
+    const [kecamatanRows] = await connectionPool.query('SELECT DISTINCT nama_kecamatan FROM kecamatan');
+    
+    const provinsiOptions = provinsiRows.map(row => ({ id: row.id, nama: row.nama_provinsi }));
+    const kotaOptions = kotaRows.map(row => ({ id: row.id, nama: row.nama_kota }));
+    const kecamatanOptions = kecamatanRows.map(row => ({ id: row.id, nama: row.nama_kecamatan }));
+    
+    res.json({ provinsi: provinsiOptions, kota: kotaOptions, kecamatan: kecamatanOptions });
+  } catch (error) {
+    console.error('Error fetching filter options:', error);
+    res.status(500).send('Error retrieving filter options');
+  }
+});
+
+
+=======
     app.delete("/kota/:nama_kota", async (req, res) => {
       try {
         const { nama_kota } = req.params;
@@ -884,10 +953,6 @@ app.delete("/provinsi/:id_provinsi", async (req, res) => {
     res.status(500).send("Error deleting province and related data");
   }
 });
-
-  
-    
-    
 
     // Start server with better error handling
     const port = 8000;

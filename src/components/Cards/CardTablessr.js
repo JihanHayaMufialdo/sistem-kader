@@ -2,8 +2,6 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
 const axios = require("axios");
 
-import FormEditSSR from "../Forms/FormEditSSR";
-
 export default function TableSSR() {
   const [showPassword, setShowPassword] = useState(false);
   const toggleShowPassword = () => {
