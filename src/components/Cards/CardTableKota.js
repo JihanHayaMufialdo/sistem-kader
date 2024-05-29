@@ -48,21 +48,39 @@ export default function TableKota() {
     
     const totalPages = Math.ceil(data.length / itemsPerPage);
 
-    const handleButtonHapusClick = (id_kota) => {
-      const confirmDelete = confirm('Apakah kamu yakin ingin menghapus Kecamatan ini?');
-      if (confirmDelete) {
-        axios.delete(`http://localhost:8000/kota/${id_kota}`)
-          .then(() => {
-            // Hapus item dari state data setelah sukses menghapus dari server
-            setData(data.filter(item => item.id_kota !== id_kota));
-            alert('Kecamatan berhasil dihapus');
-          })
-          .catch(error => {
-            console.error('There was an error deleting the item!', error);
-            alert('Gagal menghapus kecamatan');
-          });
-      }
+    const handleButtonHapusClick = async (id_kota) => {
+        try {
+            // Check if there are any related data in the database
+            const response = await axios.get(`http://localhost:8000/kota/${id_kota}`);
+            const kotaData = response.data;
+            const relatedData = data.filter(item => item.provinsi === kotaData.provinsi && item.kota === kotaData.kota);
+            
+            // If no related data found, delete the city and potentially the province
+            if (relatedData.length === 0) {
+                const confirmDelete = confirm('Apakah kamu yakin ingin menghapus Kota/Kabupaten ini?');
+                if (confirmDelete) {
+                    axios.delete(`http://localhost:8000/kota/${id_kota}`)
+                        .then(() => {
+                            // Hapus item dari state data setelah sukses menghapus dari server
+                            setData(data.filter(item => item.id_kota !== id_kota));
+                            alert('Kota/Kabupaten berhasil dihapus');
+                        })
+                        .catch(error => {
+                            console.error('There was an error deleting the city!', error);
+                            alert('Gagal menghapus Kota/Kabupaten');
+                        });
+                }
+            } else {
+                alert('Tidak dapat menghapus Kota/Kabupaten karena terdapat data terkait');
+            }
+        } catch (error) {
+            console.error('Error fetching city data:', error);
+            alert('Gagal menghapus Kota/Kabupaten');
+        }
     };
+    
+      
+      
 
     const goToPage = (page) => {
         setCurrentPage(page);
