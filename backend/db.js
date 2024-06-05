@@ -19,10 +19,7 @@ const connectionPool = mysql.createPool({
   user: "root",
   password: "",
   database: "database_ils",
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'database_ils'
+
 });
 
 connectionPool.getConnection()
@@ -42,14 +39,27 @@ connectionPool
         },
         filename: (req, file, cb) => {
           cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+          cb(null, new Date(). toString + path.extname(file.originalname)); 
         }
       });
-      
-      // Initialize Multer with the storage configuration
-      const upload = multer({ storage });
-      
+
+      const upload = multer({ 
+        storage: storage,
+        fileFilter: (req, file, cb) => {
+          const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif'];
+          const fileExtension = path.extname(file.originalname).toLowerCase();
+          if (!allowedExtensions.includes(fileExtension)) {
+            return cb(new Error('Hanya file gambar yang diizinkan.'));
+          }
+          cb(null, true);
+        }
+      });
+
+
+
       // Serve static files from the "uploads" directory
-      app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+      // app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+      app.use(upload.single('uploads'));
       
       // Handle file upload
       app.post('/upload/kader', upload.single('file'), (req, res) => {
@@ -264,11 +274,6 @@ res.send('Data berhasil disimpan ke database.');
       }
     });
     
-    
-    
-    
-    
-
     // POST: Menambahkan data kader baru
     app.post('/kader', async (req, res) => {
       const {
@@ -862,9 +867,6 @@ app.get('/filter-options', async (req, res) => {
     res.status(500).send('Error retrieving filter options');
   }
 });
-
-
-=======
     app.delete("/kota/:nama_kota", async (req, res) => {
       try {
         const { nama_kota } = req.params;
@@ -954,7 +956,46 @@ app.delete("/provinsi/:id_provinsi", async (req, res) => {
   }
 });
 
-    // Start server with better error handling
+    //GET DATA KADER UNTUK KTA DI BAGIAN SSR
+    app.get('/kader/:id', async (req, res) => {
+        try {
+            const kader = await Kader.findById(req.params.id);
+            if (!kader) {
+                return res.status(404).send({ message: 'Kader not found' });
+            }
+            res.status(200).send(kader);
+        } catch (error) {
+            console.error('Error fetching kader data:', error);
+            res.status(500).send({ message: 'Internal server error' });
+        }
+    });
+    
+
+    //POST FOTO UNTUK KTA DI BAGIAN SSR
+      app.post('/upload/photo', upload.single('file'), (req, res) => {
+        if (!req.file) {
+          return res.status(400).send('No file uploaded.');
+        }
+      
+        const filePath = req.file.path;
+        const fileName = req.file.filename;
+      
+        const sql = 'INSERT INTO photos (file_path, file_name) VALUES (?, ?)';
+      
+        connectionPool.query(sql, [filePath, fileName], (err, result) => {
+          if (err) {
+            console.error('Database error:', err);
+            return res.status(500).send('Failed to save data to database.');
+          }
+      
+          res.json({ fotoURL: filePath });  // Return the file path or URL
+        });
+      
+        console.log('Uploaded file:', req.file);
+      });
+    
+
+    /// Start server with better error handling
     const port = 8000;
     app
       .listen(port, () => console.log(`Server running on port ${port}`))
@@ -967,3 +1008,4 @@ app.delete("/provinsi/:id_provinsi", async (req, res) => {
     console.error("Error connecting to database:", error);
     process.exit(1); // Exit with error code on connection error
   });
+``
