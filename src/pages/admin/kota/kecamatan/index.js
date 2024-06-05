@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../../admin/index.js";
 
 // components
 import TableKecamatan from "../../../../components/Cards/CardTableKecamatan.js";
@@ -7,6 +8,7 @@ import TableKecamatan from "../../../../components/Cards/CardTableKecamatan.js";
 import Admin from "../../../../layouts/Admin.js";
 
 export default function Kecamatan() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

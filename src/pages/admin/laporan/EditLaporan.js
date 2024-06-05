@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import FormEditLaporan from "../../../components/Forms/FormEditLaporan.js";
@@ -6,6 +7,7 @@ import FormEditLaporan from "../../../components/Forms/FormEditLaporan.js";
 import Admin from "../../../layouts/Admin.js";
 
 export default function EditLaporan() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

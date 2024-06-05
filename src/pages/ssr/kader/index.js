@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import CardTableKaderSSR from "../../../components/Cards/CardTableKaderSSR.js";
@@ -7,6 +8,7 @@ import CardTableKaderSSR from "../../../components/Cards/CardTableKaderSSR.js";
 import SSR from "../../../layouts/SSR.js";
 
 export default function Kader() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">
