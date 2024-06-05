@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import TableProvinsi from "../../../components/Cards/CardTableProvinsi";
@@ -8,6 +9,7 @@ import TableKota from "../../../components/Cards/CardTableKota.js";
 import Admin from "../../../layouts/Admin.js";
 
 export default function Kota() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

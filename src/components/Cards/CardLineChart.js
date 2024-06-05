@@ -1,49 +1,112 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Chart from "chart.js";
 
+const months = [
+  "January", "February", "March", "April", "May", "June",
+  "July", "August", "September", "October", "November", "December"
+];
+
+const monthMap = {
+  "January": 1,
+  "February": 2,
+  "March": 3,
+  "April": 4,
+  "May": 5,
+  "June": 6,
+  "July": 7,
+  "August": 8,
+  "September": 9,
+  "October": 10,
+  "November": 11,
+  "December": 12,
+};
+
 export default function CardLineChart() {
-  React.useEffect(() => {
+  const [startMonth, setStartMonth] = useState("January");
+  const [endMonth, setEndMonth] = useState("December");
+  const [selectedYear, setSelectedYear] = useState("2024");
+  const [chartData, setChartData] = useState({
+    labels: [],
+    datasets: [],
+  });
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch('http://localhost:8000/peringkat_perwilayah');
+        const data = await response.json();
+
+        const startMonthNum = monthMap[startMonth];
+        const endMonthNum = monthMap[endMonth];
+
+        const filteredData = data.filter(item => {
+          const monthNum = item.Bulan;
+          return (
+            monthNum >= startMonthNum &&
+            monthNum <= endMonthNum &&
+            item.Tahun === parseInt(selectedYear)
+          );
+        });
+
+        const labels = months.slice(startMonthNum - 1, endMonthNum);
+        const tptData = new Array(labels.length).fill(0);
+        const ikrtData = new Array(labels.length).fill(0);
+        const ikNonrtData = new Array(labels.length).fill(0);
+        const ternotifikasiData = new Array(labels.length).fill(0);
+
+        filteredData.forEach(item => {
+          const monthIndex = item.Bulan - startMonthNum;
+          tptData[monthIndex] += parseInt(item.TPT) || 0;
+          ikrtData[monthIndex] += parseInt(item.IK) || 0;
+          ikNonrtData[monthIndex] += parseInt(item.IK_Nonrt) || 0;
+          ternotifikasiData[monthIndex] += parseInt(item.Ternotifikasi) || 0;
+        });
+
+        setChartData({
+          labels,
+          datasets: [
+            {
+              label: "TPT",
+              backgroundColor: "#4c51bf",
+              borderColor: "#4c51bf",
+              data: tptData,
+              fill: false,
+            },
+            {
+              label: "IKRT",
+              backgroundColor: "#ff0000",
+              borderColor: "#ff0000",
+              data: ikrtData,
+              fill: false,
+            },
+            {
+              label: "IK Non RT",
+              backgroundColor: "#00ff00",
+              borderColor: "#00ff00",
+              data: ikNonrtData,
+              fill: false,
+            },
+            {
+              label: "Laporan Ternotifikasi",
+              backgroundColor: "#fbcb3a",
+              borderColor: "#fbcb3a",
+              data: ternotifikasiData,
+              fill: false,
+            },
+          ],
+        });
+      } catch (error) {
+        console.error('Error fetching data:', error);
+      }
+    }
+
+    fetchData();
+  }, [startMonth, endMonth, selectedYear]);
+
+  useEffect(() => {
     var config = {
       type: "line",
-      data: {
-        labels: [
-          "Januari",
-          "Februari",
-          "Maret",
-          "April",
-          "Mei",
-          "Juni",
-          "Juli",
-          "Agustus",
-          "September",
-          "Oktober",
-          "November",
-          "Desember",
-        ],
-        datasets: [
-          {
-            label: "TPT",
-            backgroundColor: "#4c51bf",
-            borderColor: "#4c51bf",
-            data: [65, 78, 66, 44, 56, 67, 75, 60, 43, 22, 78, 98],
-            fill: false,
-          },
-          {
-            label: "IKRT",
-            backgroundColor: "#ff0000",
-            borderColor: "#ff0000",
-            data: [40, 68, 86, 74, 56, 60, 87, 45, 77, 34, 28, 70],
-            fill: false,
-          },
-          {
-            label: "Laporan Ternotifikasi",
-            backgroundColor: "#fbcb3a",
-            borderColor: "#fbcb3a",
-            data: [44, 62, 6, 71, 48, 10, 17, 11, 56, 78, 92, 34, 24],
-            fill: false,
-          },
-        ],
-      },
+      data: chartData,
       options: {
         maintainAspectRatio: false,
         responsive: true,
@@ -75,7 +138,7 @@ export default function CardLineChart() {
               },
               display: true,
               scaleLabel: {
-                display: false,
+                display: true,
                 labelString: "Month",
                 fontColor: "black",
               },
@@ -97,8 +160,8 @@ export default function CardLineChart() {
               },
               display: true,
               scaleLabel: {
-                display: false,
-                labelString: "Value",
+                display: true,
+                labelString: "Quantity",
                 fontColor: "black",
               },
               gridLines: {
@@ -116,8 +179,10 @@ export default function CardLineChart() {
       },
     };
     var ctx = document.getElementById("line-chart").getContext("2d");
+    if (window.myLine) window.myLine.destroy(); // Destroy the previous chart instance
     window.myLine = new Chart(ctx, config);
-  }, []);
+  }, [chartData]);
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-white">
@@ -128,6 +193,37 @@ export default function CardLineChart() {
                 TREN
               </h6>
               <h2 className="text-black text-xl font-semibold">Capaian Bulanan</h2>
+            </div>
+            <div className="relative w-full max-w-full flex-grow flex-1 text-right">
+              <select
+                value={startMonth}
+                onChange={(e) => setStartMonth(e.target.value)}
+                className="mr-2 p-1 border rounded"
+              >
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <select
+                value={endMonth}
+                onChange={(e) => setEndMonth(e.target.value)}
+                className="mr-2 p-1 border rounded"
+              >
+                {months.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+              <input
+                type="number"
+                value={selectedYear}
+                onChange={(e) => setSelectedYear(e.target.value)}
+                className="p-1 border rounded"
+                placeholder="Year"
+              />
             </div>
           </div>
         </div>

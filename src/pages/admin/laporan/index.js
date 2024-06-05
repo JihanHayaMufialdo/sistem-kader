@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import TableLaporan from "../../../components/Cards/CardTableLaporan.js";
@@ -7,7 +8,9 @@ import TableLaporan from "../../../components/Cards/CardTableLaporan.js";
 
 import Admin from "../../../layouts/Admin.js";
 
+
 export default function Laporan() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

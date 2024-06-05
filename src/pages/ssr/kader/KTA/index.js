@@ -1,9 +1,11 @@
 import React from "react";
+import { useAuth } from "../../../admin/index.js";
 
 // components
 import CardKTA from "/src/components/Cards/CardKTA.js";
 
 export default function Kader() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

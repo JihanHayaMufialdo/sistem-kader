@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import FormUbahDetail from "../../../components/Forms/FormUbahDetail.js";
@@ -6,6 +7,7 @@ import FormUbahDetail from "../../../components/Forms/FormUbahDetail.js";
 import Admin from "../../../layouts/Admin.js";
 
 export default function UbahDetailLaporan() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

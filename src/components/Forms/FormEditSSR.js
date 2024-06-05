@@ -5,14 +5,15 @@ import axios from "axios";
 export default function FormEditSSR() {
   const router = useRouter();
   const { nama_pengguna } = router.query;
+  const [kotaKabupatenList, setKotaKabupatenList] = useState([]);
 
 
   const [formData, setFormData] = useState({
-    no_kta: "",
     nama: "",
     kota_kabupaten: "",
     nama_pengguna: "",
     kata_sandi: "",
+    role: "", 
   });
 
   useEffect(() => {
@@ -22,11 +23,10 @@ export default function FormEditSSR() {
           const response = await axios.get(`http://localhost:8000/akun/${nama_pengguna}`);
           const dataToEdit = response.data;
           setFormData({
-            no_kta: dataToEdit.no_kta,
             nama: dataToEdit.nama,
             kota_kabupaten: dataToEdit.kota_kabupaten,
             nama_pengguna: dataToEdit.nama_pengguna,
-            kata_sandi: dataToEdit.kata_sandi,
+            role: dataToEdit.role,
           });
         }
       } catch (error) {
@@ -60,25 +60,20 @@ export default function FormEditSSR() {
   }
 };
 
-
   const handleButtonKembaliClick = () => {
     router.push('/admin/ssr/');
 };
 
-const kotaKabupatenList = [
-    "",
-    "Kota Bandar Lampung",
-    "Kota Metro",
-    "Lampung Selatan",
-    "Lampung Tengah",
-    "Lampung Timur",
-    "Lampung Utara",
-    "Pesawaran",
-    "Pringsewu",
-    "Tanggamus",
-    "Tulang Bawang Barat",
-
-  ];
+const fetchKotaKabupaten = async () => {
+  try {
+    const response = await axios.get('http://localhost:8000/nama-kota');
+    setKotaKabupatenList(response.data);
+  } catch (error) {
+    console.error('Error fetching kota/kabupaten:', error);
+    setError('Failed to load kota/kabupaten data');
+  }
+};
+fetchKotaKabupaten();
 
 
   return (
@@ -93,20 +88,7 @@ const kotaKabupatenList = [
           <form onSubmit={handleSubmit}>
             <div className="flex flex-wrap mt-3">
               <div className="w-full lg:w-6/12 px-4">
-              <div className="relative w-full mb-3">
-                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="selectKotaKabupaten">
-                    No KTA
-                  </label>
-                  <input
-                    type="text"
-                    id="no_kta"
-                    name="no_kta"
-                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
-                    value={formData.no_kta}
-                    onChange={handleChange}
-                  />
-                </div>
-                <div className="relative w-full mb-3">
+               <div className="relative w-full mb-3">
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="selectKotaKabupaten">
                     Nama
                   </label>
@@ -124,19 +106,39 @@ const kotaKabupatenList = [
                     Kota/Kabupaten
                   </label>
                   <select
-                    id="kota" name="kota_kabupaten" value={formData.kota_kabupaten} onChange={handleChange}
+                    id="selectKotaKabupaten"
+                    name="kota_kabupaten"
+                    value={formData.kota_kabupaten}
+                    onChange={handleChange}
                     className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
                   >
-                    {kotaKabupatenList.map((item, index) => (
-                      <option key={index} value={item}>
-                        {item}
+                    <option value="">Pilih Kota/Kabupaten</option>
+                    {kotaKabupatenList.map((kota) => (
+                      <option key={kota.nama_kota} value={kota.nama_kota}>
+                        {kota.nama_kota}
                       </option>
                     ))}
                   </select>
                 </div>
+                <div className="relative w-full mb-3">
+                  <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="selectRole">
+                    Role
+                  </label>
+                  <select
+                    id="selectRole"
+                    name="role"
+                    value={formData.role}
+                    onChange={handleChange}
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                  >
+                    <option value="">Select Role</option>
+                    <option value="Admin">Admin</option>
+                    <option value="SSR">SSR</option>
+                  </select>
+                </div>
               </div>
               <div className="w-full lg:w-6/12 px-4">
-                <div className="relative w-full mb-3">
+               <div className="relative w-full mb-3">
                   <label className="block uppercase text-green-600 text-xs font-bold mb-2" htmlFor="grid-password">
                     Nama Pengguna
                   </label>

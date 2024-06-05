@@ -27,7 +27,7 @@ export default function CardStats({
             <div className="relative w-auto pl-4 flex-initial">
               <div
                 className={
-                  "text-white p-3 text-center inline-flex items-center justify-center w-12 h-12 shadow-lg rounded-full " +
+                  "text-white p-3 inline-flex  justify-center h-12 shadow-lg rounded-full " +
                   statIconColor
                 }
               >

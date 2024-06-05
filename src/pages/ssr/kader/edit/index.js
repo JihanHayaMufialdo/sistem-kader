@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../../admin/index.js";
 
 // components
 import FormEditKaderSSR from "../../../components/Forms/FormEditKaderSSR.js";
@@ -7,6 +8,7 @@ import FormEditKaderSSR from "../../../components/Forms/FormEditKaderSSR.js";
 import SSR from "../../../../layouts/SSR.js";
 
 export default function EditKader() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

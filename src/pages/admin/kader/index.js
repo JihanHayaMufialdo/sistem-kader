@@ -1,7 +1,7 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
-
 import TableDK from "../../../components/Cards/CardTableDK.js";
 
 
@@ -10,6 +10,7 @@ import TableDK from "../../../components/Cards/CardTableDK.js";
 import Admin from "../../../layouts/Admin.js";
 
 export default function TableeDK() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

@@ -1,51 +1,177 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Chart from "chart.js";
 
-export default function CardBarChart() {
-  const [selectedRegion, setSelectedRegion] = useState("All"); // State untuk menyimpan daerah yang dipilih
+const months = [
+  { value: 1, label: "Januari" },
+  { value: 2, label: "Februari" },
+  { value: 3, label: "Maret" },
+  { value: 4, label: "April" },
+  { value: 5, label: "Mei" },
+  { value: 6, label: "Juni" },
+  { value: 7, label: "Juli" },
+  { value: 8, label: "Agustus" },
+  { value: 9, label: "September" },
+  { value: 10, label: "Oktober" },
+  { value: 11, label: "November" },
+  { value: 12, label: "Desember" }
+];
 
-  React.useEffect(() => {
-    let config = {
-      type: "bar",
-      data: {
-        labels: [
-          "Januari",
-          "Februari",
-          "Maret",
-          "April",
-          "Mei",
-          "Juni",
-          "Juli",
-          "Agustus",
-          "September",
-          "Oktober",
-          "November",
-          "Desember",
-        ],
-        datasets: [
-          {
-            label: "TPT",
-            backgroundColor: "#4c51bf",
-            borderColor: "#4c51bf",
-            data: [65, 78, 66, 44, 56, 67, 75, 60, 43, 22, 78, 98],
-            fill: false,
-          },
-          {
-            label: "IKRT",
-            backgroundColor: "#ff0000",
-            borderColor: "#ff0000",
-            data: [40, 68, 86, 74, 56, 60, 87, 45, 77, 34, 28, 70],
-            fill: false,
-          },
-          {
-            label: "Laporan Ternotifikasi",
-            backgroundColor: "#fbcb3a",
-            borderColor: "#fbcb3a",
-            data: [44, 62, 6, 71, 48, 10, 17, 11, 56, 78, 92, 34, 24],
-            fill: false,
-          },
-        ],
+export default function CardBarChart() {
+  const [selectedRegion, setSelectedRegion] = useState("All");
+  const [startMonth, setStartMonth] = useState("");
+  const [endMonth, setEndMonth] = useState("");
+  const [year, setYear] = useState("");
+  const [apiData, setApiData] = useState([]);
+  const [uniqueRegions, setUniqueRegions] = useState([]);
+  const [data, setData] = useState({
+    labels: [],
+    datasets: [
+      {
+        label: "TPT",
+        backgroundColor: "#4c51bf",
+        borderColor: "#4c51bf",
+        data: [],
+        fill: false,
       },
+      {
+        label: "IKRT",
+        backgroundColor: "#ff0000",
+        borderColor: "#ff0000",
+        data: [],
+        fill: false,
+      },
+      {
+        label: "IKNONRT",
+        backgroundColor: "#00ff00",
+        borderColor: "#00ff00",
+        data: [],
+        fill: false,
+      },
+      {
+        label: "Laporan Ternotifikasi",
+        backgroundColor: "#fbcb3a",
+        borderColor: "#fbcb3a",
+        data: [],
+        fill: false,
+      },
+    ],
+  });
+
+  const mergeData = (rawData) => {
+    const mergedData = {};
+
+    rawData.forEach(item => {
+      const tpt = parseInt(item.TPT, 10);
+      const ik = parseInt(item.IK, 10);
+      const ikNonrt = parseInt(item.IK_Nonrt, 10);
+      const ternotifikasi = parseInt(item.Ternotifikasi, 10);
+
+      if (!mergedData[item.Kabupaten_Kota]) {
+        mergedData[item.Kabupaten_Kota] = {
+          ...item,
+          TPT: tpt,
+          IK: ik,
+          IK_Nonrt: ikNonrt,
+          Ternotifikasi: ternotifikasi,
+        };
+      } else {
+        mergedData[item.Kabupaten_Kota].TPT += tpt;
+        mergedData[item.Kabupaten_Kota].IK += ik;
+        mergedData[item.Kabupaten_Kota].IK_Nonrt += ikNonrt;
+        mergedData[item.Kabupaten_Kota].Ternotifikasi += ternotifikasi;
+      }
+    });
+
+    return Object.values(mergedData);
+  };
+
+  const updateChartData = useCallback((rawData, region, startMonth, endMonth, year) => {
+    let filteredData = rawData;
+    
+    if (startMonth && endMonth && year) {
+      const startDate = new Date(year, startMonth - 1);
+      const endDate = new Date(year, endMonth - 1);
+
+      filteredData = rawData.filter(item => {
+        const itemDate = new Date(item.Tahun, item.Bulan - 1);
+        return itemDate >= startDate && itemDate <= endDate;
+      });
+    }
+
+    if (region !== "All") {
+      filteredData = filteredData.filter(item => item.Kabupaten_Kota === region);
+    }
+
+    filteredData = mergeData(filteredData);
+
+    const labels = filteredData.map(item => item.Kabupaten_Kota);
+    const tptData = filteredData.map(item => item.TPT);
+    const ikrtData = filteredData.map(item => item.IK);
+    const iknonrtData = filteredData.map(item => item.IK_Nonrt);
+    const ternotifikasiData = filteredData.map(item => item.Ternotifikasi);
+
+    setData({
+      labels,
+      datasets: [
+        {
+          label: "TPT",
+          backgroundColor: "#4c51bf",
+          borderColor: "#4c51bf",
+          data: tptData,
+          fill: false,
+        },
+        {
+          label: "IKRT",
+          backgroundColor: "#ff0000",
+          borderColor: "#ff0000",
+          data: ikrtData,
+          fill: false,
+        },
+        {
+          label: "IKNONRT",
+          backgroundColor: "#00ff00",
+          borderColor: "#00ff00",
+          data: iknonrtData,
+          fill: false,
+        },
+        {
+          label: "Laporan Ternotifikasi",
+          backgroundColor: "#fbcb3a",
+          borderColor: "#fbcb3a",
+          data: ternotifikasiData,
+          fill: false,
+        },
+      ],
+    });
+  }, []);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const response = await fetch("http://localhost:8000/peringkat_perwilayah");
+        const result = await response.json();
+        setApiData(result);
+        
+        const uniqueCities = [...new Set(result.map(item => item.Kabupaten_Kota))];
+        setUniqueRegions(uniqueCities);
+
+        updateChartData(result, selectedRegion, startMonth, endMonth, year);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    }
+
+    fetchData();
+  }, [updateChartData, selectedRegion, startMonth, endMonth, year]);
+
+  useEffect(() => {
+    const ctx = document.getElementById("bar-chart").getContext("2d");
+    if (window.myBar) {
+      window.myBar.destroy();
+    }
+    window.myBar = new Chart(ctx, {
+      type: "bar",
+      data,
       options: {
         maintainAspectRatio: false,
         responsive: true,
@@ -71,10 +197,10 @@ export default function CardBarChart() {
         scales: {
           xAxes: [
             {
-              display: false,
+              display: true,
               scaleLabel: {
                 display: true,
-                labelString: "Month",
+                labelString: "Wilayah",
               },
               gridLines: {
                 borderDash: [2],
@@ -90,8 +216,8 @@ export default function CardBarChart() {
             {
               display: true,
               scaleLabel: {
-                display: false,
-                labelString: "Value",
+                display: true,
+                labelString: "Jumlah Laporan",
               },
               gridLines: {
                 borderDash: [2],
@@ -106,18 +232,8 @@ export default function CardBarChart() {
           ],
         },
       },
-    };
-    let ctx = document.getElementById("bar-chart").getContext("2d");
-    window.myBar = new Chart(ctx, config);
-  }, []);
-
-  // Fungsi untuk memfilter data berdasarkan daerah yang dipilih
-  const filterDataByRegion = (region) => {
-    // Implementasi logika filter di sini
-    // Misalnya, jika ingin memfilter data berdasarkan daerah yang dipilih
-    // Anda dapat mengubah dataset sesuai dengan logika yang diinginkan
-    console.log("Filter by region:", region);
-  };
+    });
+  }, [data]);
 
   return (
     <>
@@ -129,35 +245,76 @@ export default function CardBarChart() {
                 Pemeringkatan
               </h6>
               <h2 className="text-blueGray-700 text-xl font-semibold">
-                Laporan PerDaerah
+                Laporan Perdaerah
               </h2>
             </div>
-            {/* Dropdown untuk memilih daerah */}
             <div className="relative w-full max-w-full flex-grow flex-1">
               <select
                 className="form-select block w-full bg-white border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 onChange={(e) => {
                   setSelectedRegion(e.target.value);
-                  filterDataByRegion(e.target.value);
+                  updateChartData(apiData, e.target.value, startMonth, endMonth, year);
                 }}
                 value={selectedRegion}
               >
                 <option value="All">All</option>
-                <option value="Bandar Lampung">Bandar Lampung</option>
-                <option value="Pringsewu">Pringsewu</option>
-                <option value="Pesawaran">Pesawaran</option>
-                <option value="Tanggamus">Tanggamus</option>
-                <option value="Lampung Tengah">Lampung Tengah</option>
-                <option value="Lampung Selatan">Lampung Selatan</option>
-                <option value="Lampung Timur">Lampung Timur</option>
-                <option value="Lampung Utara">Lampung Utara</option>
-                <option value="Tulang Bawang Barat">Tulang Bawang Barat</option>
+                {uniqueRegions.map((region) => (
+                  <option key={region} value={region}>
+                    {region}
+                  </option>
+                ))}
               </select>
             </div>
           </div>
+          <div className="flex flex-wrap items-center mt-4">
+            <select
+              className="bg-indigo-100 text-black px-3 py-1 mr-2 bg-white border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              value={startMonth}
+              onChange={(e) => {
+                setStartMonth(e.target.value);
+                updateChartData(apiData, selectedRegion, e.target.value, endMonth, year);
+              }}
+            >
+              <option value="">Start Month</option>
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="bg-indigo-100 text-black px-3 py-1 mr-2 bg-white border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              value={endMonth}
+              onChange={(e) => {
+                setEndMonth(e.target.value);
+                updateChartData(apiData, selectedRegion, startMonth, e.target.value, year);
+              }}
+            >
+              <option value="">End Month</option>
+              {months.map((month) => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+            <select
+              className="bg-indigo-100 text-black px-3 py-1 bg-white border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
+              value={year}
+              onChange={(e) => {
+                setYear(e.target.value);
+                updateChartData(apiData, selectedRegion, startMonth, endMonth, e.target.value);
+              }}
+            >
+              <option value="">Year</option>
+              {[...new Set(apiData.map((item) => item.Tahun))].map((yr) => (
+                <option key={yr} value={yr}>
+                  {yr}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
         <div className="p-4 flex-auto">
-          {/* Chart */}
           <div className="relative h-350-px">
             <canvas id="bar-chart"></canvas>
           </div>

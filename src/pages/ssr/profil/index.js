@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import FormEditProfil from "../../../components/Forms/FormEditProfil.js";
@@ -8,6 +9,7 @@ import FormEditProfil from "../../../components/Forms/FormEditProfil.js";
 import SSR from "../../../layouts/SSR.js";
 
 export default function Profil() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">
