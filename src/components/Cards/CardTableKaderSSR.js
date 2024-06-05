@@ -134,8 +134,8 @@ export default function TableDK() {
     }
   };
 
-  const handleButtonUploadClick = () => {
-    router.push('/ssr/kader/upload');
+  const handleButtonUnggahfoto = (id) => {
+    router.push(`/ssr/kader/upload?id=${id}`);
   };
 
   const handleButtonKTAClick = () => {
@@ -330,12 +330,12 @@ export default function TableDK() {
                   </button>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-                  <button
-                    onClick={handleButtonUploadClick}
-                    className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-                  >
-                    Unggah Foto
-                  </button>
+                <button
+  onClick={() => handleButtonUnggahfoto(kader.id)}
+  className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
+>
+  Unggah Foto
+</button>
                   <button
                     onClick={handleButtonKTAClick}
                     className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
