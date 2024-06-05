@@ -31,11 +31,13 @@ export default function Navbar() {
           </a>
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
             <div className="items-center flex mt-3">
+
               <h6
                 className="text-white text-base font-bold mr-3 cursor-pointer"
                 onClick={handleButtonClick}
               >
                 Admin
+
               </h6>
               <span
                 className="w-12 h-12 text-sm text-white bg-blueGray-200 inline-flex items-center justify-center rounded-full cursor-pointer"
@@ -44,7 +46,7 @@ export default function Navbar() {
                 <img
                   alt="..."
                   className="w-full rounded-full align-middle border-none shadow-lg"
-                  src="/img/team-1-800x800.jpg"
+                  src="/img/profiladmin.jpg"
                 />
               </span>
             </div>
