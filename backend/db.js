@@ -15,10 +15,6 @@ app.use(cors());
 
 // Konfigurasi koneksi MySQL
 const connectionPool = mysql.createPool({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "database_ils",
   host: 'localhost',
   user: 'root',
   password: '',
@@ -863,8 +859,6 @@ app.get('/filter-options', async (req, res) => {
   }
 });
 
-
-=======
     app.delete("/kota/:nama_kota", async (req, res) => {
       try {
         const { nama_kota } = req.params;
