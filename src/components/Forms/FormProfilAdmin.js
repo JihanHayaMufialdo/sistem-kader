@@ -34,7 +34,7 @@ export default function FormProfil() {
                         <img
                             alt="..."
                             className="w-full rounded-full align-middle border-none shadow-lg"
-                            src="/img/kpodo.jpg"
+                            src="/img/profiladmin.jpg"
                         />
                     </span>
                     <input

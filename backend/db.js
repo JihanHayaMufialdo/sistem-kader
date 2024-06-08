@@ -24,7 +24,7 @@ const connectionPool = mysql.createPool({
 connectionPool.getConnection()
   .then(connection => {
     console.log('Connected to MySQL database');
-});
+  });
 
 
 connectionPool
@@ -199,6 +199,82 @@ res.send('Data berhasil disimpan ke database.');
         res.status(500).send("Error deleting account");
       }
     });
+    
+    //menu Profil
+   // Judul: Menampilkan Profil Pengguna
+app.get("/profil/:nama_pengguna", async (req, res) => {
+  try {
+    const { nama_pengguna } = req.params;
+    const query = "SELECT nama_pengguna, kota_kabupaten, foto_profil FROM akun_ssrils WHERE nama_pengguna = ?";
+    const [rows] = await connectionPool.query(query, [nama_pengguna]);
+
+    if (rows.length === 0) {
+      res.status(404).send("User not found");
+    } else {
+      res.json(rows[0]);
+    }
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    res.status(500).send("Error retrieving user profile");
+  }
+});
+
+// Judul: Mengunggah Gambar Profil
+app.post("/upload-foto-profil/:nama_pengguna", upload.single('foto_profil'), async (req, res) => {
+  try {
+    const { nama_pengguna } = req.params;
+    const fotoProfilPath = req.file.path;
+
+    const updateQuery = "UPDATE akun_ssrils SET foto_profil = ? WHERE nama_pengguna = ?";
+    await connectionPool.query(updateQuery, [fotoProfilPath, nama_pengguna]);
+
+    res.status(200).json({ message: "Foto profil berhasil diunggah", path: fotoProfilPath });
+  } catch (error) {
+    console.error("Error uploading profile picture:", error);
+    res.status(500).send("Error uploading profile picture");
+  }
+});
+
+// Judul: Menangani Gambar Profil yang Diunggah
+app.use('/uploads', express.static('uploads'));
+
+// Judul: Mengupdate Kata Sandi pada Profil
+app.put("/update-password/:nama_pengguna", [
+  body('oldPassword').isLength({ min: 6 }).withMessage('Old password is required and should be at least 6 characters long'),
+  body('newPassword').isLength({ min: 6 }).withMessage('New password should be at least 6 characters long')
+], async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { nama_pengguna } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    // Verifikasi kata sandi lama
+    const [rows] = await connectionPool.query("SELECT kata_sandi FROM akun_ssrils WHERE nama_pengguna = ?", [nama_pengguna]);
+    if (rows.length === 0) {
+      return res.status(404).send("User not found");
+    }
+
+    const user = rows[0];
+    const passwordMatch = await bcrypt.compare(oldPassword, user.kata_sandi);
+    if (!passwordMatch) {
+      return res.status(400).send("Old password is incorrect");
+    }
+
+    // Hash kata sandi baru
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    const updateQuery = "UPDATE akun_ssrils SET kata_sandi = ? WHERE nama_pengguna = ?";
+    await connectionPool.query(updateQuery, [hashedPassword, nama_pengguna]);
+
+    res.status(200).send("Password updated successfully");
+  } catch (error) {
+    console.error("Error updating password:", error);
+    res.status(500).send("Error updating password");
+  }
+});
 
     // Menu Data Kader
     // GET: Mengambil semua data kader
