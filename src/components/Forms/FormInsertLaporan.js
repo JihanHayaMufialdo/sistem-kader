@@ -39,31 +39,6 @@ export default function TambahLaporan() {
     }
   };  
 
-  // const handleImportClick = async (endpoint) => {
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-
-  //     const response = await fetch(`http://localhost:8000/${endpoint}`, {
-  //       method: 'POST',
-  //       body: formData,
-  //     });
-
-  //     if (response.ok) {
-  //       setNotification("File berhasil diimpor");
-  //       setTimeout(() => {
-  //         setNotification('');
-  //         router.push('/admin/laporan/');
-  //       }, 3000); // Notification disappears after 3 seconds
-  //     } else {
-  //       throw new Error('Gagal mengimpor file');
-  //     }
-  //   } catch (error) {
-  //     setNotification(`Error: ${error.message}`);
-  //     setTimeout(() => setNotification(''), 3000); // Notification disappears after 3 seconds
-  //   }
-  // };
-
   const handleButtonKembaliClick = () => {
     router.push('/admin/laporan/');
   };
@@ -136,6 +111,20 @@ export default function TambahLaporan() {
                     onClick={() => handleImportClick('laporanterduga')}
                   >
                     Import TERNOTIFIKASI
+                  </button>
+                </div>
+                <div className="relative w-full mb-3 flex justify-between items-center">
+                  <input
+                    type="file" id="fileInputDataIndeksSITB" name="fileInputIndeksSITB"
+                    className="border-0 px-3 py-3 placeholder-blueGray-300 text-blueGray-600 bg-white rounded text-sm shadow focus:outline-none focus:ring w-full ease-linear transition-all duration-150"
+                    onChange={handleFileChange}
+                  />
+                  <button
+                    className="w-1/3 h-12 bg-green-700 active:bg-blueGray-600 text-white font-bold text-xs px-6 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    type="button"
+                    onClick={() => handleImportClick('laporansitb')}
+                  >
+                    Import SITB
                   </button>
                 </div>
               </div>

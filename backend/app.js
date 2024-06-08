@@ -10,6 +10,7 @@ const sebaranWilayah= require('./routes/sebaranWilayah')
 const laporan = require('./routes/laporan')
 const tambahAkun = require('./routes/tambahAkun')
 const dashboard = require('./routes/dashboard')
+const profil = require('./routes/profil')
 
 
 
@@ -25,6 +26,7 @@ app.use( sebaranWilayah)
 app.use( tambahAkun)
 app.use( laporan)
 app.use ( dashboard)
+app.use ( profil)
 
 
 // Start the server
