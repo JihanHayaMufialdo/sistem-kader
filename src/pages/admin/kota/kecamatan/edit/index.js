@@ -1,5 +1,5 @@
 import React from "react";
-
+import { useAuth } from "../../../../admin/index.js";
 // components
 import FormEditKecamatan from "../../../../../components/Forms/FormEditKecamatan.js";
 
@@ -7,6 +7,7 @@ import FormEditKecamatan from "../../../../../components/Forms/FormEditKecamatan
 import Admin from "../../../../../layouts/Admin.js";
 
 export default function EditKecamatan() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

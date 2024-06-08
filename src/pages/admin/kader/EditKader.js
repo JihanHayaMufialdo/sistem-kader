@@ -1,11 +1,12 @@
 import React from "react";
-
+import { useAuth } from "../../admin/index.js";
 // components
 import FormEditKader from "../../../components/Forms/FormEditKader";
 // layout for page
 import Admin from "../../../layouts/Admin.js";
 
 export default function EditKader() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

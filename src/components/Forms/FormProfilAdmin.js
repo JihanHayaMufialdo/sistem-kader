@@ -1,29 +1,67 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 
 export default function FormProfil() {
-    const [name, setName] = useState("Podo Wiseso");
-    const [city, setCity] = useState("Bandar Lampung");
-    const [role, setRole] = useState("Admin ILS");
+    const [profile, setProfile] = useState({
+        name: "",
+        city: "",
+        role: "",
+        foto_profil: "",
+    });
+
     const [oldPassword, setOldPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
     const router = useRouter();
 
-    const handleEditProfil = (e) => {
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const response = await fetch(`http://localhost:8000/profiles/${localStorage.getItem('nama_pengguna')}`);
+                const data = await response.json();
+                const userProfile = JSON.parse(data.user); // Mengonversi string JSON menjadi objek
+                setProfile(userProfile);
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+            }
+        };
+        fetchProfile();
+    }, []);
+
+    const handleEditProfil = async (e) => {
         e.preventDefault();
         const confirmation = window.confirm("Apakah anda yakin ingin mengubah profil?");
         if (confirmation) {
-            // Simpan perubahan profil
-            console.log("Profil updated:", { name, city, role });
+            try {
+                const response = await fetch(`http://localhost:8000/profiles/${localStorage.getItem('nama_pengguna')}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        password_lama: oldPassword,
+                        password_baru: newPassword,
+                    }),
+                });
+                const data = await response.json();
+                console.log("Password updated:", data.message);
+                // Reset form fields
+                setOldPassword("");
+                setNewPassword("");
+                setConfirmPassword("");
+            } catch (error) {
+                console.error('Error updating password:', error);
+            }
         } else {
-            // Pembatalan perubahan
             console.log("Profil update cancelled.");
         }
     };
 
     const navigateToEditProfil = () => {
-        router.push('/edit-profil');
+        router.push({
+            pathname: '/edit-profil',
+            query: { ...profile },
+        });
     };
 
     return (
@@ -34,21 +72,22 @@ export default function FormProfil() {
                         <img
                             alt="..."
                             className="w-full rounded-full align-middle border-none shadow-lg"
-                            src="/img/profiladmin.jpg"
+
+                            src={profile.foto_profil} // Tampilkan foto profil sesuai dengan nama_pengguna
                         />
                     </span>
                     <input
                         className="mb-1 mt-6 text-xl font-medium text-gray-900 dark:text-white bg-transparent border-none text-center"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
+                        value={profile.name}
+                        onChange={(e) => setProfile({ ...profile, name: e.target.value })}
                     />
                     <input
                         className="mb-1 text-sm text-gray-500 dark:text-gray-400 bg-transparent border-none text-center leading-tight"
-                        value={city}
-                        onChange={(e) => setCity(e.target.value)}
+                        value={profile.city}
+                        onChange={(e) => setProfile({ ...profile, city: e.target.value })}
                     />
                     <hr className="mt-6 border-b-1 border-blueGreen-900" />
-                    <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-tight">{role}</span>
+                    <span className="text-sm font-semibold text-gray-500 dark:text-gray-400 leading-tight">{profile.role}</span>
                     <button
                         className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 mt-3 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                         onClick={navigateToEditProfil}
@@ -57,7 +96,6 @@ export default function FormProfil() {
                     </button>
                 </div>
             </div>
-
             <div className="card p-4 w-full bg-white border border-gray-200 rounded-lg shadow dark:bg-gray-800 dark:border-gray-700">
                 <div className="text-center flex justify-between">
                     <h6 className="text-green-700 text-xl font-bold">
@@ -105,6 +143,7 @@ export default function FormProfil() {
                         <button
                             className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                             type="submit"
+                            onClick={handleEditProfil}
                         >
                             Simpan
                         </button>

@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../../admin/index.js";
 
 // components
 import FormEditSSR from "../../../../components/Forms/FormEditSSR.js";
@@ -6,6 +7,7 @@ import FormEditSSR from "../../../../components/Forms/FormEditSSR.js";
 import Admin from "../../../../layouts/Admin.js";
 
 export default function EditSSR() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

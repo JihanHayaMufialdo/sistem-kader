@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../admin/index.js";
 
 // components
 import TableSSR from "../../../components/Cards/CardTablessr.js";
@@ -7,6 +8,7 @@ import TableSSR from "../../../components/Cards/CardTablessr.js";
 import Admin from "../../../layouts/Admin.js";
 
 export default function SSR() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">

@@ -12,8 +12,9 @@ export default function TableDK() {
   const [provinsiData, setProvinsiData] = useState([]);
   const [kabupatenData, setKabupatenData] = useState([]);
   const [kecamatanData, setKecamatanData] = useState([]);
+  const [filterStatus, setFilterStatus] = useState("All");
   const router = useRouter();
-  const itemsPerPage = 10;
+  const itemsPerPage = 25;
   const totalPages = Math.ceil(kaderData.length / itemsPerPage);
 
   useEffect(() => {
@@ -88,6 +89,9 @@ export default function TableDK() {
     } else if (name === 'filterKecamatan') {
       setFilterKecamatan(value);
     }
+      else if (name === 'filterStatus') { // Tambahkan handler untuk filter status
+      setFilterStatus(value);
+  }
   };
   
   // Memperbarui data kabupaten setelah mendapatkan opsi baru dari filter provinsi
@@ -166,16 +170,132 @@ export default function TableDK() {
     setCurrentPage(page);
   };
 
+  const renderPaginationButtons = () => {
+    let buttons = [];
+
+    if (totalPages <= 1) return null;
+
+    buttons.push(
+      <button
+        key="prev"
+        className="bg-blue-500 hover:bg-blue-700 text-black py-2 px-4 rounded-l"
+        onClick={() => goToPage(currentPage - 1)}
+        disabled={currentPage === 1}
+      >
+        Prev
+      </button>
+    );
+
+    if (totalPages <= 10) {
+      for (let i = 1; i <= totalPages; i++) {
+        buttons.push(
+          <button
+            key={i}
+            className={`bg-${currentPage === i ? 'blueGray-200' : 'blue-500'} hover:bg-blue-700 text-green-500 py-2 px-4 rounded mr-2 ${currentPage === i ? 'text-blueGray-700 font-bold' : ''}`}
+            onClick={() => goToPage(i)}
+          >
+            {i}
+          </button>
+        );
+      }
+    } else {
+      buttons.push(
+        <button
+          key={1}
+          className={`bg-${currentPage === 1 ? 'blueGray-200' : 'blue-500'} hover:bg-blue-700 text-green-500 py-2 px-4 rounded mr-2 ${currentPage === 1 ? 'text-blueGray-700 font-bold' : ''}`}
+          onClick={() => goToPage(1)}
+        >
+          1
+        </button>
+      );
+      if (currentPage > 4) {
+        buttons.push(<span key="dots1" className="py-2 px-4">...</span>);
+      }
+      const startPage = Math.max(2, currentPage - 2);
+      const endPage = Math.min(totalPages - 1, currentPage + 2);
+      for (let i = startPage; i <= endPage; i++) {
+        buttons.push(
+          <button
+            key={i}
+            className={`bg-${currentPage === i ? 'blueGray-200' : 'blue-500'} hover:bg-blue-700 text-green-500 py-2 px-4 rounded mr-2 ${currentPage === i ? 'text-blueGray-700 font-bold' : ''}`}
+            onClick={() => goToPage(i)}
+          >
+            {i}
+          </button>
+        );
+      }
+      if (currentPage < totalPages - 3) {
+        buttons.push(<span key="dots2" className="py-2 px-4">...</span>);
+      }
+      buttons.push(
+        <button
+          key={totalPages}
+          className={`bg-${currentPage === totalPages ? 'blueGray-200' : 'blue-500'} hover:bg-blue-700 text-green-500 py-2 px-4 rounded mr-2 ${currentPage === totalPages ? 'text-blueGray-700 font-bold' : ''}`}
+          onClick={() => goToPage(totalPages)}
+        >
+          {totalPages}
+        </button>
+      );
+    }
+
+    buttons.push(
+      <button
+        key="next"
+        className="bg-blue-500 hover:bg-blue-700 text-black py-2 px-4 rounded-r"
+        onClick={() => goToPage(currentPage + 1)}
+        disabled={currentPage === totalPages}
+      >
+        Next
+      </button>
+    );
+
+    return buttons;
+  };
+
+  const filteredData = kaderData.filter((kader) => {
+    let filterResult = true;
+  
+    if (filterProvinsi !== "All" && kader.nama_provinsi !== filterProvinsi) {
+      filterResult = false;
+    }
+  
+    if (filterKabupaten !== "All" && kader.nama_kota !== filterKabupaten) {
+      filterResult = false;
+    }
+  
+    if (filterKecamatan !== "All" && kader.nama_kecamatan !== filterKecamatan) {
+      filterResult = false;
+    }
+  
+    if (filterStatus !== "All" && (filterStatus === "Active" ? kader.status !== "Aktif" : kader.status === "Aktif")) {
+      filterResult = false;
+    }
+  
+    if (searchTerm !== "" && !(
+      kader.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kader.jenis_kader.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kader.jenis_kelamin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kader.nama_kecamatan.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kader.nama_kota.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kader.nama_provinsi.toLowerCase().includes(searchTerm.toLowerCase())
+    )) {
+      filterResult = false;
+    }
+  
+    return filterResult;
+  });
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = kaderData.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
+  
 
   return (
     <div className="overflow-x-auto">
       <div className="relative flex flex-col min-w-0 break-words w-full mb-4 shadow-lg rounded-lg bg-white border-1">
         <div className="mt-6 mx-4 mb-4 flex justify-between">
           <div className="flex space-x-4">
-            <div className="w-32">
+            <div className="w-full sm:w-1/2 md:w-1/4 px-2 mb-4">
               <label htmlFor="filterProvinsi" className="block text-sm font-medium text-gray-700">
                 Provinsi
               </label>
@@ -192,7 +312,7 @@ export default function TableDK() {
                 ))}
               </select>
             </div>
-            <div className="w-32">
+            <div className="w-full sm:w-1/2 md:w-1/4 px-2 mb-4">
               <label htmlFor="filterKabupaten" className="block text-sm font-medium text-gray-700">
                 Kabupaten
               </label>
@@ -210,7 +330,7 @@ export default function TableDK() {
                 ))}
               </select>
             </div>
-            <div className="w-32">
+            <div className="w-full sm:w-1/2 md:w-1/4 px-2 mb-4">
               <label htmlFor="filterKecamatan" className="block text-sm font-medium text-gray-700">
                 Kecamatan
               </label>
@@ -228,12 +348,20 @@ export default function TableDK() {
                 ))}
               </select>
             </div>
+            <div className="w-full sm:w-1/2 md:w-1/4 px-2 mb-4">
+              <label className="block text-sm font-medium text-gray-700">Status</label>
+              <select name="filterStatus" value={filterStatus} onChange={handleFilterChange} className="mt-1 block w-full py-2 px-8 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                <option value="All">Semua Status</option>
+                <option value="Active">Aktif</option>
+                <option value="Inactive">Tidak Aktif</option>
+              </select>
+            </div>
           </div>
-          <div className="relative">
+          <div className="w-1/2 sm:w-1/2 md:w-1/4 px-2 mb-4">
             <input
               type="text"
               placeholder="Cari..."
-              className="w-full py-2 pl-10 pr-4 border border-gray-300 rounded-full leading-5 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm"
+              className="w-full mt-5 py-2 pl-10 pr-4 border border-gray-900 rounded-full leading-5 bg-white text-gray-900 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:border-blue-300 focus:shadow-outline-blue sm:text-sm"
               value={searchTerm}
               onChange={handleSearchChange}
             />
@@ -258,7 +386,7 @@ export default function TableDK() {
           <div className="rounded-t bg-white mb-1 px-3 py-3 border-collapse">
             <div className="flex justify-between items-center">
               <div className="relative w-full px-4 max-w-full flex-grow flex-1">
-                <h6 className="text-green-600 text-xl font-bold">
+                <h6 className="text-green-700 text-xl font-bold">
                   Daftar Kader ILS
                 </h6>
               </div>
@@ -277,9 +405,9 @@ export default function TableDK() {
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 No
               </th>
-              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Nomor Induk Anggota
-              </th>
+              </th> */}
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Nama
               </th>
@@ -289,9 +417,9 @@ export default function TableDK() {
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Jenis Kelamin
               </th>
-              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 No Telepon
-              </th>
+              </th> */}
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Kecamatan
               </th>
@@ -302,6 +430,9 @@ export default function TableDK() {
                 Provinsi
               </th>
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+                Status Aktif
+              </th>
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Aksi
               </th>
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
@@ -309,36 +440,21 @@ export default function TableDK() {
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
-  {kaderData
-    .filter((kader) =>
-      (filterProvinsi === "All" || kader.nama_provinsi === filterProvinsi) &&
-      (filterKabupaten === "All" || kader.nama_kota === filterKabupaten) &&
-      (filterKecamatan === "All" || kader.nama_kecamatan === filterKecamatan) &&
-      (searchTerm === "" ||
-        kader.no_induk.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.jenis_kader.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.jenis_kelamin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.no_telp.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.nama_kecamatan.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.nama_kota.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        kader.nama_provinsi.toLowerCase().includes(searchTerm.toLowerCase()))
-    )
-    .map((kader, index) => (
+  <tbody className="divide-y divide-gray-200">
+  {currentItems.map((kader, index) => (
       <tr key={kader.id}>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">
           {(currentPage - 1) * itemsPerPage + index + 1}
         </td>
-        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_induk}</td>
+        {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_induk}</td> */}
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kader}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kelamin}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_telp}</td>
+        {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_telp}</td> */}
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_kecamatan}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_kota}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_provinsi}</td>
-        
+        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.status}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
           <button onClick={() => handleEditKader(kader.id)} className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
             Ubah
@@ -365,30 +481,8 @@ export default function TableDK() {
         </div>
         {/* Pagination */}
         <div className="flex justify-center mt-4">
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-black py-2 px-4 rounded-l"
-              onClick={() => setCurrentPage((prevPage) => prevPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Prev
-            </button>
-            {[...Array(totalPages)].map((_, index) => (
-              <button
-                key={index}
-                className={`bg-${currentPage === index + 1 ? 'blueGray-200' : 'blue-500'} hover:bg-blue-700 text-green-500 py-2 px-4 rounded mr-2 ${currentPage === index + 1 ? 'text-blueGray-700 font-bold' : ''}`}
-                onClick={() => setCurrentPage(index + 1)}
-              >
-                {index + 1}
-              </button>
-            ))}
-            <button
-              className="bg-blue-500 hover:bg-blue-700 text-black py-2 px-4 rounded-r"
-              onClick={() => setCurrentPage((prevPage) => prevPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Next
-            </button>
-          </div>
+        {renderPaginationButtons()}
+      </div>
       </div>
     );
   }

@@ -3,10 +3,7 @@ import { useRouter } from "next/router";
 const axios = require("axios");
 
 export default function TableSSR() {
-  const [showPassword, setShowPassword] = useState(false);
-  const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
-  };
+  
 
   const router = useRouter();
 
@@ -130,7 +127,7 @@ export default function TableSSR() {
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Kata Sandi
+                  Role
                 </th>
                 <th
                   scope="col"
@@ -156,21 +153,7 @@ export default function TableSSR() {
                     {item.nama_pengguna}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                    {showPassword ? (
-                      <span
-                        className="text-blue-500 cursor-pointer"
-                        onClick={toggleShowPassword}
-                      >
-                        {item.kata_sandi}
-                      </span>
-                    ) : (
-                      <span
-                        className="text-blue-500 cursor-pointer"
-                        onClick={toggleShowPassword}
-                      >
-                        Lihat Kata Sandi
-                      </span>
-                    )}
+                    {item.role}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
                     <button

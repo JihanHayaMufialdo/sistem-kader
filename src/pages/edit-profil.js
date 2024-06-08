@@ -1,37 +1,56 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useRouter } from 'next/router';
 import AdminNavbar from "../components/Navbars/AdminNavbar.js";
-import FormProfil from "../components/Forms/FormProfilAdmin.js";
 import Admin from "../layouts/Admin.js";
 
 export default function EditProfil() {
-    const [name, setName] = useState("Podo Wiseso");
-    const [city, setCity] = useState("Bandar Lampung");
-    const [role, setRole] = useState("Admin ILS");
-    const [photo, setPhoto] = useState(""); // State untuk menyimpan URL foto profil
     const router = useRouter();
+    const [name, setName] = useState("");
+    const [city, setCity] = useState("");
+    const [role, setRole] = useState("");
+    const [photo, setPhoto] = useState(null); // State untuk menyimpan file foto profil
 
-    const handleSave = (e) => {
+    useEffect(() => {
+        const { nama, kota, role } = router.query;
+        if (nama) setName(nama);
+        if (kota) setCity(kota);
+        if (role) setRole(role);
+    }, [router.query]);
+
+    const handleSave = async (e) => {
         e.preventDefault();
-        // Logic to save profile changes
-        console.log("Profil updated:", { name, city, role, photo });
+        const formData = new FormData();
+        formData.append('nama', name);
+        formData.append('kota', city);
+        formData.append('role', role);
+        if (photo) {
+            formData.append('foto_profil', photo);
+        }
+
+        try {
+            const response = await fetch('http://localhost:8000/profiles', {
+                method: 'POST',
+                body: formData,
+            });
+
+            if (response.ok) {
+                console.log('Profile created successfully');
+                router.back();
+            } else {
+                console.error('Error creating profile');
+            }
+        } catch (error) {
+            console.error('Error creating profile:', error);
+        }
     };
 
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
-        // Lakukan logika untuk mengunggah foto dan mendapatkan URL foto
-        // Misalnya menggunakan Firebase Storage atau menyimpan foto di server
-        // Setelah itu, simpan URL foto ke dalam state
-        // Contoh sederhana:
-        const reader = new FileReader();
-        reader.onloadend = () => {
-            setPhoto(reader.result);
-        };
-        reader.readAsDataURL(file);
+        setPhoto(file);
     };
 
     const handleButtonKembali = () => {
-        router.push('/profil');
+        router.back();
     };
 
     return (
@@ -89,7 +108,7 @@ export default function EditProfil() {
                             <div>
                                 {photo && (
                                     <div className="mb-8">
-                                        <img src={photo} alt="Foto Profil" className="rounded-full h-24 w-24 mx-auto" />
+                                        <img src={URL.createObjectURL(photo)} alt="Foto Profil" className="rounded-full h-24 w-24 mx-auto" />
                                     </div>
                                 )}
                                 <div className="text-center">
@@ -111,6 +130,7 @@ export default function EditProfil() {
                             <button
                                 type="submit"
                                 className="bg-green-700 text-white font-bold py-2 px-4 rounded"
+                                onClick={handleSave}
                             >
                                 Simpan
                             </button>

@@ -1,31 +1,41 @@
 import React, { useState } from "react";
-// import Link from "next/link";
-import { useRouter } from "next/router.js";
-
-// layout for page
+const axios = require("axios");
 
 import Auth from "../../layouts/Auth.js";
 
-
-
 export default function Login() {
-  const router = useRouter();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-    // Ensure this code runs only on the client side
-    if (typeof window !== 'undefined') {
-      // Memeriksa username yang dimasukkan
-      if (username === "admin") {
-        router.push("/admin/dashboard/");
-      } else if (username === "ssr") {
-        router.push("/ssr/profil/");
+  const handleLogin = async (e) => {
+    e.preventDefault(); // Mencegah perilaku default dari form
+
+    try {
+      const response = await axios.post('http://localhost:8000/login', {
+        nama_pengguna: username,
+        kata_sandi: password,
+      });
+
+      // Simpan token atau informasi pengguna yang diterima dari API
+      localStorage.setItem('authToken', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+
+      // Arahkan pengguna ke halaman yang sesuai berdasarkan peran
+      const role = response.data.user.role;
+      if (role === 'Admin') {
+        window.location.href = '/admin/dashboard';
+      } else if (role === 'SSR') {
+        window.location.href = '/ssr/dashboard';
+      } else {
+        setError('Peran pengguna tidak dikenali.');
       }
-      // Reset formulir setelah pengalihan halaman
-      setUsername("");
-      setPassword("");
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        setError(error.response.data.message);
+      } else {
+        setError('Terjadi kesalahan saat login. Silakan coba lagi.');
+      }
     }
   };
 
@@ -77,6 +87,7 @@ export default function Login() {
                       placeholder="Kata Sandi"
                     />
                   </div>
+                  {error && <div className="text-red-500 text-sm">{error}</div>}
                   <div>
                     <label className="inline-flex items-center cursor-pointer">
                       <input

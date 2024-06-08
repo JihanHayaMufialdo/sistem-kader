@@ -1,12 +1,10 @@
 const express = require("express");
 const mysql = require("mysql2/promise");
 const cors = require("cors");
-const multer = require('multer');
-const xlsx = require("xlsx");
-const path = require("path");
+
 const fs = require("fs");
-const { body, validationResult } = require('express-validator');
-const bcrypt = require('bcrypt');
+const { body, validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
 
 const app = express();
 app.use(express.json()); // Middleware untuk mengurai JSON body dari request
@@ -15,23 +13,21 @@ app.use(cors());
 
 // Konfigurasi koneksi MySQL
 const connectionPool = mysql.createPool({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'database_ils'
+  host: "localhost",
+  user: "root",
+  password: "",
+  database: "database_ils",
+  port: 3308,
 });
 
-connectionPool.getConnection()
-  .then(connection => {
-    console.log('Connected to MySQL database');
-  });
-
+connectionPool.getConnection().then((connection) => {
+  console.log("Connected to MySQL database");
+});
 
 connectionPool
   .getConnection()
   .then((connection) => {
     console.log("Connected to MySQL database");
-
       const storage = multer.diskStorage({
         destination: (req, file, cb) => {
           cb(null, 'uploads/');
@@ -756,192 +752,11 @@ app.get('/provinsi', async (req, res) => {
     });
     
     
-    
-
-    
-
-    // Route untuk menghapus data kecamatan
-    app.delete("/kecamatan/:id_kecamatan", async (req, res) => {
-      try {
-        const { id_kecamatan } = req.params;
-        const query = "DELETE FROM kecamatan WHERE id = ?";
-        await connection.query(query, [id_kecamatan]);
-        res.status(200).send("Kecamatan deleted successfully");
-      } catch (error) {
-        console.error("Error deleting kecamatan:", error);
-        res.status(500).send("Error deleting kecamatan");
-      }
-    }); 
-
-    app.delete("/kota/:id_kota", async (req, res) => {
-      try {
-        const { id_kota } = req.params;
-        const query = "DELETE FROM kota WHERE id = ?";
-        const [result] = await connectionPool.query(query, [id_kota]);
-    
-        if (result.affectedRows > 0) {
-          res.status(200).send("Kota deleted successfully");
-        } else {
-          res.status(404).send("Kota not found");
-        }
-      } catch (error) {
-        console.error("Error deleting kota:", error);
-        res.status(500).send("Error deleting kota. Please try again later."); // Pesan kesalahan yang lebih informatif
-      }
-    });
-    
-    
-    // POST: Menambahkan data baru ke tabel provinsi
-    app.post("/tambah-data", async (req, res) => {
-      try {
-        const {
-          nama_provinsi,
-          kode_provinsi,
-          nama_kota,
-          kode_kota,
-          nama_kecamatan,
-          kode_kecamatan,
-          id // Tambahkan field id_provinsi dari frontend
-        } = req.body;
-    
-        // Cek apakah nama provinsi sudah ada di database
-        const existingProvinsiQuery = "SELECT id FROM provinsi WHERE nama_provinsi = ?";
-        const [existingProvinsiRows] = await connection.query(existingProvinsiQuery, [nama_provinsi]);
-    
-        let id_toInsert = id; // Gunakan ID provinsi dari frontend
-        if (existingProvinsiRows.length > 0) {
-          // Jika nama provinsi sudah ada, gunakan ID provinsi yang sudah ada
-          id_toInsert = existingProvinsiRows[0].id;
-        } else {
-          // Jika nama provinsi belum ada, tambahkan data provinsi baru
-          const newProvinsiQuery = "INSERT INTO provinsi (nama_provinsi, kode_provinsi) VALUES (?, ?)";
-          const [newProvinsiResult] = await connection.query(newProvinsiQuery, [nama_provinsi, kode_provinsi]);
-          id_toInsert = newProvinsiResult.insertId;
-        }
-    
-        // Insert data ke tabel 'kota'
-        const kotaQuery =
-          "INSERT INTO kota (nama_kota, kode_kota, id_provinsi) VALUES (?, ?, ?)";
-        const [kotaResult] = await connection.query(kotaQuery, [
-          nama_kota,
-          kode_kota,
-          id_toInsert // Gunakan ID provinsi yang sudah ditentukan
-        ]);
-        const id_kota = kotaResult.insertId;
-    
-        // Insert data ke tabel 'kecamatan'
-        const kecamatanQuery =
-          "INSERT INTO kecamatan (nama_kecamatan, kode_kecamatan, id_kota) VALUES (?, ?, ?)";
-        await connection.query(kecamatanQuery, [
-          nama_kecamatan,
-          kode_kecamatan,
-          id_kota,
-        ]);
-    
-        res.status(201).send("Data added successfully");
-      } catch (error) {
-        console.error("Error adding data:", error);
-        res.status(500).send("Error adding data");
-      }
-    });
-    
-    
-
-    // PUT: Memperbarui data di tabel provinsi
-    app.put("/provinsi/:id", async (req, res) => {
-      try {
-        const { id } = req.params;
-        const { nama_provinsi, kode_provinsi } = req.body;
-        const query =
-          "UPDATE provinsi SET nama_provinsi = ?, kode_provinsi = ? WHERE id = ?";
-        await connection.query(query, [nama_provinsi, kode_provinsi, id]);
-        res.status(200).send("Provinsi updated successfully");
-      } catch (error) {
-        console.error("Error updating provinsi:", error);
-        res.status(500).send("Error updating provinsi");
-      }
-    });
-
-    // DELETE: Menghapus data di tabel provinsi
-    app.delete("/provinsi/:id", async (req, res) => {
-      try {
-        const { id } = req.params;
-        const query = "DELETE FROM provinsi WHERE id = ?";
-        await connection.query(query, [id]);
-        res.status(200).send("Provinsi deleted successfully");
-      } catch (error) {
-        console.error("Error deleting provinsi:", error);
-        res.status(500).send("Error deleting provinsi");
-      }
-    });
-
-// Filter
-// Endpoint untuk menyaring data kader berdasarkan filter
-app.get("/filter-kader", async (req, res) => {
-  try {
-    const { jenis_kader, jenis_kelamin, provinsi, kota_kabupaten, kecamatan } = req.query;
-    let conditions = [];
-
-    if (jenis_kader) {
-      conditions.push(`jenis_kader = '${jenis_kader}'`);
-    }
-    if (jenis_kelamin) {
-      conditions.push(`jenis_kelamin = '${jenis_kelamin}'`);
-    }
-    if (provinsi) {
-      conditions.push(`nama_provinsi = '${provinsi}'`);
-    }
-    if (kota_kabupaten) {
-      conditions.push(`nama_kota = '${kota_kabupaten}'`);
-    }
-    if (kecamatan) {
-      conditions.push(`nama_kecamatan = '${kecamatan}'`);
-    }
-
-    let whereClause = "";
-    if (conditions.length > 0) {
-      whereClause = "WHERE " + conditions.join(" AND ");
-    }
-
-    const query = `
-      SELECT 
-        dk.*, p.nama_provinsi, k.nama_kota, kec.nama_kecamatan
-      FROM 
-        data_kader dk
-      JOIN 
-        kecamatan kec ON dk.id_kecamatan = kec.id
-      JOIN 
-        kota k ON kec.id_kota = k.id
-      JOIN 
-        provinsi p ON k.id_provinsi = p.id
-      ${whereClause}
-    `;
-    const [rows] = await connectionPool.query(query);
-    res.json(rows);
-  } catch (error) {
-    console.error("Error fetching filtered kader data:", error);
-    res.status(500).send("Error retrieving filtered kader data");
-  }
-});
-
-
-// Endpoint untuk mengambil pilihan nama provinsi, kabupaten/kota, dan kecamatan
-app.get('/filter-options', async (req, res) => {
-  try {
-    const [provinsiRows] = await connectionPool.query('SELECT DISTINCT nama_provinsi FROM provinsi');
-    const [kotaRows] = await connectionPool.query('SELECT DISTINCT nama_kota FROM kota');
-    const [kecamatanRows] = await connectionPool.query('SELECT DISTINCT nama_kecamatan FROM kecamatan');
-    
     const provinsiOptions = provinsiRows.map(row => ({ id: row.id, nama: row.nama_provinsi }));
     const kotaOptions = kotaRows.map(row => ({ id: row.id, nama: row.nama_kota }));
     const kecamatanOptions = kecamatanRows.map(row => ({ id: row.id, nama: row.nama_kecamatan }));
     
     res.json({ provinsi: provinsiOptions, kota: kotaOptions, kecamatan: kecamatanOptions });
-  } catch (error) {
-    console.error('Error fetching filter options:', error);
-    res.status(500).send('Error retrieving filter options');
-  }
-});
 
     app.delete("/kota/:nama_kota", async (req, res) => {
       try {

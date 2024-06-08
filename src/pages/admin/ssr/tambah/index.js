@@ -1,4 +1,5 @@
 import React from "react";
+import { useAuth } from "../../../admin/index.js";
 
 // components
 import FormInsertSSR from "../../../../components/Forms/FormInsertSSR.js";
@@ -6,6 +7,7 @@ import FormInsertSSR from "../../../../components/Forms/FormInsertSSR.js";
 import Admin from "../../../../layouts/Admin.js";
 
 export default function InsertSSR() {
+  useAuth();
   return (
     <>
       <div className="flex flex-wrap mt-4">
