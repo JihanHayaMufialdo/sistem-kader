@@ -72,6 +72,7 @@ export default function FormProfil() {
                         <img
                             alt="..."
                             className="w-full rounded-full align-middle border-none shadow-lg"
+
                             src={profile.foto_profil} // Tampilkan foto profil sesuai dengan nama_pengguna
                         />
                     </span>
