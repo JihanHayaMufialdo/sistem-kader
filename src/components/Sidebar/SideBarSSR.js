@@ -44,27 +44,26 @@ export default function Sidebar() {
 
           {/* Menu */}
           <ul className="md:flex-col md:min-w-full flex flex-col list-none">
-            <li className="items-center">
+          <li className="items-center">
               <Link
-                href="/ssr/profil/"
+                href="/ssr/dashboard/"
                 className={
                   "text-sm uppercase py-3 font-bold block " +
-                  (router.pathname.indexOf("/ssr/profil") !== -1
+                  (router.pathname.indexOf("/ssr/dashboard") !== -1
                     ? "text-green-500 hover:text-green-600"
                     : "text-blueGray-700 hover:text-blueGray-500")
                 }
               >
                 <i
                   className={
-                    "fas fa-map-marked mr-2 text-sm" +
-                    (router.pathname.indexOf("/ssr/profil") !== -1
+                    "fas fa-chart-simple mr-2 text-sm " +
+                    (router.pathname.indexOf("/ssr/dashboard") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }>
-                </i>{" "}Profil
+                </i>{" "}BERANDA
               </Link>
             </li>
-
             <li className="items-center">
               <Link
                 href="/ssr/kader/"

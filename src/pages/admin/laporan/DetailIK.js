@@ -2,8 +2,7 @@ import React from "react";
 import { useAuth } from "../../admin/index.js";
 
 // components
-import TableLaporan from "../../../components/Cards/CardTableLaporan.js";
-import TableIK from "../../../components/Cards/CardTableIK.js";
+import TableDetailIK from "../../../components/Cards/CardDetailIK.js";
 
 // layout for page
 
@@ -16,10 +15,7 @@ export default function Laporan() {
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <TableIK />
-        </div>
-        <div className="w-full mb-12 px-4">
-          <TableLaporan />
+          <TableDetailIK />
         </div>
       </div>
     </>

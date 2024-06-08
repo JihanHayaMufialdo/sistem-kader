@@ -240,7 +240,7 @@ db.getConnection()
     });
     
             
-    // Laporan Teruga/Ternotifikasi
+    // Laporan Terduga/Ternotifikasi
     router.post('/laporanterduga', upload.single('file'), async (req, res) => {
       if (!req.file) {
         return res.status(400).send('No file uploaded.');
@@ -414,7 +414,86 @@ db.getConnection()
       // Filter baris yang memiliki 'Tanggal Data'
       const filteredData = sheetData.filter(row => row['Tanggal Data'] && String(row['Tanggal Data']).trim());
     
-      const sqlInsertIKRT = "INSERT INTO laporan_ik_rt (tanggal, bulan, tahun, kader, kota_kab, kecamatan, kode_laporan) VALUES (?, ?, ?, ?, ?, ?, ?)";
+      const sqlInsertIKRT = "INSERT INTO laporan_ik_rt (tanggal, bulan, tahun, id_sitb, kader, kota_kab, kecamatan, kode_laporan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+      const sqlInsertUpload = "INSERT INTO upload_file_laporan (nama_file, jenis_laporan, tanggal_entry) VALUES (?, ?, ?)";
+
+      const connection = await db.getConnection();
+
+      try {
+        // Mulai transaksi
+        await connection.beginTransaction();
+
+        // Ambil nama file dari file yang diupload
+        const namaFile = req.file.originalname;
+
+        // Ambil jenis laporan dari nama tabel yang dimasukkan
+        const jenisLaporan = 'Laporan IK RT'; // Sesuaikan dengan jenis laporan yang benar
+
+        // Insert ke upload_file_laporan dan dapatkan id yang dihasilkan
+        const [result] = await connection.query(sqlInsertUpload, [
+          namaFile,
+          jenisLaporan,
+          new Date().toISOString().slice(0, 10) // Format tanggal saat ini YYYY-MM-DD
+        ]);
+        const kodeLaporan = result.insertId;
+
+        for (const row of filteredData) {
+          const [tanggal, bulan, tahun] = String(row['Tanggal Data']).split('-').map(Number);
+
+          if (!isNaN(tanggal) && !isNaN(bulan) && !isNaN(tahun)) {
+            // Hapus petik tunggal atau ganda dari id_sitb
+            const id_sitb = String(row['Person ID SITB']).replace(/['"]/g, '');
+
+            // Insert ke laporan_ik_rt
+            await connection.query(sqlInsertIKRT, [
+              tanggal,
+              bulan,
+              tahun,
+              id_sitb,
+              row.Kader,
+              row["Kota Kab"],
+              row.Kecamatan,
+              kodeLaporan // Masukkan kode_laporan di sini
+            ]);
+          } else {
+            console.warn("Invalid date found:", row['Tanggal Data']);
+          }
+        }
+
+        // Komit transaksi
+        await connection.commit();
+
+        // Hapus file yang diunggah setelah berhasil disimpan ke database
+        fs.unlinkSync(req.file.path);
+        res.send('Data berhasil disimpan ke database.');
+      } catch (err) {
+        console.error("Error inserting data:", err);
+        await connection.rollback();
+        res.status(500).send('Gagal menyimpan data ke database.');
+      } finally {
+        connection.release();
+      }
+    
+      console.log('Uploaded file:', req.file);
+    });
+
+    //Laporan SITB
+    router.post('/laporansitb', upload.single('file'), async (req, res) => {
+      if (!req.file) {
+        return res.status(400).send('No file uploaded.');
+      }
+    
+      const allowedExtensions = ['.xls', '.xlsx'];
+      const fileExtension = path.extname(req.file.originalname).toLowerCase();
+      if (!allowedExtensions.includes(fileExtension)) {
+        return res.status(400).send('Hanya file XLS yang diizinkan.');
+      }
+    
+      const workbook = xlsx.readFile(req.file.path);
+      const sheetName = workbook.SheetNames[0];
+      const sheetData = xlsx.utils.sheet_to_json(workbook.Sheets[sheetName]);
+    
+      const sqlInsertSITB = "INSERT INTO laporan_sitb (person_id, nama, kota, kecamatan, alamat, kode_yankes, fasyankes, kode_laporan) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
       const sqlInsertUpload = "INSERT INTO upload_file_laporan (nama_file, jenis_laporan, tanggal_entry) VALUES (?, ?, ?)";
     
       const connection = await db.getConnection();
@@ -427,7 +506,7 @@ db.getConnection()
         const namaFile = req.file.originalname;
     
         // Ambil jenis laporan dari nama tabel yang dimasukkan
-        const jenisLaporan = 'Laporan IK RT'; // Sesuaikan dengan jenis laporan yang benar
+        const jenisLaporan = 'Laporan SITB'; // Sesuaikan dengan jenis laporan yang benar
     
         // Insert ke upload_file_laporan dan dapatkan id yang dihasilkan
         const [result] = await connection.query(sqlInsertUpload, [
@@ -437,23 +516,33 @@ db.getConnection()
         ]);
         const kodeLaporan = result.insertId;
     
-        for (const row of filteredData) {
-          const [tanggal, bulan, tahun] = String(row['Tanggal Data']).split('-').map(Number);
+        for (const row of sheetData) {
+          // Hapus petik tunggal atau ganda dari person_id
+          const person_id = String(row['person_id']).replace(/['"]/g, '');
     
-          if (!isNaN(tanggal) && !isNaN(bulan) && !isNaN(tahun)) {
-            // Insert ke laporan_ik_rt
-            await connection.query(sqlInsertIKRT, [
-              tanggal,
-              bulan,
-              tahun,
-              row.Kader,
-              row["Kota Kab"],
-              row.Kecamatan,
-              kodeLaporan // Masukkan kode_laporan di sini
-            ]);
-          } else {
-            console.warn("Invalid date found:", row['Tanggal Data']);
-          }
+          // Log nilai untuk debugging
+          console.log("Inserting row:", {
+            person_id,
+            nama: row.nama,
+            kota: row.kabupaten_kota,
+            kecamatan: row.person_kecamatan,
+            alamat: row.alamat,
+            kode_yankes: row.kode_yankes,
+            fasyankes: row.fasyankes,
+            kode_laporan: kodeLaporan
+          });
+    
+          // Insert ke laporan_sitb
+          await connection.query(sqlInsertSITB, [
+            person_id,
+            row.nama,
+            row.kabupaten_kota,
+            row.person_kecamatan,
+            row.alamat,
+            row.kode_yankes,
+            row.fasyankes,
+            kodeLaporan // Masukkan kode_laporan di sini
+          ]);
         }
     
         // Komit transaksi
@@ -472,6 +561,113 @@ db.getConnection()
     
       console.log('Uploaded file:', req.file);
     });
+
+
+    router.get("/menampilkan_status_ik", async (req, res) => {
+      try {
+        // Query untuk data yang tidak cocok
+        const queryUnmatched = `
+          SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
+          FROM laporan_sitb ls
+          LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+          LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+          LEFT JOIN kota k ON kc.id_kota = k.id
+          WHERE lir.id_sitb IS NULL
+        `;
+
+        // Query untuk data yang cocok
+        const queryMatched = `
+          SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
+          FROM laporan_sitb ls
+          INNER JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+          LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+          LEFT JOIN kota k ON kc.id_kota = k.id
+        `;
+
+        // Query untuk jumlah data yang tidak cocok per kota
+        const queryUnmatchedByCity = `
+          SELECT k.nama_kota AS kota, COUNT(*) as total_belumik
+          FROM laporan_sitb ls
+          LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+          LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+          LEFT JOIN kota k ON kc.id_kota = k.id
+          WHERE lir.id_sitb IS NULL
+          GROUP BY k.nama_kota
+        `;
+
+        // Query untuk jumlah data yang cocok per kota
+        const queryMatchedByCity = `
+          SELECT k.nama_kota AS kota, COUNT(*) as total_sudah_ik
+          FROM laporan_sitb ls
+          INNER JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+          LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+          LEFT JOIN kota k ON kc.id_kota = k.id
+          GROUP BY k.nama_kota
+        `;
+
+        // Execute semua query
+        const [unmatchedRows] = await connection.query(queryUnmatched);
+        const [matchedRows] = await connection.query(queryMatched);
+        const [unmatchedByCity] = await connection.query(queryUnmatchedByCity);
+        const [matchedByCity] = await connection.query(queryMatchedByCity);
+
+        // Hitung total data yang tidak cocok dan yang cocok
+        const total_belumik = unmatchedRows.length;
+        const total_sudah_ik = matchedRows.length;
+
+        const response = {
+          total_belumik,
+          data_belumik: unmatchedRows,
+          total_sudah_ik,
+          data_sudah_ik: matchedRows,
+          pembagian_kota: {
+            total_belumik_by_city: unmatchedByCity,
+            total_sudah_ik_by_city: matchedByCity
+          }
+        };
+
+        res.json(response);
+      } catch (error) {
+        console.error("Error fetching laporan:", error);
+        res.status(500).send("Error retrieving laporan");
+      }
+    });
+
+    router.get("/menampilkan_status_ik_belum", async (req, res) => {
+      try {
+          // Query untuk data yang belum ik
+          const queryUnmatched = `
+              SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
+              FROM laporan_sitb ls
+              LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+              LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+              LEFT JOIN kota k ON kc.id_kota = k.id
+              WHERE lir.id_sitb IS NULL
+          `;
+  
+          // Execute query untuk data yang belum ik
+          const [unmatchedRows] = await connection.query(queryUnmatched);
+  
+          const response = {
+              total_belumik: unmatchedRows.length,
+              data_belumik: unmatchedRows
+          };
+  
+          res.json(response);
+      } catch (error) {
+          console.error("Error fetching data:", error);
+          res.status(500).send("Error retrieving data");
+      }
+  });
+  
+
+    
+    
+    
+    
+    
+
+
 
   })
   .catch((error) => {

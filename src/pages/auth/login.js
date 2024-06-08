@@ -26,7 +26,7 @@ export default function Login() {
       if (role === 'Admin') {
         window.location.href = '/admin/dashboard';
       } else if (role === 'SSR') {
-        window.location.href = '/ssr/profil';
+        window.location.href = '/ssr/dashboard';
       } else {
         setError('Peran pengguna tidak dikenali.');
       }
