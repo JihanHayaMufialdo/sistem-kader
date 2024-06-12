@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import "@fortawesome/fontawesome-free/css/all.css";
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState("hidden");

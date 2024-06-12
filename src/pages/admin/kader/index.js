@@ -17,7 +17,6 @@ export default function TableeDK() {
         <div className="w-full mb-12 px-4">
           <TableDK />
         </div>
-
       </div>
     </>
   );
