@@ -5,6 +5,8 @@ const xlsx = require("xlsx");
 const path = require("path");
 const router = express.Router();
 const fs = require("fs");
+const mysql = require('mysql2/promise');
+const excelJS = require('exceljs');
 
 db.getConnection()
   .then((connection) => {
@@ -633,41 +635,133 @@ db.getConnection()
       }
     });
 
-    router.get("/menampilkan_status_ik_belum", async (req, res) => {
-      try {
-          // Query untuk data yang belum ik
-          const queryUnmatched = `
-              SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
-              FROM laporan_sitb ls
-              LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
-              LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
-              LEFT JOIN kota k ON kc.id_kota = k.id
-              WHERE lir.id_sitb IS NULL
-          `;
-  
-          // Execute query untuk data yang belum ik
-          const [unmatchedRows] = await connection.query(queryUnmatched);
-  
-          const response = {
-              total_belumik: unmatchedRows.length,
-              data_belumik: unmatchedRows
-          };
-  
-          res.json(response);
-      } catch (error) {
-          console.error("Error fetching data:", error);
-          res.status(500).send("Error retrieving data");
-      }
-  });
-  
+// Endpoint untuk mendapatkan daftar kota
+router.get("/filter-kota", async (req, res) => {
+  try {
+    const query = "SELECT DISTINCT nama_kota AS nama FROM kota";
+    const [rows] = await db.query(query);
+    const kotaOptions = rows.map((row) => ({
+      nama: row.nama
+    }));
+    res.json({ kota: kotaOptions });
+  } catch (error) {
+    console.error("Error fetching cities:", error);
+    res.status(500).send("Error retrieving city data");
+  }
+});
 
-    
-    
-    
-    
-    
+// Endpoint untuk mendapatkan laporan berdasarkan status IK
+router.get("/menampilkan_status_ik_belum", async (req, res) => {
+  const { kota } = req.query; // Ambil nilai filter kota dari query
 
+  try {
+    let query = `
+      SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
+      FROM laporan_sitb ls
+      LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+      LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+      LEFT JOIN kota k ON kc.id_kota = k.id
+      WHERE lir.id_sitb IS NULL
+    `;
+    
+    if (kota && kota !== 'All') {
+      query += ` AND k.nama_kota = ?`;
+    }
 
+    const [rows] = await connection.query(query, [kota !== 'All' ? kota : undefined]);
+    const response = {
+      total_belumik: rows.length,
+      data_belumik: rows,
+    };
+    res.json(response);
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    res.status(500).send("Error retrieving reports");
+  }
+});
+
+// Endpoint untuk mengekspor data ke Excel
+router.get("/export_excel", async (req, res) => {
+  const { kota } = req.query; // Ambil nilai filter kota dari query
+
+  try {
+    let query = `
+      SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
+      FROM laporan_sitb ls
+      LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+      LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+      LEFT JOIN kota k ON kc.id_kota = k.id
+      WHERE lir.id_sitb IS NULL
+    `;
+    
+    if (kota && kota !== 'All') {
+      query += ` AND k.nama_kota = ?`;
+    }
+
+    const [rows] = await connection.query(query, [kota !== 'All' ? kota : undefined]);
+    res.json(rows);
+  } catch (error) {
+    console.error("Error exporting reports:", error);
+    res.status(500).send("Error exporting reports");
+  }
+});
+
+router.get('/export_excel', async (req, res) => {
+  const { kota } = req.query;
+
+  try {
+    let query = `
+      SELECT ls.person_id, ls.nama, k.nama_kota AS kota, ls.kecamatan, ls.fasyankes, ls.alamat
+      FROM laporan_sitb ls
+      LEFT JOIN laporan_ik_rt lir ON ls.person_id = lir.id_sitb
+      LEFT JOIN kecamatan kc ON ls.kecamatan = kc.nama_kecamatan
+      LEFT JOIN kota k ON kc.id_kota = k.id
+      WHERE lir.id_sitb IS NULL
+    `;
+    
+    if (kota && kota !== 'All') {
+      query += ` AND k.nama_kota = ?`;
+    }
+
+    const [rows] = await connection.query(query, [kota !== 'All' ? kota : undefined]);
+
+    // Buat workbook baru
+    const workbook = new excelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Laporan');
+
+    // Tambahkan header
+    worksheet.columns = [
+      { header: 'Person ID', key: 'person_id', width: 15 },
+      { header: 'Nama', key: 'nama', width: 30 },
+      { header: 'Kecamatan', key: 'kecamatan', width: 20 },
+      { header: 'Kota', key: 'kota', width: 20 },
+      { header: 'Fasyankes', key: 'fasyankes', width: 20 },
+      { header: 'Alamat', key: 'alamat', width: 30 },
+    ];
+
+    // Tambahkan data
+    rows.forEach((row) => {
+      worksheet.addRow(row);
+    });
+
+    // Konfigurasi respons
+    res.setHeader(
+      'Content-Type',
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    );
+    res.setHeader(
+      'Content-Disposition',
+      'attachment; filename=Laporan_Belum_IK.xlsx'
+    );
+
+    // Kirim workbook sebagai respons
+    await workbook.xlsx.write(res);
+    res.end();
+  } catch (error) {
+    console.error('Error exporting to Excel:', error);
+    res.status(500).send('Error exporting to Excel');
+  }
+});
 
   })
   .catch((error) => {
