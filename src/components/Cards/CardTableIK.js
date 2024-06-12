@@ -5,6 +5,7 @@ const axios = require("axios");
 export default function TableIK({ color }) {
   const router = useRouter();
   const [laporan, setLaporan] = useState([]);
+  const [totalBelumIK, setTotalBelumIK] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100;
   const totalPages = Math.ceil(laporan.length / itemsPerPage);
@@ -26,10 +27,8 @@ export default function TableIK({ color }) {
     const fetchBelumIKData = async () => {
       try {
         const response = await axios.get("http://localhost:8000/menampilkan_status_ik");
-        const data = response.data.data_belumik || [];
-        setBelumIKData(data);
-        const totalItems = data.length;
-        setTotalPages(Math.ceil(totalItems / itemsPerPage));
+        const dataBelumIK = response.data.pembagian_kota.total_belumik_by_city || [];
+        setTotalBelumIK(dataBelumIK);
       } catch (error) {
         console.error(error);
       }
@@ -38,14 +37,16 @@ export default function TableIK({ color }) {
     fetchBelumIKData();
   }, []);
 
+  const handleButtonDetailClick = () => {
+    router.push('/admin/laporan/DetailIK');
+  };
 
-  
   const handleButtonLihatClick = (kota) => {
     router.push({
         pathname: '/admin/laporan/DetailIK',
         query: { kota },
     });
-};
+  };
 
   const handleButtonExportClick = () => {
     console.log(`Export ke Excel`);
@@ -53,10 +54,6 @@ export default function TableIK({ color }) {
 
   const handleButtonTambahClick = () => {
     router.push('/admin/laporan/InsertLaporan');
-  };
-
-  const handleButtonDetailClick = () => {
-    router.push('/admin/laporan/DetailIK');
   };
 
   const goToPage = (page) => {
@@ -89,7 +86,7 @@ export default function TableIK({ color }) {
             </div>
           </div>
 
-          {/* Tabel Akun SSR */}
+          {/* Tabel Laporan IK */}
           <table className="items-center w-full bg-white border-collapse">
             <thead className="bg-blueGray-50">
               <tr>
@@ -115,31 +112,27 @@ export default function TableIK({ color }) {
                   Sudah IK
                 </th>
                 <th
-                  style={{ width: "50px" }}
+                  style={{ width: "100px" }}
                   scope="col"
                   className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
                   Belum IK
                 </th>
-                <th
-                  style={{ width: "50px" }}
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Aksi
-                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
-              {currentItems.map((item, index) => (
-                <tr key={index}>
-                  <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
-                  <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kabupaten_Kota}</td>
-                  <td style={{ width: "100px" }} className="px-10 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.IK}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  </td>
-                </tr>
-              ))}
+              {currentItems.map((item, index) => {
+                const belumIKData = totalBelumIK?.find(bel => bel.kota === item.Kabupaten_Kota);
+                const totalBelumIKCount = belumIKData ? belumIKData.total_belumik : 0;
+                return (
+                  <tr key={index}>
+                    <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
+                    <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kabupaten_Kota}</td>
+                    <td style={{ width: "100px" }} className="px-10 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.IK}</td>
+                    <td style={{ width: "100px" }} className="px-10 py-4 whitespace-nowrap text-center text-sm text-gray-800">{totalBelumIKCount}</td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
           {/* Pagination */}
@@ -169,11 +162,6 @@ export default function TableIK({ color }) {
             </button>
           </div>
         </div>
-      </div>
-      <div className="flex justify-end mr-2">
-        <a type="button" onClick={handleButtonExportClick} className="bg-blueGray-700 text-white font-medium py-1 px-3 rounded mr-2">
-          Export Excel
-        </a>
       </div>
     </>
   );
