@@ -146,8 +146,8 @@ export default function TableDK() {
     router.push('/components/Forms/FormUploadKTA');
   };
 
-  const handleLihatKTA = () => {
-    router.push('kader/KTA');
+  const handleLihatKTA = (id) => {
+    router.push(`/ssr/kader/KTA?id=${id}`);
   };
 
   const handleButtonHapus = async (id) => {
@@ -467,7 +467,7 @@ export default function TableDK() {
           <div>
             <button
               type="button"
-              onClick={handleLihatKTA}
+              onClick={() => handleLihatKTA(kader.id)}
               className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
             >
               Lihat

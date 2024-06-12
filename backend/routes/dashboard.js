@@ -108,6 +108,42 @@ db.getConnection()
         res.status(500).send('Error retrieving kader data');
       }
     });
+
+    router.get('/jumlah_total_laporan', async (req, res) => {
+    try {
+        const [rows] = await db.query(`
+            SELECT
+                SUM(COALESCE(laporan_tpt.count, 0)) AS Total_TPT,
+                SUM(COALESCE(laporan_ik_rt.count, 0)) AS Total_IK_RT,
+                SUM(COALESCE(laporan_ik_nonrt.count, 0)) AS Total_IK_Nonrt,
+                SUM(COALESCE(laporan_terduga.count, 0)) AS Total_Terdeteksi
+            FROM (
+                SELECT DISTINCT kota_kab AS Kabupaten_Kota, bulan, tahun FROM laporan_ik_nonrt
+                UNION
+                SELECT DISTINCT kota_kab AS Kabupaten_Kota, bulan, tahun FROM laporan_tpt
+                UNION
+                SELECT DISTINCT kota_kab AS Kabupaten_Kota, bulan, tahun FROM laporan_ik_rt
+                UNION
+                SELECT DISTINCT kota_kab AS Kabupaten_Kota, bulan, tahun FROM laporan_terduga
+            ) AS kader_data
+            LEFT JOIN (SELECT kota_kab, bulan, tahun, COUNT(*) AS count FROM laporan_tpt GROUP BY kota_kab, bulan, tahun) AS laporan_tpt
+                ON kader_data.Kabupaten_Kota = laporan_tpt.kota_kab AND kader_data.Bulan = laporan_tpt.bulan AND kader_data.Tahun = laporan_tpt.tahun
+            LEFT JOIN (SELECT kota_kab, bulan, tahun, COUNT(*) AS count FROM laporan_ik_rt GROUP BY kota_kab, bulan, tahun) AS laporan_ik_rt
+                ON kader_data.Kabupaten_Kota = laporan_ik_rt.kota_kab AND kader_data.Bulan = laporan_ik_rt.bulan AND kader_data.Tahun = laporan_ik_rt.tahun
+            LEFT JOIN (SELECT kota_kab, bulan, tahun, COUNT(*) AS count FROM laporan_ik_nonrt GROUP BY kota_kab, bulan, tahun) AS laporan_ik_nonrt
+                ON kader_data.Kabupaten_Kota = laporan_ik_nonrt.kota_kab AND kader_data.Bulan = laporan_ik_nonrt.bulan AND kader_data.Tahun = laporan_ik_nonrt.tahun
+            LEFT JOIN (SELECT kota_kab, bulan, tahun, COUNT(*) AS count FROM laporan_terduga GROUP BY kota_kab, bulan, tahun) AS laporan_terduga
+                ON kader_data.Kabupaten_Kota = laporan_terduga.kota_kab AND kader_data.Bulan = laporan_terduga.bulan AND kader_data.Tahun = laporan_terduga.tahun;
+        `);
+
+        const [totals] = rows;
+        res.json(totals);
+    } catch (error) {
+        console.error('Error fetching total laporan data:', error);
+        res.status(500).send('Error retrieving total laporan data');
+    }
+});
+
     
       
   })

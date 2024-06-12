@@ -7,7 +7,6 @@ db.getConnection()
   .then((connection) => {
     console.log("Connected to MySQL database");
 
-
     // Menu Data Kader
     // GET: Mengambil semua data kader
     router.get('/kader', async (req, res) => {
@@ -279,15 +278,39 @@ db.getConnection()
     // DELETE: Menghapus data kader
     router.delete('/kader/:id', async (req, res) => {
       try {
-        const { id } = req.params;
-        const query = 'DELETE FROM data_kader WHERE id = ?';
-        await connection.query(query, [id]);
-        res.status(200).send('Kader data deleted successfully');
+          const { id } = req.params;
+  
+          // Ambil kode_kta terkait dengan id dari data_kader yang akan dihapus
+          const kodeKtaQuery = 'SELECT kode_kta FROM data_kader WHERE id = ?';
+          const [kodeKtaResult] = await connection.query(kodeKtaQuery, [id]);
+          
+          // Check if kode_kta exists
+          if (!kodeKtaResult || kodeKtaResult.length === 0 || !kodeKtaResult[0].kode_kta) {
+              throw new Error('kode_kta not found');
+          }
+  
+          const { kode_kta } = kodeKtaResult[0];
+  
+          // Hapus data dari tabel data_kader
+          const deleteDataKaderQuery = 'DELETE FROM data_kader WHERE id = ?';
+          await connection.query(deleteDataKaderQuery, [id]);
+  
+          // Hapus data dari tabel kta yang memiliki id yang sesuai dengan kode_kta dari data_kader
+          const deleteKtaQuery = 'DELETE FROM kta WHERE id = ?';
+          await connection.query(deleteKtaQuery, [kode_kta]);
+  
+          res.status(200).send('Kader data and related KTA data deleted successfully');
       } catch (error) {
-        console.error('Error deleting kader data:', error);
-        res.status(500).send('Error deleting kader data');
+          console.error('Error deleting kader data and related KTA data:', error);
+          res.status(500).send('Error deleting kader data and related KTA data');
       }
-    });
+  });
+  
+  
+  
+  
+  
+  
 
 
   })

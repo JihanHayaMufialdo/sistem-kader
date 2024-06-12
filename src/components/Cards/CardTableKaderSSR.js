@@ -142,8 +142,8 @@ export default function TableDK() {
     router.push(`/ssr/kader/upload?id=${id}`);
   };
 
-  const handleButtonKTAClick = () => {
-    router.push('/ssr/kader/KTA');
+  const handleButtonKTAClick = (id) => {
+    router.push(`/ssr/kader/KTA?id=${id}`);
   };
 
   const handleButtonHapus = async (id) => {
@@ -426,9 +426,6 @@ export default function TableDK() {
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Aksi
               </th>
-              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
-                KTA
-              </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200">
@@ -447,21 +444,13 @@ export default function TableDK() {
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_provinsi}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.status}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-          <button onClick={() => handleEditKader(kader.id)} className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
-            Ubah
-          </button>
-          <button onClick={() => handleButtonHapus(kader.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
-            Hapus
-          </button>
-        </td>
-        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
           <button
               onClick={() => handleButtonUnggahfoto(kader.id)}
               className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
             >
               Unggah Foto
           </button>
-          <button onClick={handleButtonKTAClick} className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
+          <button onClick={() => handleButtonKTAClick(kader.id)} className="bg-orange-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
             >
               Lihat KTA
           </button>

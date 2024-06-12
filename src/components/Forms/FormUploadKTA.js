@@ -35,32 +35,47 @@ export default function FormUploadKTA() {
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            const formData = new FormData();
-            formData.append('file', file);
-
-            axios.post(`http://localhost:3000/upload/photo`, formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            })
-            .then(response => {
-                console.log('Response dari backend:', response);
-                setFotoURL(response.data.fotoURL);  // Menggunakan URL dari response backend
-                setSuccessMessage('Foto berhasil diunggah');
-            })
-            .catch(error => {
-                console.error('Error uploading photo:', error);
-                setErrorMessage('Gagal mengunggah foto');
-            });
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                setFotoURL(reader.result); // Menggunakan URL gambar yang diunggah untuk ditampilkan
+            };
+            reader.readAsDataURL(file);
+            setSuccessMessage('Foto berhasil diunggah');
+        } else {
+            setErrorMessage('Pilih file foto terlebih dahulu');
         }
     };
 
-    const handleSaveClick = () => {
-        setSuccessMessage('Data berhasil disimpan');
+    const handleSaveClick = async () => {
+        const formData = new FormData();
+        formData.append('nama', nama);
+        formData.append('nomorInduk', nomorInduk);
+        formData.append('jenis_kader', jenis_kader);
+        if (fotoURL) {
+            const blob = await fetch(fotoURL).then(res => res.blob());
+            formData.append('foto', blob, 'uploaded_image.png');
+        }
+
+        try {
+            const response = await axios.post('http://localhost:8000/kta', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            setSuccessMessage('Data berhasil disimpan');
+            setFotoURL(response.data.fotoURL);  // Menggunakan URL dari response backend
+        } catch (error) {
+            console.error('Error saving KTA data:', error);
+            setErrorMessage('Gagal menyimpan data');
+        }
     };
 
     const handleButtonKembaliClick = () => {
         router.push('/ssr/kader');
+    };
+
+    const handleButtonKTAClick = () => {
+        router.push('/ssr/kader/KTA');
     };
 
     return (
@@ -106,6 +121,7 @@ export default function FormUploadKTA() {
                         <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="foto">Foto</label>
                         <input
                             type="file" id="foto" name="foto"
+                            accept="image/*"
                             className="border-2 border-gray-300 rounded w-full py-2 px-3 leading-tight focus:outline-none focus:border-blue-500"
                             onChange={handleFileChange}
                         />
@@ -127,27 +143,27 @@ export default function FormUploadKTA() {
                 </div>
             </div>
             <div className="p-4">
-            <h2 className="text-2xl font-bold text-center mb-4">ID Card</h2>
-            <div className="flex justify-center">
-                {/* Bagian Depan Kartu */}
-                <div className="bg-white shadow-md rounded p-4 mr-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/KTA.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
-                    <h2 className="px-8 py-12 m-4 text-lxl font-bold text-center">KARTU TANDA ANGGOTA</h2>
-                    <div className="photo">
-                        {fotoURL && <img src={fotoURL} alt="Foto" className="mx-auto" style={{ width: '150px', height: '150px', borderRadius: '100%' }} />}
+                <h2 className="text-2xl font-bold text-center mb-8">ID Card</h2>
+                <div className="flex justify-center">
+                    {/* Bagian Depan Kartu */}
+                    <div className="bg-white shadow-md rounded p-8 mr-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/KTA.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
+                        <h2 className="px-8 py-5 m-4 mt-8 text-lxl font-bold text-center">KARTU TANDA ANGGOTA</h2>
+                        <div className="photo text-center"> 
+                            {fotoURL && <img src={fotoURL} alt="Foto" className="mx-auto" style={{ width: '150px', height: '150px', borderRadius: '100%' }} />}
+                        </div>
+                        <div className="text-center mt-5">
+                            <p className="font-bold">{nama}</p>
+                            <p>{nomorInduk}</p>
+                            <p>{jenis_kader}</p>
+                        </div>
                     </div>
-                    <div className="text-center">
-                        <p className="font-bold">{nama}</p>
-                        <p>{nomorInduk}</p>
-                        <p>{jenis_kader}</p>
+                    
+                    {/* Bagian Belakang Kartu */}
+                    <div className="bg-white shadow-md rounded p-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/Belakang.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
+                        {/* Konten untuk bagian belakang kartu di sini */}
                     </div>
-                </div>
-                
-                {/* Bagian Belakang Kartu */}
-                <div className="bg-white shadow-md rounded p-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/Belakang.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
-                    {/* Konten untuk bagian belakang kartu di sini */}
                 </div>
             </div>
-        </div>
         </div>
     );
 }
