@@ -101,7 +101,7 @@ export default function NewPage({ color }) {
                     {new Date(file.tanggal_entry).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                    <button onClick={() => handleDeleteClick(file.id)} className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded">
+                    <button onClick={() => handleDeleteClick(file.id)} className="bg-red-700 hover:bg-red-700 text-white font-medium py-1 px-3 rounded">
                       Hapus
                     </button>
                   </td>

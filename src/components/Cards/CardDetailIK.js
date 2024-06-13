@@ -3,7 +3,8 @@ import { useRouter } from 'next/router';
 import axios from "axios";
 import * as XLSX from 'xlsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCircleChevronLeft } from "@fortawesome/free-solid-svg-icons";
+
 
 export default function TableIK({ color }) {
   const router = useRouter();
@@ -96,7 +97,7 @@ export default function TableIK({ color }) {
           <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
             <div className="flex justify-between items-center">
               <div className="flex items-center justify-left">
-                <FontAwesomeIcon icon={faArrowLeft} className="cursor-pointer text-green-700 text-xl mr-2" onClick={handleBackClick} />
+                <FontAwesomeIcon icon={faCircleChevronLeft} className="cursor-pointer text-green-700 text-xl mr-2" onClick={handleBackClick} />
                 <h6 className="text-green-700 text-xl font-bold">
                   Laporan Belum IK
                 </h6>
@@ -119,7 +120,6 @@ export default function TableIK({ color }) {
         </div>
       </div>
     </div>
-    
           <table className="items-center w-full bg-white border-collapse">
             <thead className="bg-blueGray-50">
               <tr>
