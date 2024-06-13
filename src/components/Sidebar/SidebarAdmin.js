@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faUser, faFileLines, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState(true); // Ubah nilai awal menjadi true
@@ -59,7 +61,7 @@ export default function Sidebar() {
           } md:flex md:flex-col md:items-stretch px-6 py-6 md:opacity-100 md:relative md:mt-5 md:shadow-none shadow absolute top-0 left-1 right-1 overflow-y-auto overflow-x-hidden h-auto items-center flex-10 rounded bg-white md:transition-all md:duration-300 md:ease-in-out`}
         >
           {/* Divider */}
-          <hr className="my-4 md:w-full " />
+          <hr className="my-6 md:w-full " />
 
           {/* Menu */}
           <ul className="md:flex-col md:min-w-full flex flex-col list-none">
@@ -73,14 +75,17 @@ export default function Sidebar() {
                     : "text-blueGray-700 hover:text-blueGray-500")
                 }
               >
-                <i
-                  className={
-                    "fas fas fa-tools mr-2 text-sm " +
-                    (router.pathname.indexOf("/admin/dashboard") !== -1
-                      ? "opacity-75"
-                      : "text-blueGray-300")
-                  }
-                ></i>{" "}
+                <i>
+                  <FontAwesomeIcon
+                    icon={faHouse}
+                    className={
+                      "mr- text-sm " +
+                      (router.pathname.indexOf("/admin/dashboard") !== -1
+                        ? "opacity-75"
+                        : "text-blueGray-300")
+                    }
+                  />
+                </i>{" "}
                 BERANDA
               </Link>
             </li>
@@ -95,14 +100,18 @@ export default function Sidebar() {
                     : "text-blueGray-700 hover:text-blueGray-500")
                 }>
 
-                <i
+                <i>
+                  <FontAwesomeIcon
+                  icon={faUser}
                   className={
-                    "fas fa-tools mr-2 text-sm " +
+                    "mr-2 text-sm " +
                     (router.pathname.indexOf("/admin/ssr") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }
-                ></i>{" "}Akun SSR
+                  />
+                </i>{" "}
+                Akun SSR
               </Link>
             </li>
 
@@ -137,16 +146,20 @@ export default function Sidebar() {
                     : "text-blueGray-700 hover:text-blueGray-500")
                 }>
 
-                <i
-                  className={
-                    "fas fa-map-marked mr-2 text-sm " +
-                    (router.pathname.indexOf("/admin/laporan") !== -1
-                      ? "opacity-75"
-                      : "text-blueGray-300")
-                  }
-                ></i>{" "}Laporan
-              </Link>
-            </li>
+                <i>
+                    <FontAwesomeIcon
+                      icon={faFileLines}
+                      className={
+                        "mr-2 text-sm " +
+                        (router.pathname.indexOf("/admin/laporan") !== -1
+                          ? "opacity-75"
+                          : "text-blueGray-300")
+                      }
+                    />
+                  </i>{" "}
+                  Laporan
+                </Link>
+              </li>
 
             <li className="items-center">
               <Link
@@ -160,7 +173,7 @@ export default function Sidebar() {
 
                 <i
                   className={
-                    "fas fa-map-marked mr-2 text-sm" +
+                    "fas fa-map-marked mr-2 text-sm " +
                     (router.pathname.indexOf("/admin/kota") !== -1
                     ? "opacity-75"
                       : "text-blueGray-300")
@@ -179,14 +192,17 @@ export default function Sidebar() {
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
               >
-                <i
+                <i>
+                  <FontAwesomeIcon
+                  icon={faAngleRight}
                   className={
-                    "fas fa-map-marked mr-2 text-sm " +
+                    "mr-2 text-sm " +
                     (router.pathname.indexOf("/auth/login") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }
-                ></i>{" "}
+                  />
+                </i>{" "}
                 Keluar
               </button>
             </li>

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function KTADisplay() {
     const [kader, setKader] = useState(null);
@@ -127,14 +129,24 @@ export default function KTADisplay() {
 
     return (
         <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
-            <div className="overflow-x-auto">
-            <h1 className="text-2xl font-bold text-center mb-4 mt-4">Kartu Tanda Anggota</h1>
-                <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
-                    <div className="flex justify-between items-center">
-                        <div className="relative w-full px-3 max-w-full flex-grow flex-1">
-                            
-                            <div className="flex items-center justify-center">
-                                <div className="flex space-x-8">
+      <div className="overflow-x-auto">
+        <div className="flex justify-between items-center px-6 py-4 bg-white border-b-2">
+          <div className="flex items-center">
+            <FontAwesomeIcon
+              icon={faCircleChevronLeft}
+              className="cursor-pointer text-green-700 text-xl mr-2"
+              onClick={() => router.back()}
+            />
+            <h1 className="text-2xl font-bold ">Kartu Tanda Anggota</h1>
+          </div>
+          <div className="w-8"></div> {/* Placeholder untuk memberikan ruang kosong seukuran ikon */}
+        </div>
+        <div className="rounded-t bg-blueGray-100 mb-1 px-6 py-6 border-2">
+          <div className="flex justify-between items-center">
+            <div className="relative w-full px-3 max-w-full flex-grow flex-1">
+              {/* Konten lainnya */}
+              <div className="flex items-center justify-center">
+                <div className="flex space-x-8">
                     {/* Bagian Depan Kartu */}
                     <div className="bg-white shadow-md rounded p-8 m-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/KTA.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                         <h2 className="px-8 py-5 m-4 mt-8 text-lxl font-bold text-center">KARTU TANDA ANGGOTA</h2>
@@ -157,16 +169,16 @@ export default function KTADisplay() {
             <div className="text-center mt-10">
             <button
                     onClick={handlePrint}
-                    className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-orange-500 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-1 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     style={{ marginRight: '15px' }}
                 >
                     Cetak
                 </button>
                 <button
                     onClick={() => router.back()}
-                    className="bg-red-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="bg-blueGray-400 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-1 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                    Kembali
+                    Batal
                 </button>
             </div>
         </div>

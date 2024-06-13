@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import "@fortawesome/fontawesome-free/css/all.css";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faHouse, faUser, faFileLines, faAngleRight} from '@fortawesome/free-solid-svg-icons';
 
 export default function Sidebar() {
   const [collapseShow, setCollapseShow] = React.useState(true); // Ubah nilai awal menjadi true
@@ -73,14 +75,17 @@ export default function Sidebar() {
                     : "text-blueGray-700 hover:text-blueGray-500")
                 }
               >
-                <i
+                <i>
+                  <FontAwesomeIcon
+                  icon={faHouse}
                   className={
-                    "fas fas fa-tools mr-2 text-sm " +
+                    "mr-2 text-sm" +
                     (router.pathname.indexOf("/ssr/dashboard") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }
-                ></i>{" "}
+                  />
+                </i>{" "}
                 BERANDA
               </Link>
             </li>
@@ -97,7 +102,7 @@ export default function Sidebar() {
 
                 <i
                   className={
-                    "fas fa-map-marked mr-2 text-sm " +
+                    "fas fa-table mr-2 text-sm " +
                     (router.pathname.indexOf("/ssr/kader") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
@@ -115,14 +120,17 @@ export default function Sidebar() {
                       : "text-blueGray-700 hover:text-blueGray-500")
                   }
               >
-                <i
+                <i>
+                  <FontAwesomeIcon
+                  icon={faAngleRight}
                   className={
-                    "fas fa-map-marked mr-2 text-sm " +
+                    "mr-2 text-sm " +
                     (router.pathname.indexOf("/auth/login") !== -1
                       ? "opacity-75"
                       : "text-blueGray-300")
                   }
-                ></i>{" "}
+                  />
+                </i>{" "}
                 Keluar
               </button>
             </li>
