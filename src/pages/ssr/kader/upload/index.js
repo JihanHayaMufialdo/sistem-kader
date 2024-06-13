@@ -1,13 +1,28 @@
-import React from "react";
-import { useAuth } from "../../../admin/index.js";
+// src/pages/admin/ssr/uploadkta/index.js
 
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
 import FormUploadKTA from "../../../../components/Forms/FormUploadKTA"; // Sesuaikan jalur sesuai struktur direktori
 // layouts
 import SSR from "../../../../layouts/SSR"; // Sesuaikan jalur sesuai struktur direktori
 
 const UploadKTA = () => {
-  useAuth();
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'SSR') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan SSR
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
 
   return (
     <>

@@ -1,13 +1,29 @@
-import React from "react";
-import { useAuth } from "../../../../admin/index.js";
+// src/pages/admin/edit-kecamatan/index.js
+
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import FormEditKecamatan from "../../../../../components/Forms/FormEditKecamatan.js";
-
+import FormEditKecamatan from "../../../../../components/Forms/FormEditKecamatan";
 // layout for page
-import Admin from "../../../../../layouts/Admin.js";
+import Admin from "../../../../../layouts/Admin";
 
-export default function EditKecamatan() {
-  useAuth();
+const EditKecamatan = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'Admin') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan admin
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
+
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -17,6 +33,8 @@ export default function EditKecamatan() {
       </div>
     </>
   );
-}
+};
 
 EditKecamatan.layout = Admin;
+
+export default EditKecamatan;

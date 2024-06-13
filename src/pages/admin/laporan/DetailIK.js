@@ -1,16 +1,29 @@
-import React from "react";
-import { useAuth } from "../../admin/index.js";
+// src/pages/admin/laporan/index.js
 
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import TableDetailIK from "../../../components/Cards/CardDetailIK.js";
-
+import TableDetailIK from "../../../components/Cards/CardDetailIK";
 // layout for page
+import Admin from "../../../layouts/Admin";
 
-import Admin from "../../../layouts/Admin.js";
+const Laporan = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'Admin') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan admin
+      }
+    }
+  }, [user, loading, router]);
 
-export default function Laporan() {
-  useAuth();
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
+
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -20,6 +33,8 @@ export default function Laporan() {
       </div>
     </>
   );
-}
+};
 
 Laporan.layout = Admin;
+
+export default Laporan;

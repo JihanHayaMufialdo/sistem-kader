@@ -1,12 +1,28 @@
-import React from "react";
-import { useAuth } from "../../admin/index.js";
+// src/pages/admin/lihat-kta-display/index.js
+
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import CardLihatKTA from "../../../components/Cards/CardLihatKTA.js";
-import Admin from "../../../layouts/Admin.js";
+import CardLihatKTA from "../../../components/Cards/CardLihatKTA";
+import Admin from "../../../layouts/Admin";
 
+const LihatKTADisplay = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
 
-export default function LihatKTADisplay() {
-  useAuth();
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'Admin') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan admin
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
+
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -16,6 +32,8 @@ export default function LihatKTADisplay() {
       </div>
     </>
   );
-}
+};
 
 LihatKTADisplay.layout = Admin;
+
+export default LihatKTADisplay;

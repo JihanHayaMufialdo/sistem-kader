@@ -1,13 +1,29 @@
-import React from "react";
-import { useAuth } from "../../../admin/index.js";
+// src/pages/admin/ssr/edit/index.js
 
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import FormEditProfil from "../../../../components/Forms/FormEditProfil.js";
-// layout for page
-import SSR from "../../../../layouts/SSR.js";
+import FormEditProfil from "../../../../components/Forms/FormEditProfil.js"; // Sesuaikan jalur sesuai struktur direktori
+// layouts
+import SSR from "../../../../layouts/SSR.js"; // Sesuaikan jalur sesuai struktur direktori
 
-export default function EditSSR() {
-  useAuth();
+const EditSSR = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'SSR') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan SSR
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
+
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -17,6 +33,8 @@ export default function EditSSR() {
       </div>
     </>
   );
-}
+};
 
 EditSSR.layout = SSR;
+
+export default EditSSR;
