@@ -61,10 +61,6 @@ export default function TableIK({ color }) {
     console.log(`Export ke Excel`);
   };
 
-  const handleButtonTambahClick = () => {
-    router.push('/admin/laporan/InsertLaporan');
-  };
-
   const goToPage = (page) => {
     setCurrentPage(page);
   };
@@ -88,10 +84,7 @@ export default function TableIK({ color }) {
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
-                <button type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
-                  Tambah Laporan
-                </button>
-                <button type="button" onClick={handleButtonDetailClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
+                <button type="button" onClick={handleButtonDetailClick} className="bg-orange-500 text-white font-medium py-1 px-3 rounded mr-2">
                   Detail Belum IK
                 </button>
               </div>
@@ -131,9 +124,9 @@ export default function TableIK({ color }) {
                 const totalBelumIKCount = belumIKData ? belumIKData.total_belumik : 0;
                 return (
                   <tr key={index}>
-                    <td style={{ width: "40px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
-                    <td style={{ width: "120px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">{item.Kabupaten_Kota}</td>
-                    <td style={{ width: "100px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">{totalBelumIKCount}</td>
+                    <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
+                    <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kabupaten_Kota}</td>
+                    <td style={{ width: "100px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{totalBelumIKCount}</td>
                   </tr>
                 );
               })}
@@ -143,7 +136,7 @@ export default function TableIK({ color }) {
                 <td style={{ width: "100px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">{totalBelumIKUnknown}</td>
               </tr>
               <tr className="bg-gray-200">
-                <td colSpan="3" className="px-4 py-2 whitespace-nowrap text-center text-m font-bold text-gray-900">
+                <td colSpan="3" className="px-4 py-2 whitespace-nowrap text-center text-m font-bold text-gray-800">
                   Total Belum IK: {totalBelumIKCount}
                 </td>
               </tr>

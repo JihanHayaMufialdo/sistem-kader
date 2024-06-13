@@ -107,7 +107,7 @@ export default function TableProvinsi() {
                     <button
                       type="button"
                       onClick={() => handleDelete(provinsi.id)}
-                      className="bg-red-500 text-white font-medium py-1 px-3 rounded mr-2"
+                      className="bg-red-700 text-white font-medium py-1 px-3 rounded mr-2"
                     >
                       Hapus
                     </button>

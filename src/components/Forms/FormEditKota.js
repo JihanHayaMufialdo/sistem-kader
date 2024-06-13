@@ -134,7 +134,7 @@ export default function FormEditKota() {
                                 type="button"
                                 onClick={handleButtonKembaliClick}
                             >
-                                Kembali
+                                Batal
                             </button>
                         </div>
                     </form>
