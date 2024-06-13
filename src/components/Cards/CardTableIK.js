@@ -61,10 +61,6 @@ export default function TableIK({ color }) {
     console.log(`Export ke Excel`);
   };
 
-  const handleButtonTambahClick = () => {
-    router.push('/admin/laporan/InsertLaporan');
-  };
-
   const goToPage = (page) => {
     setCurrentPage(page);
   };
@@ -88,9 +84,6 @@ export default function TableIK({ color }) {
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
-                <button type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
-                  Tambah Laporan
-                </button>
                 <button type="button" onClick={handleButtonDetailClick} className="bg-orange-500 text-white font-medium py-1 px-3 rounded mr-2">
                   Detail Belum IK
                 </button>
