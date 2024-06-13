@@ -47,28 +47,33 @@ export default function FormUploadKTA() {
     };
 
     const handleSaveClick = async () => {
+        if (!window.confirm('Apakah Anda yakin untuk menyimpan foto?')) {
+          return;
+        }
+    
         const formData = new FormData();
         formData.append('nama', nama);
         formData.append('nomorInduk', nomorInduk);
         formData.append('jenis_kader', jenis_kader);
         if (fotoURL) {
-            const blob = await fetch(fotoURL).then(res => res.blob());
-            formData.append('foto', blob, 'uploaded_image.png');
+          const blob = await fetch(fotoURL).then(res => res.blob());
+          formData.append('foto', blob, 'uploaded_image.png');
         }
-
+    
         try {
-            const response = await axios.post('http://localhost:8000/kta', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            setSuccessMessage('Data berhasil disimpan');
-            setFotoURL(response.data.fotoURL);  // Menggunakan URL dari response backend
+          const response = await axios.post('http://localhost:8000/kta', formData, {
+            headers: {
+              'Content-Type': 'multipart/form-data'
+            }
+          });
+          setSuccessMessage('Data berhasil disimpan');
+          setFotoURL(response.data.fotoURL);  // Menggunakan URL dari response backend
+          router.push('/ssr/kader');  // Redirect to the specified route
         } catch (error) {
-            console.error('Error saving KTA data:', error);
-            setErrorMessage('Gagal menyimpan data');
+          console.error('Error saving KTA data:', error);
+          setErrorMessage('Gagal menyimpan data');
         }
-    };
+      };
 
     const handleButtonKembaliClick = () => {
         router.push('/ssr/kader');

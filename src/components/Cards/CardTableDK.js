@@ -147,7 +147,7 @@ export default function TableDK() {
   };
 
   const handleLihatKTA = (id) => {
-    router.push(`/ssr/kader/KTA?id=${id}`);
+    router.push(`/admin/kader/LihatKTA?id=${id}`);
   };
 
   const handleButtonHapus = async (id) => {
