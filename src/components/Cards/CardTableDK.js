@@ -147,7 +147,7 @@ export default function TableDK() {
   };
 
   const handleLihatKTA = (id) => {
-    router.push(`/ssr/kader/KTA?id=${id}`);
+    router.push(`/admin/kader/LihatKTA?id=${id}`);
   };
 
   const handleButtonHapus = async (id) => {
@@ -291,8 +291,8 @@ export default function TableDK() {
   
 
   return (
-    <div className="overflow-x-auto">
-      <div className="relative flex flex-col min-w-0 break-words w-full mb-4 shadow-lg rounded-lg bg-white border-1">
+    <div className="relative flex flex-col min-w-0 break-words w-full mb-4 shadow-lg rounded-lg bg-white border-1">
+      <div className="overflow-x-auto">
         <div className="mt-6 mx-4 mb-4 flex justify-between">
           <div className="flex space-x-4">
             <div className="w-full sm:w-1/2 md:w-1/4 px-2 mb-4">
@@ -405,18 +405,18 @@ export default function TableDK() {
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 No
               </th>
-              {/* <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
-                Nomor Induk Anggota
-              </th> */}
+              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+                Nomor Anggota
+              </th>
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Nama
               </th>
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Jenis Kader
               </th>
-              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Jenis Kelamin
-              </th>
+              </th> */}
               {/* <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 No Telepon
               </th> */}
@@ -426,9 +426,9 @@ export default function TableDK() {
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Kota
               </th>
-              <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
+              {/* <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Provinsi
-              </th>
+              </th> */}
               <th className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider">
                 Status Aktif
               </th>
@@ -446,33 +446,31 @@ export default function TableDK() {
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">
           {(currentPage - 1) * itemsPerPage + index + 1}
         </td>
-        {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_induk}</td> */}
+        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_induk}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kader}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kelamin}</td>
+        {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.jenis_kelamin}</td> */}
         {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.no_telp}</td> */}
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_kecamatan}</td>
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_kota}</td>
-        <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_provinsi}</td>
+        {/* <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.nama_provinsi}</td> */}
         <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{kader.status}</td>
         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
-          <button onClick={() => handleEditKader(kader.id)} className="mr-2 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">
+          <button onClick={() => handleEditKader(kader.id)} className="mr-2 bg-blueGray-700 hover:bg-green-700 text-white font-bold py-1 px-4 rounded">
             Ubah
           </button>
-          <button onClick={() => handleButtonHapus(kader.id)} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+          <button onClick={() => handleButtonHapus(kader.id)} className="bg-red-700 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">
             Hapus
           </button>
         </td>
         <td>
-          <div>
-            <button
-              type="button"
-              onClick={() => handleLihatKTA(kader.id)}
-              className="ml-2 mr-2 bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Lihat
-            </button>
-          </div>
+          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-800">
+            <div>
+              <button onClick={() => handleLihatKTA(kader.id)} className="bg-yellow-500 hover:bg-red-700 text-white font-bold py-1 px-4 rounded">
+                Lihat
+              </button>
+            </div>
+          </td>  
         </td>
       </tr>
     ))}

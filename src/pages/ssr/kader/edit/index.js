@@ -1,14 +1,29 @@
-import React from "react";
-import { useAuth } from "../../../admin/index.js";
+// src/pages/admin/ssr/edit-kader/index.js
 
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import FormEditKaderSSR from "../../../components/Forms/FormEditKaderSSR.js";
-
+import FormEditKaderSSR from "../../../../components/Forms/FormEditKaderSSR";
 // layout for page
-import SSR from "../../../../layouts/SSR.js";
+import SSR from "../../../layouts/SSR";
 
-export default function EditKader() {
-  useAuth();
+const EditKader = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'SSR') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan SSR
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
+
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -18,6 +33,8 @@ export default function EditKader() {
       </div>
     </>
   );
-}
+};
 
 EditKader.layout = SSR;
+
+export default EditKader;

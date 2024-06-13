@@ -208,7 +208,7 @@ export default function CardPieChart() {
                 updateChartData(apiData, selectedRegion, e.target.value, endMonth, year);
               }}
             >
-              <option value="">Start Month</option>
+              <option value="">Mulai Bulan</option>
               {months.map((month) => (
                 <option key={month.value} value={month.value}>
                   {month.label}
@@ -223,7 +223,7 @@ export default function CardPieChart() {
                 updateChartData(apiData, selectedRegion, startMonth, e.target.value, year);
               }}
             >
-              <option value="">End Month</option>
+              <option value="">Akhir Bulan</option>
               {months.map((month) => (
                 <option key={month.value} value={month.value}>
                   {month.label}
@@ -238,7 +238,7 @@ export default function CardPieChart() {
                 updateChartData(apiData, selectedRegion, startMonth, endMonth, e.target.value);
               }}
             >
-              <option value="">Year</option>
+              <option value="">Tahun</option>
               {[...new Set(apiData.map((item) => item.Tahun))].map((yr) => (
                 <option key={yr} value={yr}>
                   {yr}

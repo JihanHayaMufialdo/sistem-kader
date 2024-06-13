@@ -1,14 +1,29 @@
-import React from "react";
-import { useAuth } from "../../../admin/index.js";
+// src/pages/admin/kecamatan/index.js
 
+import React, { useEffect } from "react";
+import { useRouter } from "next/router";
+import { useAuth } from "../../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import TableKecamatan from "../../../../components/Cards/CardTableKecamatan.js";
-
+import TableKecamatan from "../../../../components/Cards/CardTableKecamatan";
 // layout for page
-import Admin from "../../../../layouts/Admin.js";
+import Admin from "../../../../layouts/Admin";
 
-export default function Kecamatan() {
-  useAuth();
+const Kecamatan = () => {
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'Admin') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan admin
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
+
   return (
     <>
       <div className="flex flex-wrap mt-4">
@@ -18,6 +33,8 @@ export default function Kecamatan() {
       </div>
     </>
   );
-}
+};
 
 Kecamatan.layout = Admin;
+
+export default Kecamatan;

@@ -86,7 +86,7 @@ export default function FormTambahKecamatan() {
                 type="button"
                 onClick={handleButtonKembaliClick}
               >
-                Kembali
+                Batal 
               </button>
             </div>
           </form>

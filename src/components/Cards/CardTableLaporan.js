@@ -58,7 +58,7 @@ export default function TableLaporan({ color }) {
                 <button type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
                   Tambah Laporan
                 </button>
-                <button type="button" onClick={handleButtonDetailClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-2">
+                <button type="button" onClick={handleButtonDetailClick} className="bg-orange-500 text-white font-medium py-1 px-3 rounded mr-2">
                   Detail Laporan
                 </button>
               </div>
@@ -130,7 +130,7 @@ export default function TableLaporan({ color }) {
             <tbody className="divide-y divide-gray-200">
             {[...laporan, ...currentItems].map((item, index) => (
                 <tr key={index}>
-                  <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
+                  <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{indexOfFirstItem + index + 1}</td>
                   <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Nama_Kader}</td>
                   <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kabupaten_Kota}</td>
                   <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kecamatan}</td>
@@ -169,11 +169,6 @@ export default function TableLaporan({ color }) {
           </button>
         </div>
         </div>
-      </div>
-      <div className="flex justify-end mr-2">
-              <a type="button" onClick={handleButtonExportClick} className="bg-blueGray-700 text-white font-medium py-1 px-3 rounded mr-2">
-                  Export Excel
-              </a>
       </div>
     </>
   );

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useRouter } from 'next/router';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function TableKecamatan() {
     const router = useRouter();
@@ -84,9 +86,12 @@ export default function TableKecamatan() {
                     <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
                         <div className="flex justify-between items-center">
                             <div className="relative w-full px-4 max-w-full flex-grow flex-1">
+                            <div className="flex items-center justify-left">
+                                <FontAwesomeIcon icon={faCircleChevronLeft} className="cursor-pointer text-green-700 mr-2" onClick={handleButtonKembaliClick} style={{ fontSize: '2rem' }} />
                                 <h6 className="text-green-700 text-xl font-bold">
                                     Daftar Kecamatan {namaKota}
                                 </h6>
+                            </div>
                             </div>
                             <div className="flex justify-end mr-2">
                                 <button type="button" onClick={handleButtonTambahClick} className="bg-green-600 text-white font-medium py-1 px-3 rounded mr-3">
@@ -185,16 +190,6 @@ export default function TableKecamatan() {
                     </button>
                 </div>
             </div>
-            <div className="text-center flex justify-end mr-3 mt-3">
-                <button
-                className="bg-blueGray-400 mr-12 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
-                type="button"
-                onClick={handleButtonKembaliClick}
-                >
-                Kembali
-                </button>
-            </div>
-
         </>
     );
 }

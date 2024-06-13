@@ -1,19 +1,33 @@
-import React, { useEffect, useState } from "react";
+// src/pages/admin/dashboard/index.js
+
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../../admin/index.js";
+import { useAuth } from "../../../hooks/useAuth.js"; // Periksa jalur ini
 
 // components
 import CardLineChart from "../../../components/Cards/CardLineChart.js";
-import CardBarChart from "../../../components/Cards/CardBarChart.js";
+import CardPieChart from "../../../components/Cards/CardPieChart.js";
 import CardRankKader from "../../../components/Cards/CardRankKader.js";
 import CardRankWilayah from "../../../components/Cards/CardRankWilayah.js";
-//import CardSocialTraffic from "../../components/Cards/CardSocialTraffic.js";
 
 // layout for page
 import Admin from "../../../layouts/Admin.js";
 
 const Dashboard = () => {
-  useAuth();
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'Admin') {
+        router.push('/unauthorized'); // redirect to unauthorized page or any other page
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // or you can return a loading spinner here
+  }
 
   return (
     <>
@@ -22,7 +36,7 @@ const Dashboard = () => {
           <CardLineChart />
         </div>
         <div className="w-full px-4">
-          <CardBarChart />
+          <CardPieChart />
         </div>
         <div className="w-full px-4">
           <CardRankWilayah />
@@ -38,4 +52,3 @@ const Dashboard = () => {
 Dashboard.layout = Admin;
 
 export default Dashboard;
-  

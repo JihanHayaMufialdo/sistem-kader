@@ -1,21 +1,20 @@
-// src/pages/admin/ssr/insert/index.js
+// src/pages/admin/lihat-kta-display/index.js
 
 import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../../../../hooks/useAuth"; // Pastikan jalur impor benar
+import { useAuth } from "../../../hooks/useAuth"; // Pastikan jalur impor benar
 // components
-import FormInsertSSR from "../../../../components/Forms/FormInsertSSR";
-// layout for page
-import Admin from "../../../../layouts/Admin";
+import CardLihatKTA from "../../../components/Cards/CardLihatKTA";
+import Admin from "../../../layouts/Admin";
 
-const InsertSSR = () => {
+const LihatKTADisplay = () => {
   const { user, loading } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
     if (!loading) {
       if (!user || user.role !== 'Admin') {
-        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan SSR
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan admin
       }
     }
   }, [user, loading, router]);
@@ -28,13 +27,13 @@ const InsertSSR = () => {
     <>
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <FormInsertSSR />
+          <CardLihatKTA />
         </div>
       </div>
     </>
   );
 };
 
-InsertSSR.layout = Admin;
+LihatKTADisplay.layout = Admin;
 
-export default InsertSSR;
+export default LihatKTADisplay;

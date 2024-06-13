@@ -1,18 +1,31 @@
-import React, { useEffect, useState } from "react";
+// src/pages/admin/ssr/dashboard/index.js
+
+import React, { useEffect } from "react";
 import { useRouter } from "next/router";
-import { useAuth } from "../../admin/index.js";
+import { useAuth } from "../../../hooks/useAuth";
 
 // components
-import CardLineChart from "../../../components/Cards/CardLineChart.js";
-import CardBarChart from "../../../components/Cards/CardBarChart.js";
-import CardRankWilayah from "../../../components/Cards/CardRankWilayah.js";
-//import CardSocialTraffic from "../../components/Cards/CardSocialTraffic.js";
-
+import CardLineChart from "../../../components/Cards/CardLineChart";
+import CardPieChart from "../../../components/Cards/CardPieChart";
+import CardRankWilayah from "../../../components/Cards/CardRankWilayah";
 // layout for page
-import SSR from "../../../layouts/SSR.js";
+import SSR from "../../../layouts/SSR";
 
 const Dashboard = () => {
-  useAuth();
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading) {
+      if (!user || user.role !== 'SSR') {
+        router.push('/unauthorized'); // Redirect ke halaman unauthorized jika bukan SSR
+      }
+    }
+  }, [user, loading, router]);
+
+  if (loading) {
+    return <div>Loading...</div>; // Atau tampilkan spinner loading
+  }
 
   return (
     <>
@@ -21,7 +34,7 @@ const Dashboard = () => {
           <CardLineChart />
         </div>
         <div className="w-full px-4">
-          <CardBarChart />
+          <CardPieChart />
         </div>
         <div className="w-full px-4">
           <CardRankWilayah />
@@ -34,4 +47,3 @@ const Dashboard = () => {
 Dashboard.layout = SSR;
 
 export default Dashboard;
-  
