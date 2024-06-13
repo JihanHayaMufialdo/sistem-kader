@@ -126,10 +126,15 @@ export default function KTADisplay() {
     }
 
     return (
-        <div className="container mx-auto mt-8">
-            <h1 className="text-2xl font-bold text-center mb-8">Kartu Tanda Anggota</h1>
-            <div className="flex items-center justify-center">
-                <div className="flex space-x-8">
+        <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+            <div className="overflow-x-auto">
+            <h1 className="text-2xl font-bold text-center mb-4 mt-4">Kartu Tanda Anggota</h1>
+                <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
+                    <div className="flex justify-between items-center">
+                        <div className="relative w-full px-3 max-w-full flex-grow flex-1">
+                            
+                            <div className="flex items-center justify-center">
+                                <div className="flex space-x-8">
                     {/* Bagian Depan Kartu */}
                     <div className="bg-white shadow-md rounded p-8 m-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/KTA.png)', backgroundSize: 'cover', backgroundPosition: 'center' }}>
                         <h2 className="px-8 py-5 m-4 mt-8 text-lxl font-bold text-center">KARTU TANDA ANGGOTA</h2>
@@ -164,6 +169,10 @@ export default function KTADisplay() {
                     Kembali
                 </button>
             </div>
+        </div>
+        </div>
+    </div>
+</div>
         </div>
     );
 }

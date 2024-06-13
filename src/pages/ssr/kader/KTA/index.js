@@ -4,7 +4,10 @@ import { useAuth } from "../../../admin/index.js";
 // components
 import CardKTA from "/src/components/Cards/CardKTA.js";
 
-export default function Kader() {
+// layout for page
+import SSR from "../../../../layouts/SSR";
+
+function Kader() {
   useAuth();
   return (
     <>
@@ -16,3 +19,7 @@ export default function Kader() {
     </>
   );
 }
+
+Kader.layout = SSR;
+
+export default Kader;
