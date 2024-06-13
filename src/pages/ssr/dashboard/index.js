@@ -4,7 +4,7 @@ import { useAuth } from "../../admin/index.js";
 
 // components
 import CardLineChart from "../../../components/Cards/CardLineChart.js";
-import CardBarChart from "../../../components/Cards/CardBarChart.js";
+import CardPieChart from "../../../components/Cards/CardPieChart.js";
 import CardRankWilayah from "../../../components/Cards/CardRankWilayah.js";
 //import CardSocialTraffic from "../../components/Cards/CardSocialTraffic.js";
 
@@ -13,7 +13,6 @@ import SSR from "../../../layouts/SSR.js";
 
 const Dashboard = () => {
   useAuth();
-
   return (
     <>
       <div className="flex flex-wrap flex-wrap mt-4">
@@ -21,7 +20,7 @@ const Dashboard = () => {
           <CardLineChart />
         </div>
         <div className="w-full px-4">
-          <CardBarChart />
+          <CardPieChart />
         </div>
         <div className="w-full px-4">
           <CardRankWilayah />

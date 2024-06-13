@@ -50,7 +50,6 @@ export default function NewPage({ color }) {
             </div>
           </div>
         </div>
-
         <table className="items-center w-full bg-white border-collapse">
           <thead className="bg-blueGray-50">
             <tr>

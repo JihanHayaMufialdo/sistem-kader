@@ -159,16 +159,16 @@ export default function LihatKTADisplay() {
             <div className="text-center mt-10">
             <button
                     onClick={handlePrint}
-                    className="bg-green-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
+                    className="bg-orange-500 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none mr-1 ease-linear transition-all duration-150"
                     style={{ marginRight: '15px' }}
                 >
                     Cetak
                 </button>
                 <button
                     onClick={() => router.back()}
-                    className="bg-red-700 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
+                    className="bg-blueGray-400 active:bg-blueGray-600 text-white font-bold text-sm px-4 py-2 rounded shadow hover:shadow-md outline-none focus:outline-none ease-linear transition-all duration-150"
                 >
-                    Kembali
+                    Batal
                 </button>
             </div>
         </div>

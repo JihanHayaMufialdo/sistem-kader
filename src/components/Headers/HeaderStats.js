@@ -44,7 +44,7 @@ export default function HeaderStats() {
             </div>
             <div className="w-full lg:w-3/12 xl:w-2/12 px-4">
               <CardStats
-                statSubtitle="TOTAL LAPORAN SUDAH IK"
+                statSubtitle="TOTAL LAPORAN IK RT"
                 statTitle={totalLaporan.Total_IK_RT || "Loading..."}
                 statIconColor="bg-orange-500"
               />
@@ -63,7 +63,7 @@ export default function HeaderStats() {
                 statIconColor="bg-pink-500"
               />
             </div>
-            <div className="w-full lg:w-3/12 xl:w-2/12 px-4 mt-8">
+            <div className="w-full lg:w-3/12 xl:w-2/12 px-4 mt-3">
               <CardStats
                 statSubtitle="TOTAL LAPORAN TERNOTIFIKASI"
                 statTitle={totalLaporan.Total_Terdeteksi || "Loading..."}

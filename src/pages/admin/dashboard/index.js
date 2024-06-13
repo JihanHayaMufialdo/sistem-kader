@@ -4,7 +4,7 @@ import { useAuth } from "../../admin/index.js";
 
 // components
 import CardLineChart from "../../../components/Cards/CardLineChart.js";
-import CardBarChart from "../../../components/Cards/CardBarChart.js";
+import CardPieChart from "../../../components/Cards/CardPieChart.js";
 import CardRankKader from "../../../components/Cards/CardRankKader.js";
 import CardRankWilayah from "../../../components/Cards/CardRankWilayah.js";
 //import CardSocialTraffic from "../../components/Cards/CardSocialTraffic.js";
@@ -22,7 +22,7 @@ const Dashboard = () => {
           <CardLineChart />
         </div>
         <div className="w-full px-4">
-          <CardBarChart />
+          <CardPieChart />
         </div>
         <div className="w-full px-4">
           <CardRankWilayah />

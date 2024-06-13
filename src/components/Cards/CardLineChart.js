@@ -2,28 +2,28 @@ import React, { useState, useEffect } from "react";
 import Chart from "chart.js";
 
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "Januari", "Februari", "Maret", "April", "Mei", "Juni",
+  "Juli", "Agustus", "September", "Oktober", "November", "Desember"
 ];
 
 const monthMap = {
-  "January": 1,
-  "February": 2,
-  "March": 3,
+  "Januari": 1,
+  "Februari": 2,
+  "Maret": 3,
   "April": 4,
-  "May": 5,
-  "June": 6,
-  "July": 7,
-  "August": 8,
+  "Mei": 5,
+  "Juni": 6,
+  "Juli": 7,
+  "Agustus": 8,
   "September": 9,
-  "October": 10,
+  "Oktober": 10,
   "November": 11,
-  "December": 12,
+  "Desember": 12,
 };
 
 export default function CardLineChart() {
-  const [startMonth, setStartMonth] = useState("January");
-  const [endMonth, setEndMonth] = useState("December");
+  const [startMonth, setStartMonth] = useState("Januari");
+  const [endMonth, setEndMonth] = useState("Desember");
   const [selectedYear, setSelectedYear] = useState("2024");
   const [chartData, setChartData] = useState({
     labels: [],
@@ -139,7 +139,7 @@ export default function CardLineChart() {
               display: true,
               scaleLabel: {
                 display: true,
-                labelString: "Month",
+                labelString: "Bulan",
                 fontColor: "black",
               },
               gridLines: {
@@ -161,7 +161,7 @@ export default function CardLineChart() {
               display: true,
               scaleLabel: {
                 display: true,
-                labelString: "Quantity",
+                labelString: "Jumlah Laporan",
                 fontColor: "black",
               },
               gridLines: {
@@ -194,12 +194,13 @@ export default function CardLineChart() {
               </h6>
               <h2 className="text-black text-xl font-semibold">Capaian Bulanan</h2>
             </div>
-            <div className="relative w-full max-w-full flex-grow flex-1 text-right">
+            <div className="relative w-full max-w-full flex-grow flex-1 text-right bg-indigo-100 text-black px-3 py-1 mr-2 bg-white border-gray-300 rounded-md focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
               <select
                 value={startMonth}
                 onChange={(e) => setStartMonth(e.target.value)}
-                className="mr-2 p-1 border rounded"
+                className="mr-3 p-1  border rounded"
               >
+                <option value="">Mulai Bulan </option> 
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -209,8 +210,9 @@ export default function CardLineChart() {
               <select
                 value={endMonth}
                 onChange={(e) => setEndMonth(e.target.value)}
-                className="mr-2 p-1 border rounded"
+                className="mr-3 p-1 border rounded "
               >
+                <option value="">Akhir Bulan</option>
                 {months.map((month) => (
                   <option key={month} value={month}>
                     {month}
@@ -220,7 +222,7 @@ export default function CardLineChart() {
               <input
                 type="number"
                 value={selectedYear}
-                onChange={(e) => setSelectedYear(e.target.value)}
+                onChange={(e) => setSelectedYear(e.target.value)} 
                 className="p-1 border rounded"
                 placeholder="Year"
               />
