@@ -1548,6 +1548,22 @@ select {
   border-color: rgba(71, 85, 105, var(--tw-border-opacity));
 }
 
+.border-gold {
+  --tw-border-opacity: 1;
+  border-color: rgba(255, 215, 0, var(--tw-border-opacity)); /* Warna gold */
+}
+
+.border-silver {
+  --tw-border-opacity: 1;
+  border-color: rgba(192, 192, 192, var(--tw-border-opacity)); /* Warna silver */
+}
+
+.border-bronze {
+  --tw-border-opacity: 1;
+  border-color: rgba(205, 127, 50, var(--tw-border-opacity)); /* Warna bronze */
+}
+
+
 .focus\:border-black:focus {
   --tw-border-opacity: 1;
   border-color: rgba(0, 0, 0, var(--tw-border-opacity));

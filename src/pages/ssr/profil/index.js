@@ -1,20 +1,17 @@
-import React from "react";
-import { useAuth } from "../../admin/index.js";
-
-// components
-import FormEditProfil from "../../../components/Forms/FormEditProfil.js";
-
-// layout for page
-
+import React, { useEffect, useState } from "react";
+import CardProfile from "../../../components/Cards/CardProfile.js";
 import SSR from "../../../layouts/SSR.js";
+import { useRouter } from "next/router";
+import { useAuth } from "../../admin/index.js";
 
 export default function Profil() {
   useAuth();
   return (
     <>
+
       <div className="flex flex-wrap mt-4">
         <div className="w-full mb-12 px-4">
-          <FormEditProfil />
+          <CardProfile />
         </div>
       </div>
     </>

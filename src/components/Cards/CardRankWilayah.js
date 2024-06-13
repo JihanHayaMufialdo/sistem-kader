@@ -91,7 +91,7 @@ export default function CardPageVisits() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full px-4 max-w-full flex-grow flex-1">
               <h3 className="font-semibold text-base text-blueGray-700">
-                Pemeringkatan Wilayah
+                Total Laporan PerWilayah
               </h3>
             </div>
             <div className="relative w-full px-4 max-w-full flex-grow flex-1 text-right">
@@ -127,7 +127,7 @@ export default function CardPageVisits() {
                   value={year}
                   onChange={(e) => setYear(e.target.value)}
                 />
-                <button
+                {/* <button
                   className={`bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear                   transition-all duration-150 ${filter === 'top5' && 'bg-indigo-600'}`}
                   onClick={() => setFilter('top5')}
                 >
@@ -138,13 +138,13 @@ export default function CardPageVisits() {
                   onClick={() => setFilter('top10')}
                 >
                   Top 10
-                </button>
-                <button
+                </button> */}
+                {/* <button
                   className={`bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 ${filter === 'all' && 'bg-indigo-600'}`}
                   onClick={() => setFilter('all')}
                 >
                   Lihat Semua
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

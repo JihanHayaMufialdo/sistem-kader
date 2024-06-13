@@ -3,6 +3,7 @@ const db = require('../config/db');
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
+const bcrypt = require('bcrypt');
 
 const router = express.Router();
 
@@ -112,6 +113,65 @@ db.getConnection()
           }
       });
    });
+
+   router.put("/editprofil/:username", async (req, res) => {
+    try {
+      const { nama, kota_kabupaten, kata_sandi } = req.body;
+      const hashedPassword = await bcrypt.hash(kata_sandi, 10);
+      const query = "UPDATE akun_ssrils SET nama = ?, kota_kabupaten = ?, kata_sandi = ? WHERE nama_pengguna = ?";
+      await db.query(query, [nama, kota_kabupaten, hashedPassword, req.params.username]);
+      res.status(200).send("Account updated successfully");
+    } catch (error) {
+      console.error("Error updating account:", error);
+      res.status(500).send("Error updating account");
+    }
+  });
+
+  router.post('/upload_foto_profil/:nama_pengguna', upload.single('foto'), async (req, res) => {
+    try {
+      const { nama_pengguna } = req.params;
+      const newFotoURL = req.file ? `/uploads/${req.file.filename}` : '';
+  
+      // Ambil URL foto lama dari database
+      const [rows] = await db.query('SELECT foto_url FROM akun_ssrils WHERE nama_pengguna = ?', [nama_pengguna]);
+      const oldFotoURL = rows.length > 0 ? rows[0].foto_url : null;
+  
+      // Update URL foto di database
+      const updateQuery = 'UPDATE akun_ssrils SET foto_url = ? WHERE nama_pengguna = ?';
+      await db.query(updateQuery, [newFotoURL, nama_pengguna]);
+  
+      // Hapus file lama dari sistem file
+      if (oldFotoURL) {
+        const oldFilePath = path.resolve(__dirname, '../uploads', path.basename(oldFotoURL)); // Perbaiki path di sini
+        fs.access(oldFilePath, fs.constants.F_OK, (err) => {
+          if (!err) {
+            fs.unlink(oldFilePath, (err) => {
+              if (err) {
+                console.error("Error deleting old photo:", err);
+              } else {
+                console.log("Old photo deleted successfully");
+              }
+            });
+          } else {
+            console.error("Old photo not found:", oldFilePath);
+          }
+        });
+      }
+  
+      // Kirim URL foto sebagai response
+      res.json({ fotoURL: newFotoURL });
+    } catch (error) {
+      console.error("Error uploading photo:", error);
+      res.status(500).send("Error uploading photo");
+    }
+  });
+
+
+  
+  
+
+  
+  
 
     
 

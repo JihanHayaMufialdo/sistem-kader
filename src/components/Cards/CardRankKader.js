@@ -21,6 +21,8 @@ export default function CardPageVisits() {
   const [startMonth, setStartMonth] = useState('');
   const [endMonth, setEndMonth] = useState('');
   const [year, setYear] = useState('');
+  const [displayedDataCount, setDisplayedDataCount] = useState(5);
+
 
   useEffect(() => {
     // Fetch data from API
@@ -74,7 +76,7 @@ export default function CardPageVisits() {
         return finalData.slice(0, 10);
       case 'all':
       default:
-        return finalData;
+        return finalData.slice(0, displayedDataCount); // Menggunakan displayedDataCount sebagai batasan
     }
   };
 
@@ -135,14 +137,17 @@ export default function CardPageVisits() {
                 </button>
                 <button
                   className={`bg-indigo-500 text-white active:bg-indigo-600 text-xs font-bold uppercase px-3 py-1 rounded outline-none focus:outline-none mr-1 mb-1 ease-linear transition-all duration-150 ${filter === 'all' && 'bg-indigo-600'}`}
-                  onClick={() => setFilter('all')}
+                  onClick={() => {
+                    setFilter('all'); // Set filter ke 'all' saat tombol diklik
+                    setDisplayedDataCount(data.length); // Atur displayedDataCount sesuai dengan panjang data
+                  }}
                 >
                   Lihat Semua
                 </button>
               </div>
             </div>
           </div>
-        </div>
+        </div>       
         <div className="block w-full overflow-x-auto">
           {/* Projects table */}
           <table className="items-center w-full bg-transparent border-collapse">
@@ -179,37 +184,36 @@ export default function CardPageVisits() {
             </thead>
             <tbody>
             {filteredData().map((item, index) => (
-            <tr key={index}>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
-                {index + 1}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-left">
-                {item.Nama_Kader}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-left">
-                {item.Kabupaten_Kota}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-left">
-                {item.Kecamatan}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
-                {item.TPT}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
-                {item.IK}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
-                {item.IK_Nonrt}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
-                {item.Ternotifikasi}
-              </td>
-              <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
-                {item.Total_Laporan}
-              </td>
-            </tr>
-          ))}
-
+                <tr key={index} className={index < 3 ? 'bg-gray-200' : ''}>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
+                    {index + 1}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-left">
+                    {item.Nama_Kader}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-left">
+                    {item.Kabupaten_Kota}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-left">
+                    {item.Kecamatan}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
+                    {item.TPT}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
+                    {item.IK}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
+                    {item.IK_Nonrt}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
+                    {item.Ternotifikasi}
+                  </td>
+                  <td className="border-t-0 px-2 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-2 text-center">
+                    {item.Total_Laporan}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>

@@ -107,12 +107,6 @@ export default function TableIK({ color }) {
                 >
                   Alamat
                 </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Aksi
-                </th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-200">
@@ -125,8 +119,6 @@ export default function TableIK({ color }) {
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.kota}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.fasyankes}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.alamat}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                  </td>
                 </tr>
               ))}
             </tbody>
