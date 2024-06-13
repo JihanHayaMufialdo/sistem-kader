@@ -564,6 +564,47 @@ db.getConnection()
       console.log('Uploaded file:', req.file);
     });
 
+    router.get('/total_laporan_sudah_ik_Perwilayah', async (req, res) => {
+      try {
+        const [rows] = await db.query(`
+          SELECT
+            kader_data.Kabupaten_Kota,
+            SUM(COALESCE(laporan_tpt.count, 0)) AS TPT,
+            SUM(COALESCE(laporan_ik_rt.count, 0)) AS IK,
+            SUM(COALESCE(laporan_ik_nonrt.count, 0)) AS IK_Nonrt,
+            SUM(COALESCE(laporan_terduga.count, 0)) AS Ternotifikasi,
+            SUM(COALESCE(laporan_tpt.count, 0) +
+                COALESCE(laporan_ik_rt.count, 0) +
+                COALESCE(laporan_ik_nonrt.count, 0) +
+                COALESCE(laporan_terduga.count, 0)) AS Total_Laporan
+          FROM (
+            SELECT DISTINCT kota_kab AS Kabupaten_Kota FROM laporan_ik_nonrt
+            UNION
+            SELECT DISTINCT kota_kab AS Kabupaten_Kota FROM laporan_tpt
+            UNION
+            SELECT DISTINCT kota_kab AS Kabupaten_Kota FROM laporan_ik_rt
+            UNION
+            SELECT DISTINCT kota_kab AS Kabupaten_Kota FROM laporan_terduga
+          ) AS kader_data
+          LEFT JOIN (SELECT kota_kab, COUNT(*) AS count FROM laporan_tpt GROUP BY kota_kab) AS laporan_tpt
+            ON kader_data.Kabupaten_Kota = laporan_tpt.kota_kab
+          LEFT JOIN (SELECT kota_kab, COUNT(*) AS count FROM laporan_ik_rt GROUP BY kota_kab) AS laporan_ik_rt
+            ON kader_data.Kabupaten_Kota = laporan_ik_rt.kota_kab
+          LEFT JOIN (SELECT kota_kab, COUNT(*) AS count FROM laporan_ik_nonrt GROUP BY kota_kab) AS laporan_ik_nonrt
+            ON kader_data.Kabupaten_Kota = laporan_ik_nonrt.kota_kab
+          LEFT JOIN (SELECT kota_kab, COUNT(*) AS count FROM laporan_terduga GROUP BY kota_kab) AS laporan_terduga
+            ON kader_data.Kabupaten_Kota = laporan_terduga.kota_kab
+          GROUP BY kader_data.Kabupaten_Kota
+          ORDER BY Total_Laporan DESC;
+        `);
+        res.json(rows);
+      } catch (error) {
+        console.error('Error fetching kader data:', error);
+        res.status(500).send('Error retrieving kader data');
+      }
+    });
+    
+
 
     router.get("/menampilkan_status_ik", async (req, res) => {
       try {
