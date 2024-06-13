@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 export default function FormUploadKTA() {
     const router = useRouter();
@@ -70,7 +72,7 @@ export default function FormUploadKTA() {
         }
     };
 
-    const handleButtonKembaliClick = () => {
+    const handleButtonBatalClick = () => {
         router.push('/ssr/kader');
     };
 
@@ -81,9 +83,13 @@ export default function FormUploadKTA() {
     return (
         <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
             <div className="overflow-x-auto">
-            <h2 className="text-2xl font-bold text-center mb-4 mt-4">ID Card</h2>
-                <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
-                    <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center px-6 py-4 bg-white border-b-2">
+            <FontAwesomeIcon icon={faCircleChevronLeft} className="cursor-pointer text-green-700 text-xl mr-2" onClick={handleButtonBatalClick} />
+            <h2 className="text-2xl font-bold text-center flex-grow ">Form Upload Foto KTA</h2>
+            <div className="w-8"></div> {/* Placeholder untuk memberikan ruang kosong seukuran ikon */}
+        </div>
+        <div className="rounded-t bg-blueGray-100 mb-1 px-6 py-6 border-2">
+          <div className="flex justify-between items-center">
                         <div className="relative w-full px-3 max-w-full flex-grow flex-1"
                  style={{ backgroundImage: "url('/depan.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
                 <h1 className="text-2xl font-bold text-center px-8 pt-4 pb-8 mb-4 mt-4">Form ID Card</h1>
@@ -133,13 +139,13 @@ export default function FormUploadKTA() {
                 </form>
                 <div className="flex items-center justify-center mt-4 space-x-4">
                     <button
-                        className="bg-yellow-500 hover:bg-yellow-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                        onClick={handleButtonKembaliClick}
+                        className="bg-blueGray-400 hover:bg-yellow-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
+                        onClick={handleButtonBatalClick}
                     >
-                        Kembali
+                        Batal
                     </button>
                     <button
-                        className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+                        className="bg-green-700 hover:bg-green-700 text-white font-bold py-1 px-4 rounded focus:outline-none focus:shadow-outline"
                         onClick={handleSaveClick}
                     >
                         Simpan
