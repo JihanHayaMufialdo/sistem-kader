@@ -169,7 +169,7 @@ export default function TableKota() {
                                         <button  
                                             type="button"
                                             onClick={() => handleButtonLihatClick(item.id_kota)}
-                                            className="bg-green-700 text-white font-bold py-1 px-3 rounded mr-2"
+                                            className="bg-yellow-500 text-white font-bold py-1 px-3 rounded mr-2"
                                         > Lihat
                                         </button>  
                                     </td>

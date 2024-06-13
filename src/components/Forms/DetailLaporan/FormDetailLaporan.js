@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from 'next/router';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
+import { faCircleChevronLeft } from '@fortawesome/free-solid-svg-icons'; // Tambahkan impor ini
 import axios from 'axios';
 
 export default function NewPage({ color }) {
@@ -41,7 +41,7 @@ export default function NewPage({ color }) {
             <div className="flex justify-between items-center">
               <div className="relative w-full px-4 max-w-full flex-grow flex-1">
                 <div className="flex items-center justify-left">
-                  <FontAwesomeIcon icon={faArrowLeft} className="cursor-pointer text-green-700 text-xl mr-2" onClick={handleBackClick} />
+                  <FontAwesomeIcon icon={faCircleChevronLeft} className="cursor-pointer text-green-700 mr-2" onClick={handleBackClick} style={{ fontSize: '2rem' }} />
                   <h6 className="text-green-700 text-xl font-bold">
                     Detail Laporan
                   </h6>
@@ -49,67 +49,67 @@ export default function NewPage({ color }) {
               </div>
             </div>
           </div>
-
-          <table className="items-center w-full bg-white border-collapse">
-            <thead className="bg-blueGray-50">
-              <tr>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  No
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Nama File
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Jenis Laporan
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Tanggal Entry
-                </th>
-                <th
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Aksi
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {files.map((file, index) => (
-                <tr key={file.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">
-                    {index + 1}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                    {file.nama_file}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                    {file.jenis_laporan}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                    {new Date(file.tanggal_entry).toLocaleDateString()}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
-                    <button onClick={() => handleDeleteClick(file.id)} className="bg-red-600 hover:bg-red-700 text-white font-medium py-1 px-3 rounded">
-                      Hapus
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
+
+        <table className="items-center w-full bg-white border-collapse">
+          <thead className="bg-blueGray-50">
+            <tr>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+              >
+                No
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+              >
+                Nama File
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+              >
+                Jenis Laporan
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+              >
+                Tanggal Entry
+              </th>
+              <th
+                scope="col"
+                className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+              >
+                Aksi
+              </th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-200">
+            {files.map((file, index) => (
+              <tr key={file.id}>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">
+                  {index + 1}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
+                  {file.nama_file}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
+                  {file.jenis_laporan}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
+                  {new Date(file.tanggal_entry).toLocaleDateString()}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-center text-sm text-gray-800">
+                  <button onClick={() => handleDeleteClick(file.id)} className="bg-red-700 hover:bg-red-700 text-white font-medium py-1 px-3 rounded">
+                    Hapus
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </>
   );
