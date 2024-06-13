@@ -101,7 +101,7 @@ export default function FormEditKecamatan() {
                 type="button"
                 onClick={handleButtonKembaliClick}
               >
-                Kembali
+                Batal 
               </button>
             </div>
           </form>

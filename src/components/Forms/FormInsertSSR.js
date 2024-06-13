@@ -147,7 +147,7 @@ export default function FormInsertSSR() {
                 type="button"
                 onClick={handleButtonKembaliClick}
               >
-                Kembali
+                Batal 
               </button>
             </div>
           </form>

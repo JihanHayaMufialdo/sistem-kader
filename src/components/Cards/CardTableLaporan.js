@@ -130,7 +130,7 @@ export default function TableLaporan({ color }) {
             <tbody className="divide-y divide-gray-200">
             {[...laporan, ...currentItems].map((item, index) => (
                 <tr key={index}>
-                  <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
+                  <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{indexOfFirstItem + index + 1}</td>
                   <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Nama_Kader}</td>
                   <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kabupaten_Kota}</td>
                   <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kecamatan}</td>

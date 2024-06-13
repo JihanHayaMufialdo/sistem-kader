@@ -221,7 +221,7 @@ export default function FormTambahKota() {
                 type="button"
                 onClick={handleButtonKembaliClick}
               >
-                Kembali
+                Batal
               </button>
             </div>
           </form>

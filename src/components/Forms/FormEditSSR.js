@@ -178,7 +178,7 @@ fetchKotaKabupaten();
                     type="button"
                     onClick={handleButtonKembaliClick}
                 >
-                    Kembali
+                    Batal 
                 </button>
 
             </div>
