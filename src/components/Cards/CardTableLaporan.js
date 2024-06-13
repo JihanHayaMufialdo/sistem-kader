@@ -51,7 +51,7 @@ export default function TableLaporan({ color }) {
             <div className="flex justify-between items-center">
               <div className="relative w-full px-3 max-w-full flex-grow flex-1">
                 <h6 className="text-green-700 text-xl font-bold">
-                  Laporan
+                  TPT | IK RT | IK NON-RT | TERDUGA
                 </h6>
               </div>
               <div className="flex justify-end mr-2">

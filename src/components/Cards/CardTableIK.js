@@ -6,6 +6,7 @@ export default function TableIK({ color }) {
   const router = useRouter();
   const [laporan, setLaporan] = useState([]);
   const [totalBelumIK, setTotalBelumIK] = useState([]);
+  const [totalBelumIKUnknown, setTotalBelumIKUnknown] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 100;
   const totalPages = Math.ceil(laporan.length / itemsPerPage);
@@ -13,7 +14,7 @@ export default function TableIK({ color }) {
   useEffect(() => {
     const fetchLaporan = async () => {
       try {
-        const response = await axios.get("http://localhost:8000/peringkat_perwilayah");
+        const response = await axios.get("http://localhost:8000/total_laporan_sudah_ik_Perwilayah");
         setLaporan(response.data);
       } catch (error) {
         console.error(error);
@@ -28,7 +29,15 @@ export default function TableIK({ color }) {
       try {
         const response = await axios.get("http://localhost:8000/menampilkan_status_ik");
         const dataBelumIK = response.data.pembagian_kota.total_belumik_by_city || [];
-        setTotalBelumIK(dataBelumIK);
+        
+        // Separate data with known and unknown kota
+        const knownKota = dataBelumIK.filter(item => item.kota);
+        const unknownKotaCount = dataBelumIK.reduce((acc, item) => {
+          return item.kota ? acc : acc + item.total_belumik;
+        }, 0);
+        
+        setTotalBelumIK(knownKota);
+        setTotalBelumIKUnknown(unknownKotaCount);
       } catch (error) {
         console.error(error);
       }
@@ -64,6 +73,9 @@ export default function TableIK({ color }) {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = laporan.slice(indexOfFirstItem, indexOfLastItem);
 
+  // Calculate total count for "Belum IK"
+  const totalBelumIKCount = totalBelumIK.reduce((acc, item) => acc + item.total_belumik, 0) + totalBelumIKUnknown;
+
   return (
     <>
       <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
@@ -72,7 +84,7 @@ export default function TableIK({ color }) {
             <div className="flex justify-between items-center">
               <div className="relative w-full px-3 max-w-full flex-grow flex-1">
                 <h6 className="text-green-700 text-xl font-bold">
-                  Laporan IK
+                  Belum IK
                 </h6>
               </div>
               <div className="flex justify-end mr-2">
@@ -93,30 +105,23 @@ export default function TableIK({ color }) {
                 <th
                   style={{ width: "40px" }}
                   scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+                  className="px-4 py-2 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
                   No
                 </th>
                 <th
                   style={{ width: "120px" }}
                   scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+                  className="px-4 py-2 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
                   Kabupaten/Kota
                 </th>
                 <th
                   style={{ width: "100px" }}
                   scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
+                  className="px-4 py-2 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
                 >
-                  Sudah IK
-                </th>
-                <th
-                  style={{ width: "100px" }}
-                  scope="col"
-                  className="px-6 py-3 text-center text-xs font-bold text-green-700 uppercase tracking-wider"
-                >
-                  Belum IK
+                  Total Belum IK
                 </th>
               </tr>
             </thead>
@@ -126,13 +131,22 @@ export default function TableIK({ color }) {
                 const totalBelumIKCount = belumIKData ? belumIKData.total_belumik : 0;
                 return (
                   <tr key={index}>
-                    <td style={{ width: "40px" }} className="px-6 py-4 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
-                    <td style={{ width: "120px" }} className="px-7 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.Kabupaten_Kota}</td>
-                    <td style={{ width: "100px" }} className="px-10 py-4 whitespace-nowrap text-center text-sm text-gray-800">{item.IK}</td>
-                    <td style={{ width: "100px" }} className="px-10 py-4 whitespace-nowrap text-center text-sm text-gray-800">{totalBelumIKCount}</td>
+                    <td style={{ width: "40px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-900">{index + 1}</td>
+                    <td style={{ width: "120px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">{item.Kabupaten_Kota}</td>
+                    <td style={{ width: "100px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">{totalBelumIKCount}</td>
                   </tr>
                 );
               })}
+              <tr>
+                <td style={{ width: "40px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-bold text-gray-900">N/A</td>
+                <td style={{ width: "120px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">Kabupaten Pasien Tidak Diketahui</td>
+                <td style={{ width: "100px" }} className="px-2 py-2 whitespace-nowrap text-center text-sm font-semibold text-gray-800">{totalBelumIKUnknown}</td>
+              </tr>
+              <tr className="bg-gray-200">
+                <td colSpan="3" className="px-4 py-2 whitespace-nowrap text-center text-m font-bold text-gray-900">
+                  Total Belum IK: {totalBelumIKCount}
+                </td>
+              </tr>
             </tbody>
           </table>
           {/* Pagination */}
