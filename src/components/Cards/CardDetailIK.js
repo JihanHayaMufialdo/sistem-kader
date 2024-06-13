@@ -92,16 +92,17 @@ export default function TableIK({ color }) {
 
   return (
     <>
-      <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
-        <div className="overflow-x-auto">
-          <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center justify-left">
-                <FontAwesomeIcon icon={faCircleChevronLeft} className="cursor-pointer text-green-700 text-xl mr-2" onClick={handleBackClick} />
-                <h6 className="text-green-700 text-xl font-bold">
-                  Laporan Belum IK
-                </h6>
-              </div>
+
+<div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+  <div className="overflow-x-auto">
+    <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
+      <div className="flex justify-between items-center">
+        <div className="flex items-center justify-left">
+          <FontAwesomeIcon icon={faCircleChevronLeft} className="cursor-pointer text-green-700 mr-2" onClick={handleBackClick} style={{ fontSize: '2rem' }} />
+          <h6 className="text-green-700 text-xl font-bold">
+            Laporan Belum IK
+          </h6>
+        </div>
               <div className="relative w-full px-3 max-w-full flex-grow flex-1 text-right">
           <div className="inline-block">
             <select
