@@ -1,28 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/router";
+import axios from "axios";
 
 export default function Navbar() {
   const router = useRouter();
   const [namaPengguna, setNamaPengguna] = useState('');
+  const [role, setRole] = useState('');
+  const [fotoURL, setFotoURL] = useState('');
 
   useEffect(() => {
-    // Ambil nama pengguna dari localStorage
-    const storedNamaPengguna = localStorage.getItem('nama_pengguna');
-    if (storedNamaPengguna) {
-      setNamaPengguna(storedNamaPengguna);
+    const storedUser = localStorage.getItem('user');
+    if (storedUser) {
+      const { nama_pengguna, role } = JSON.parse(storedUser);
+      setNamaPengguna(nama_pengguna);
+      setRole(role);
+      fetchUserData(nama_pengguna);
     }
   }, []);
 
-  const navbarStyle = {
-    backgroundImage: `url('/img/bglogin6.Jpg')`, // Atur latar belakang dengan gambar yang diimpor
-    backgroundSize: "cover", // Sesuaikan ukuran gambar agar mencakup seluruh area navbar
-    backgroundRepeat: "no-repeat", // Hindari pengulangan gambar
-    padding: "10px 20px", // Sesuaikan padding sesuai kebutuhan
-    // Tambahkan gaya lainnya sesuai kebutuhan
+  const fetchUserData = async (namaPengguna) => {
+    try {
+      const response = await axios.get(`http://localhost:8000/akun/${namaPengguna}`);
+      setFotoURL(`http://localhost:8000${response.data.foto_url}`);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+    }
   };
 
   const handleButtonClick = () => {
-    router.push(`/admin/profil/${namaPengguna}`); // Mengarahkan ke halaman profil berdasarkan nama_pengguna
+    if (role === 'Admin') {
+      router.push(`/admin/profil?namaPengguna=${namaPengguna}`);
+    } else if (role === 'SSR') {
+      router.push(`/ssr/profil?namaPengguna=${namaPengguna}`);
+    } else {
+      // Handle other roles or show an error message
+      console.error('Role not recognized');
+    }
   };
 
   return (
@@ -36,7 +49,7 @@ export default function Navbar() {
             href="#pablo"
             onClick={(e) => e.preventDefault()}
           >
-            Beranda
+            SIDAK (Sistem Data Kader)
           </a>
           <ul className="flex-col md:flex-row list-none items-center hidden md:flex">
             <div className="items-center flex mt-3">
@@ -53,7 +66,7 @@ export default function Navbar() {
                 <img
                   alt="..."
                   className="w-full rounded-full align-middle border-none shadow-lg"
-                  src="/img/profiladmin.jpg"
+                  src={fotoURL || '/img/team-2-800x800.jpg'}
                 />
               </span>
             </div>

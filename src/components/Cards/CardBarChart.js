@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from "react";
 import Chart from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
 const months = [
   { value: 1, label: "Januari" },
@@ -16,41 +17,22 @@ const months = [
   { value: 12, label: "Desember" }
 ];
 
-export default function CardBarChart() {
+export default function CardPieChart() {
   const [selectedRegion, setSelectedRegion] = useState("All");
   const [startMonth, setStartMonth] = useState("");
   const [endMonth, setEndMonth] = useState("");
   const [year, setYear] = useState("");
   const [apiData, setApiData] = useState([]);
   const [uniqueRegions, setUniqueRegions] = useState([]);
+  const [totalLaporan, setTotalLaporan] = useState(0); // Tambahkan state untuk total laporan
+
   const [data, setData] = useState({
     labels: [],
     datasets: [
       {
-        label: "TPT",
-        backgroundColor: "#4c51bf",
-        borderColor: "#4c51bf",
-        data: [],
-        fill: false,
-      },
-      {
-        label: "IKRT",
-        backgroundColor: "#ff0000",
-        borderColor: "#ff0000",
-        data: [],
-        fill: false,
-      },
-      {
-        label: "IKNONRT",
-        backgroundColor: "#00ff00",
-        borderColor: "#00ff00",
-        data: [],
-        fill: false,
-      },
-      {
-        label: "Laporan Ternotifikasi",
-        backgroundColor: "#fbcb3a",
-        borderColor: "#fbcb3a",
+        label: "Laporan",
+        backgroundColor: ["#4c51bf", "#ff0000", "#00ff00", "#fbcb3a"],
+        borderColor: "#ffffff",
         data: [],
         fill: false,
       },
@@ -104,41 +86,26 @@ export default function CardBarChart() {
 
     filteredData = mergeData(filteredData);
 
-    const labels = filteredData.map(item => item.Kabupaten_Kota);
-    const tptData = filteredData.map(item => item.TPT);
-    const ikrtData = filteredData.map(item => item.IK);
-    const iknonrtData = filteredData.map(item => item.IK_Nonrt);
-    const ternotifikasiData = filteredData.map(item => item.Ternotifikasi);
+    const labels = ["TPT", "IKRT", "IKNONRT", "Laporan Ternotifikasi"];
+    const tptData = filteredData.reduce((sum, item) => sum + item.TPT, 0);
+    const ikrtData = filteredData.reduce((sum, item) => sum + item.IK, 0);
+    const iknonrtData = filteredData.reduce((sum, item) => sum + item.IK_Nonrt, 0);
+    const ternotifikasiData = filteredData.reduce((sum, item) => sum + item.Ternotifikasi, 0);
+
+    const dataValues = [tptData, ikrtData, iknonrtData, ternotifikasiData];
+
+    // Hitung total laporan
+    const total = dataValues.reduce((acc, val) => acc + val, 0);
+    setTotalLaporan(total);
 
     setData({
       labels,
       datasets: [
         {
-          label: "TPT",
-          backgroundColor: "#4c51bf",
-          borderColor: "#4c51bf",
-          data: tptData,
-          fill: false,
-        },
-        {
-          label: "IKRT",
-          backgroundColor: "#ff0000",
-          borderColor: "#ff0000",
-          data: ikrtData,
-          fill: false,
-        },
-        {
-          label: "IKNONRT",
-          backgroundColor: "#00ff00",
-          borderColor: "#00ff00",
-          data: iknonrtData,
-          fill: false,
-        },
-        {
-          label: "Laporan Ternotifikasi",
-          backgroundColor: "#fbcb3a",
-          borderColor: "#fbcb3a",
-          data: ternotifikasiData,
+          label: "Laporan",
+          backgroundColor: ["#4c51bf", "#ff0000", "#00ff00", "#fbcb3a"],
+          borderColor: "#ffffff",
+          data: dataValues,
           fill: false,
         },
       ],
@@ -165,27 +132,29 @@ export default function CardBarChart() {
   }, [updateChartData, selectedRegion, startMonth, endMonth, year]);
 
   useEffect(() => {
-    const ctx = document.getElementById("bar-chart").getContext("2d");
-    if (window.myBar) {
-      window.myBar.destroy();
+    const ctx = document.getElementById("pie-chart").getContext("2d");
+    if (window.myPie) {
+      window.myPie.destroy();
     }
-    window.myBar = new Chart(ctx, {
-      type: "bar",
+    window.myPie = new Chart(ctx, {
+      type: "pie",
       data,
       options: {
         maintainAspectRatio: false,
         responsive: true,
-        title: {
-          display: false,
-          text: "Orders Chart",
-        },
-        tooltips: {
-          mode: "index",
-          intersect: false,
-        },
-        hover: {
-          mode: "nearest",
-          intersect: true,
+        plugins: {
+          datalabels: {
+            formatter: (value, ctx) => {
+              let sum = 0;
+              const dataArr = ctx.chart.data.datasets[0].data;
+              dataArr.forEach((data) => {
+                sum += data;
+              });
+              const percentage = ((value / sum) * 100).toFixed(2) + "%";
+              return percentage;
+            },
+            color: "#fff",
+          },
         },
         legend: {
           labels: {
@@ -194,44 +163,8 @@ export default function CardBarChart() {
           align: "end",
           position: "bottom",
         },
-        scales: {
-          xAxes: [
-            {
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: "Wilayah",
-              },
-              gridLines: {
-                borderDash: [2],
-                borderDashOffset: [2],
-                color: "rgba(33, 37, 41, 0.3)",
-                zeroLineColor: "rgba(33, 37, 41, 0.3)",
-                zeroLineBorderDash: [2],
-                zeroLineBorderDashOffset: [2],
-              },
-            },
-          ],
-          yAxes: [
-            {
-              display: true,
-              scaleLabel: {
-                display: true,
-                labelString: "Jumlah Laporan",
-              },
-              gridLines: {
-                borderDash: [2],
-                drawBorder: false,
-                borderDashOffset: [2],
-                color: "rgba(33, 37, 41, 0.2)",
-                zeroLineColor: "rgba(33, 37, 41, 0.15)",
-                zeroLineBorderDash: [2],
-                zeroLineBorderDashOffset: [2],
-              },
-            },
-          ],
-        },
       },
+      plugins: [ChartDataLabels],
     });
   }, [data]);
 
@@ -242,10 +175,10 @@ export default function CardBarChart() {
           <div className="flex flex-wrap items-center">
             <div className="relative w-full max-w-full flex-grow flex-1">
               <h6 className="uppercase text-blueGray-400 mb-1 text-xs font-semibold">
-                Pemeringkatan
+                Diagram
               </h6>
               <h2 className="text-blueGray-700 text-xl font-semibold">
-                Laporan Perdaerah
+                Total Laporan Provinsi Lampung
               </h2>
             </div>
             <div className="relative w-full max-w-full flex-grow flex-1">
@@ -316,10 +249,15 @@ export default function CardBarChart() {
         </div>
         <div className="p-4 flex-auto">
           <div className="relative h-350-px">
-            <canvas id="bar-chart"></canvas>
+            <canvas id="pie-chart"></canvas>
           </div>
+        </div>
+        {/* Keterangan Total Laporan */}
+        <div className="p-4 mt-4 border-t border-gray-300 text-center">
+          <p className="text-base font-semibold text-gray-700">Total Laporan: {totalLaporan}</p>
         </div>
       </div>
     </>
   );
 }
+
