@@ -121,13 +121,12 @@ export default function CardProfile() {
           <div className="mt-10 py-10 border-t border-blueGray-200 text-center">
             <div className="flex flex-wrap justify-center">
               <div className="w-full lg:w-9/12 px-4">
-                <p className="mb-4 text-lg leading-relaxed text-blueGray-700">
+                <p className="text-lg leading-relaxed text-blueGray-700">
                   {userData ? userData.biografi : "Loading..."}
                 </p>
                 <a
-                  href="#pablo"
+                  href="https://maps.app.goo.gl/wyC6W67RL8GNhJKm6"
                   className="font-normal text-sm text-lightBlue-500"
-                  onClick={(e) => e.preventDefault()}
                 >
                   Jl. Imam Bonjol No.164 LK.1 RT.002 RW.00 Kel. Gedong Air Kec. Tanjung Karang Barat Bandar Lampung, Bandar Lampung 35151
                 </a>
