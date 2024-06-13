@@ -79,10 +79,14 @@ export default function FormUploadKTA() {
     };
 
     return (
-        <div className="container mx-auto mt-8 flex justify-center">
-            <div className="shadow-md rounded px-8 pt-6 pb-8 mb-4"
+        <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded-lg bg-blueGray-100 border-0">
+            <div className="overflow-x-auto">
+            <h2 className="text-2xl font-bold text-center mb-4 mt-4">ID Card</h2>
+                <div className="rounded-t bg-white mb-1 px-6 py-6 border-2">
+                    <div className="flex justify-between items-center">
+                        <div className="relative w-full px-3 max-w-full flex-grow flex-1"
                  style={{ backgroundImage: "url('/depan.png')", backgroundSize: 'cover', backgroundPosition: 'center' }}>
-                <h1 className="text-2xl font-bold text-center mb-4">Form ID Card</h1>
+                <h1 className="text-2xl font-bold text-center px-8 pt-4 pb-8 mb-4 mt-4">Form ID Card</h1>
                 {errorMessage && (
                     <div className="text-red-500 text-sm mb-4">{errorMessage}</div>
                 )}
@@ -143,7 +147,7 @@ export default function FormUploadKTA() {
                 </div>
             </div>
             <div className="p-4">
-                <h2 className="text-2xl font-bold text-center mb-8">ID Card</h2>
+                
                 <div className="flex justify-center">
                     {/* Bagian Depan Kartu */}
                     <div className="bg-white shadow-md rounded p-8 mr-4" style={{ width: '300px', height: '500px', backgroundImage: 'url(/img/KTA.png)', backgroundSize: 'cover', backgroundPosition: 'center'}}>
@@ -163,6 +167,9 @@ export default function FormUploadKTA() {
                         {/* Konten untuk bagian belakang kartu di sini */}
                     </div>
                 </div>
+            </div>
+        </div>
+        </div>
             </div>
         </div>
     );
